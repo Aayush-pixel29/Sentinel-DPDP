@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 from typing import Any
 
@@ -55,12 +56,29 @@ def _gemini_client():
 
 
 def _deterministic_fallback_patch(finding: dict[str, Any], rule: dict[str, Any]) -> dict[str, Any]:
-    """Deterministic fallback when GEMINI_API_KEY is not configured."""
+    """Language-aware deterministic fallback when Gemini is unavailable."""
     rid = finding["rule_id"]
     snippet = finding.get("snippet", "")
+    file_path = finding.get("file", "")
+    is_js = file_path.endswith((".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"))
     if rid == "DPDP-LOG-001":
+        if is_js:
+            patched = re.sub(r"\$\{([^}]*(?:email|phone|aadhaar|pan|upi)[^}]*)\}", r"${maskPii(\1)}", snippet, flags=re.I)
+            if patched == snippet:
+                patched = f"// Redacted {finding['pii_entity']} before logging\n{snippet}"
+            return {
+                "engine": "ts-deterministic-fallback",
+                "rule_id": rid,
+                "dpdp_section": rule.get("dpdp_section", "Sec 8(5)"),
+                "dpdp_explanation": f"Logging raw {finding['pii_entity']} in {file_path} violates {rule.get('dpdp_section')} ({rule.get('penalty_ref')}).",
+                "remediation_summary": "Wrap PII variables with a TypeScript maskPii() helper before console/logger output.",
+                "original_snippet": snippet,
+                "patched_snippet": patched,
+                "helper_code": "function maskPii(v: string): string {\n  return v.length > 4 ? `XXXX${v.slice(-4)}` : 'XXXX';\n}",
+                "commit_message": f"fix(dpdp): mask {finding['pii_entity']} in TS logs ({rule.get('dpdp_section')})",
+            }
         return {
-            "engine": "deterministic-fallback",
+            "engine": "py-deterministic-fallback",
             "rule_id": rid,
             "dpdp_section": rule.get("dpdp_section", "Sec 8(5)"),
             "dpdp_explanation": f"Logging raw {finding['pii_entity']} violates {rule.get('dpdp_section')} ({rule.get('penalty_ref')}).",
