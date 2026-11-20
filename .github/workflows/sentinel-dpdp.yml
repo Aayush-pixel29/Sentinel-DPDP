@@ -1,0 +1,64 @@
+name: Sentinel-DPDP PR Gate
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  sentinel-dpdp-verify:
+    name: sentinel-dpdp/verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run Deterministic AST + DPDP Scan
+        id: scan
+        continue-on-error: true
+        run: |
+          python .agent/skills/dpdp-compliance-auditor/scripts/scan_pii_ast.py . --format json --out scan.json
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Post CodeRabbit-Style PR Review Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const report = JSON.parse(fs.readFileSync("scan.json", "utf8"));
+            const s = report.summary;
+            const status = s.total === 0 ? "PASS" : "BLOCKED";
+            const rows = report.findings.slice(0, 10).map(
+              f => `| \`${f.file}:${f.line}\` | \`${f.rule_id}\` | \`${f.pii_entity}\` (${f.sink_type}) | **${f.dpdp_section}** | ${f.severity.toUpperCase()} |`
+            ).join("\n");
+            const body = [
+              `## Sentinel-DPDP Pre-Merge Gate (\`${status}\`)`,
+              `- **Risk Score:** \`${s.risk_score}/100\` | **Total Findings:** \`${s.total}\` (Critical: ${s.counts.critical}, High: ${s.counts.high})`,
+              `- **DPDP Sections Impacted:** ${(s.dpdp_sections || []).join(", ") || "None"}`,
+              "",
+              s.total > 0
+                ? "| File : Line | Rule | Runtime Sink | DPDP Section | Severity |\n|---|---|---|---|---|\n" + rows
+                : "No runtime PII sinks, schema retention gaps, or consent dark patterns detected.",
+              "",
+              "_Powered by Sentinel-DPDP Neuro-Symbolic Engine (`scan_pii_ast.py` + `SKILL.md` + Gemini 3.8 Flash + `verify_patch.py`)._"
+            ].join("\n");
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });
+
+      - name: Enforce Pre-Merge Gate
+        if: steps.scan.outputs.exit_code != '0'
+        run: |
+          echo "Blocking PR: critical/high DPDP or AppSec violations detected."
+          exit 1

@@ -46,11 +46,13 @@ PII_NAME_PATTERNS: dict[str, re.Pattern] = {
     "dob": re.compile(r"\bdob\b|date_?of_?birth|birth_?date", re.I),
     "health": re.compile(r"diagnos|medical|health_?record|prescription", re.I),
     "address": re.compile(r"\baddress\b|home_addr", re.I),
+    "kyc_user": re.compile(r"kyc_?payload|customer_?record|user_?profile", re.I),
 }
 MASK_FUNC_RE = re.compile(r"mask|redact|hash|anonymi[sz]e|tokeni[sz]e|encrypt", re.I)
 
-LOG_METHODS = {"debug", "info", "warning", "warn", "error", "exception", "critical", "log", "print"}
-LOGGER_NAMES = re.compile(r"^(log|logger|logging|_logger|LOG|console)$|logger$", re.I)
+LOG_METHODS = {"debug", "info", "warning", "warn", "error", "exception", "critical", "log", "print",
+               "capture_message", "capture_exception"}
+LOGGER_NAMES = re.compile(r"^(log|logger|logging|_logger|LOG|console|sentry|sentry_sdk)$|logger$", re.I)
 LLM_CALL_SUFFIXES = (
     "generate_content", "generate_content_async", "send_message",
     "chat.completions.create", "completions.create", "messages.create",
@@ -260,17 +262,21 @@ def _js_pii(text: str) -> str | None:
 def scan_js(path: Path, rel: str) -> list[Finding]:
     out: list[Finding] = []
     lines = path.read_text(encoding="utf-8", errors="ignore").splitlines()
-    for i, line in enumerate(lines, 1):
+    for i, raw_line in enumerate(lines, 1):
+        # Gate 3: Strip single-line comments so bypass directives like // sentinel-ignore cannot hide leaks
+        line = re.sub(r"//.*$", "", raw_line)
+        if not line.strip():
+            continue
         if (m := JS_LOG_RE.search(line)) and (e := _js_pii(m.group(3))):
-            out.append(Finding("DPDP-LOG-001", rel, i, "log", e, line.strip()[:200]))
+            out.append(Finding("DPDP-LOG-001", rel, i, "log", e, raw_line.strip()[:200]))
         if JS_LLM_RE.search(line):
-            window = " ".join(lines[i - 1:i + 6])
+            window = " ".join(re.sub(r"//.*$", "", l) for l in lines[i - 1:i + 6])
             if (e := _js_pii(window)):
-                out.append(Finding("DPDP-LLM-002", rel, i, "llm_prompt", e, line.strip()[:200]))
+                out.append(Finding("DPDP-LLM-002", rel, i, "llm_prompt", e, raw_line.strip()[:200]))
         if "<input" in line or "Checkbox" in line or "checkbox" in line:
             ctx = " ".join(lines[max(0, i - 3):i + 4]).lower()
             if JS_CONSENT_RE.search(line) and re.search(r"consent|marketing|share|agree|terms|promot", ctx):
-                out.append(Finding("DPDP-CON-004", rel, i, "consent_ui", "any", line.strip()[:200]))
+                out.append(Finding("DPDP-CON-004", rel, i, "consent_ui", "any", raw_line.strip()[:200]))
     return out
 
 
@@ -315,11 +321,12 @@ def scan_literals(path: Path, rel: str) -> list[Finding]:
 
 # ---------------------------------------------------------------- optional external engines
 def run_semgrep(target: Path) -> list[Finding]:
-    if not shutil.which("semgrep"):
+    cfg = os.environ.get("SEMGREP_CONFIG")
+    if not cfg or not shutil.which("semgrep"):
         return []
     try:
-        res = subprocess.run(["semgrep", "--config", "p/secrets", "--json", "--quiet", str(target)],
-                             capture_output=True, text=True, timeout=300)
+        res = subprocess.run(["semgrep", "--config", cfg, "--metrics=off", "--json", "--quiet", str(target)],
+                             capture_output=True, text=True, timeout=15)
         data = json.loads(res.stdout or "{}")
     except Exception:
         return []

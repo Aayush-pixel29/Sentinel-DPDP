@@ -23,6 +23,7 @@ dist/
 build/
 
 # Scan artifacts & OS
+backend/data/
 scan.json
 *.sarif
 .DS_Store
