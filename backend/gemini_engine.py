@@ -142,24 +142,28 @@ def generate_patch(finding: dict[str, Any], target_root: Path) -> dict[str, Any]
         "that eliminates the DPDP leak while preserving functionality. Keep `original_snippet` "
         "exact to the file so string replacement succeeds."
     )
-    try:
-        from google.genai import types
-        resp = client.models.generate_content(
-            model=os.environ.get("GEMINI_MODEL", "gemini-3.8-flash"),
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_schema=PatchSuggestion,
-                temperature=0.1,
-            ),
-        )
-        data = json.loads(resp.text)
-        data["engine"] = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
-        return data
-    except Exception as exc:
-        fb = _deterministic_fallback_patch(finding, rule)
-        fb["gemini_note"] = f"Fallback used ({type(exc).__name__})"
-        return fb
+    models = [os.environ.get("GEMINI_MODEL", "gemini-3.8-flash"), "gemini-3.5-flash-lite"]
+    last_exc: Exception | None = None
+    for model_name in dict.fromkeys(models):
+        try:
+            from google.genai import types
+            resp = client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=PatchSuggestion,
+                    temperature=0.1,
+                ),
+            )
+            data = json.loads(resp.text)
+            data["engine"] = model_name
+            return data
+        except Exception as exc:
+            last_exc = exc
+    fb = _deterministic_fallback_patch(finding, rule)
+    fb["gemini_note"] = f"Fallback used ({type(last_exc).__name__ if last_exc else 'unknown'})"
+    return fb
 
 
 def ask_auditor(question: str, scan_report: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -179,14 +183,12 @@ def ask_auditor(question: str, scan_report: dict[str, Any] | None = None) -> dic
             f"Matched DPDP Rules: {json.dumps(matched_rules)}\n\n"
             f"User Question: {question}"
         )
-        try:
-            resp = client.models.generate_content(
-                model=os.environ.get("GEMINI_MODEL", "gemini-3.8-flash"),
-                contents=prompt,
-            )
-            return {"answer": resp.text, "engine": os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")}
-        except Exception:
-            pass
+        for model_name in dict.fromkeys([os.environ.get("GEMINI_MODEL", "gemini-3.8-flash"), "gemini-3.5-flash-lite"]):
+            try:
+                resp = client.models.generate_content(model=model_name, contents=prompt)
+                return {"answer": resp.text, "engine": model_name}
+            except Exception:
+                continue
 
     # Grounded fallback answer
     if not findings:
