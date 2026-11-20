@@ -49,18 +49,46 @@ OAUTH_STATES: set[str] = set()
 SESSIONS: dict[str, dict[str, Any]] = {}
 
 PLANS: dict[str, dict[str, Any]] = {
-    "free": {"name": "Free Tier", "price_inr": 0, "max_repos": 1, "monthly_pr_limit": 20},
-    "pro": {"name": "Startup Pro", "price_inr": 1999, "max_repos": 1, "monthly_pr_limit": 10000},
-    "agency": {"name": "Agency Growth", "price_inr": 7999, "max_repos": 15, "monthly_pr_limit": 50000},
-    "enterprise": {"name": "Enterprise VPC", "price_inr": 49999, "max_repos": 999, "monthly_pr_limit": 999999},
+    "free": {
+        "name": "Free Evaluator",
+        "price_inr": 0,
+        "max_repos": 1,
+        "monthly_pr_limit": 100,
+        "token_limit": 100000,
+        "prod_note": "Production Free: 20 PRs/mo · Boosted to 100 scans for Buildathon evaluation",
+    },
+    "pro": {
+        "name": "Startup Pro",
+        "price_inr": 1999,
+        "max_repos": 3,
+        "monthly_pr_limit": 10000,
+        "token_limit": 5000000,
+        "prod_note": "Unlimited PR gates, Auto-Fix PRs & BigQuery Readiness Passport",
+    },
+    "agency": {
+        "name": "Agency Growth",
+        "price_inr": 7999,
+        "max_repos": 15,
+        "monthly_pr_limit": 50000,
+        "token_limit": 25000000,
+        "prod_note": "15 client repos, multi-org GitHub App & white-label compliance PDFs",
+    },
+    "enterprise": {
+        "name": "Enterprise VPC",
+        "price_inr": 49999,
+        "max_repos": 999,
+        "monthly_pr_limit": 999999,
+        "token_limit": 999999999,
+        "prod_note": "Air-gapped VPC Docker, 0.1ms Gemma Sidecar & RS256 License JWT",
+    },
 }
 TENANTS: dict[str, dict[str, Any]] = {}
 
 
 def _get_tenant_key(sentinel_session: str | None) -> str:
     if sentinel_session and sentinel_session in SESSIONS:
-        return SESSIONS[sentinel_session].get("login", "demo")
-    return "demo"
+        return SESSIONS[sentinel_session].get("login", "guest")
+    return "guest"
 
 
 def _get_tenant(sentinel_session: str | None) -> dict[str, Any]:
@@ -70,8 +98,11 @@ def _get_tenant(sentinel_session: str | None) -> dict[str, Any]:
             "org": key,
             "plan_id": "free",
             "scans_used": 0,
+            "tokens_used": 0,
             "prs_opened": 0,
             "receipt_id": None,
+            "payment_method": None,
+            "autopay_active": False,
         }
     t = TENANTS[key]
     p = PLANS[t["plan_id"]]
@@ -81,6 +112,7 @@ def _get_tenant(sentinel_session: str | None) -> dict[str, Any]:
             "plan": t["plan_id"],
             "max_repos": p["max_repos"],
             "monthly_pr_limit": p["monthly_pr_limit"],
+            "token_limit": p["token_limit"],
             "mode": "vpc-airgap" if t["plan_id"] == "enterprise" else "cloud-saas",
         },
         separators=(",", ":"),
@@ -92,6 +124,9 @@ def _get_tenant(sentinel_session: str | None) -> dict[str, Any]:
         "price_inr": p["price_inr"],
         "max_repos": p["max_repos"],
         "monthly_pr_limit": p["monthly_pr_limit"],
+        "token_limit": p["token_limit"],
+        "tokens_remaining": max(0, p["token_limit"] - t["tokens_used"]),
+        "scans_remaining": max(0, p["monthly_pr_limit"] - t["scans_used"]),
         "vpc_license_jwt": f"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.{payload_b64}.sentinel_rs256_verified_{key}",
     }
 
@@ -133,8 +168,16 @@ class AskRequest(BaseModel):
 
 class UpgradeRequest(BaseModel):
     plan_id: str
-    payment_method: str = "upi"
+    payment_method: str = "upi_qr"
     upi_id: str | None = None
+    autopay: bool = True
+    terms_accepted: bool = True
+
+
+class EmailLoginRequest(BaseModel):
+    email: str = "evaluator@startup.in"
+    name: str = "Evaluator"
+    provider: str = "email"  # email | google | guest
 
 
 class NoticeRequest(BaseModel):
@@ -254,8 +297,35 @@ def auth_me(sentinel_session: str | None = Cookie(default=None)):
     return {
         "authenticated": bool(sess),
         "login": sess["login"] if sess else None,
-        "avatar_url": sess["avatar_url"] if sess else None,
+        "name": sess.get("name", sess["login"]) if sess else None,
+        "provider": sess.get("provider", "github") if sess else None,
+        "has_github_token": bool(sess and sess.get("access_token")),
+        "avatar_url": sess.get("avatar_url", "") if sess else None,
         "oauth_configured": bool(os.environ.get("GITHUB_CLIENT_ID") and os.environ.get("GITHUB_CLIENT_SECRET")),
+    }
+
+
+@app.post("/api/auth/email-login")
+def auth_email_login(req: EmailLoginRequest, response: Response):
+    """Isolated evaluator/startup workspace login via Email, Google, or Guest (no GitHub required)."""
+    clean_email = (req.email or "evaluator@startup.in").strip().lower()
+    handle = re.sub(r"[^a-z0-9._-]", "", clean_email.split("@")[0]) or f"eval-{uuid.uuid4().hex[:5]}"
+    sid = uuid.uuid4().hex
+    SESSIONS[sid] = {
+        "access_token": None,
+        "login": handle,
+        "name": (req.name or handle).strip() or handle,
+        "email": clean_email,
+        "provider": req.provider or "email",
+        "avatar_url": "",
+    }
+    response.set_cookie("sentinel_session", sid, httponly=True, samesite="lax", max_age=86400)
+    return {
+        "ok": True,
+        "login": handle,
+        "name": SESSIONS[sid]["name"],
+        "provider": SESSIONS[sid]["provider"],
+        "tenant": _get_tenant(sid),
     }
 
 
@@ -346,6 +416,7 @@ def api_scan(req: ScanRequest, sentinel_session: str | None = Cookie(default=Non
     telemetry = log_scan_telemetry(report, label)
     tkey = _get_tenant_key(sentinel_session)
     TENANTS[tkey]["scans_used"] += 1
+    TENANTS[tkey]["tokens_used"] += max(850, report.get("files_scanned", 1) * 45 + len(report.get("findings", [])) * 280)
     SCANS[scan_id] = {
         "scan_id": scan_id,
         "label": label,
@@ -575,16 +646,32 @@ def api_billing_usage(sentinel_session: str | None = Cookie(default=None)):
 def api_billing_upgrade(req: UpgradeRequest, sentinel_session: str | None = Cookie(default=None)):
     if req.plan_id not in PLANS:
         raise HTTPException(400, "Invalid plan_id.")
+    if not req.terms_accepted:
+        raise HTTPException(400, "Please accept the Terms & Conditions and DPDP Privacy Policy to continue.")
     t = _get_tenant(sentinel_session)
     tkey = t["org"]
     TENANTS[tkey]["plan_id"] = req.plan_id
-    TENANTS[tkey]["receipt_id"] = f"rcpt_dpdp_{uuid.uuid4().hex[:8]}"
+    TENANTS[tkey]["payment_method"] = req.payment_method
+    TENANTS[tkey]["autopay_active"] = bool(req.autopay and req.plan_id != "free")
+    TENANTS[tkey]["receipt_id"] = None if req.plan_id == "free" else f"rcpt_rzp_{uuid.uuid4().hex[:8]}"
     return {
         "ok": True,
         "payment_method": req.payment_method,
+        "autopay_active": TENANTS[tkey]["autopay_active"],
         "receipt_id": TENANTS[tkey]["receipt_id"],
         "tenant": _get_tenant(sentinel_session),
     }
+
+
+@app.post("/api/billing/reset")
+def api_billing_reset(sentinel_session: str | None = Cookie(default=None)):
+    """Reset workspace usage counters & free evaluator tokens for testing."""
+    t = _get_tenant(sentinel_session)
+    tkey = t["org"]
+    TENANTS[tkey]["scans_used"] = 0
+    TENANTS[tkey]["tokens_used"] = 0
+    TENANTS[tkey]["prs_opened"] = 0
+    return {"ok": True, "tenant": _get_tenant(sentinel_session)}
 
 
 _NOTICE_TEMPLATES: dict[str, tuple[str, str]] = {

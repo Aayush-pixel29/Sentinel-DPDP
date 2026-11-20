@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sentinel-DPDP · Pre-Merge AppSec &amp; India DPDP Act Compliance</title>
+  <title>Sentinel-DPDP — Pre-Merge Privacy &amp; India DPDP Compliance</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/lucide@latest" defer></script>
@@ -16,7 +16,6 @@
       --ink-2: #3F3F46;
       --muted: #71717A;
       --border: #E4E4E7;
-      --border-strong: #18181B;
       --red: #DC2626;
       --red-bg: #FEF2F2;
       --red-line: #FEE2E2;
@@ -27,8 +26,8 @@
       --amber-bg: #FFFBEB;
       --radius: 10px;
       --shadow-sm: 0 1px 2px rgba(9,9,11,.04);
-      --shadow-md: 0 8px 24px rgba(9,9,11,.07);
-      --shadow-lg: 0 24px 64px rgba(9,9,11,.14);
+      --shadow-md: 0 10px 28px rgba(9,9,11,.07);
+      --shadow-lg: 0 24px 64px rgba(9,9,11,.13);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,50 +41,46 @@
       line-height: 1.5;
     }
     code, pre, .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+    .hidden { display: none !important; }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(7px); }
       to { opacity: 1; transform: translateY(0); }
     }
     @keyframes pulseDot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: .45; transform: scale(.85); }
+      0%, 100% { opacity: 1; }
+      50% { opacity: .4; }
     }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    .animate-in { animation: fadeUp .24s cubic-bezier(.16,1,.3,1) both; }
-    .hidden { display: none !important; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .fade-in { animation: fadeUp .22s cubic-bezier(.16,1,.3,1) both; }
 
-    /* Buttons & Inputs */
+    /* Controls */
     button, .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 7px;
       background: var(--bg); color: var(--ink); border: 1px solid var(--border);
       border-radius: 8px; padding: 9px 15px; font-size: 13px; font-weight: 600;
       cursor: pointer; text-decoration: none; font-family: inherit;
-      transition: background .15s ease, border-color .15s ease, transform .1s ease, box-shadow .15s ease;
+      transition: background .14s ease, border-color .14s ease, transform .08s ease;
     }
     button:hover:not(:disabled), .btn:hover { border-color: var(--ink); background: var(--surface-2); }
     button:active:not(:disabled), .btn:active { transform: translateY(1px); }
-    button.primary, .btn.primary {
-      background: var(--ink); color: #FFFFFF; border-color: var(--ink);
-    }
+    button.primary, .btn.primary { background: var(--ink); color: #FFF; border-color: var(--ink); }
     button.primary:hover:not(:disabled), .btn.primary:hover { background: #27272A; border-color: #27272A; }
-    button.ok { background: var(--green); color: #FFFFFF; border-color: var(--green); }
-    button.ok:hover:not(:disabled) { background: #166534; border-color: #166534; }
+    button.ok { background: var(--green); color: #FFF; border-color: var(--green); }
+    button.ok:hover:not(:disabled) { background: #166534; }
     button.ghost { background: transparent; border-color: transparent; color: var(--ink-2); }
     button.ghost:hover:not(:disabled) { background: var(--surface-2); color: var(--ink); border-color: transparent; }
-    button.sm { padding: 6px 11px; font-size: 12px; border-radius: 6px; }
-    button.lg, .btn.lg { padding: 12px 20px; font-size: 14px; border-radius: 9px; }
+    button.sm, .btn.sm { padding: 6px 11px; font-size: 12px; border-radius: 7px; }
+    button.lg, .btn.lg { padding: 11px 20px; font-size: 14px; border-radius: 9px; }
     button:disabled { opacity: .42; cursor: not-allowed; }
 
     input, textarea, select {
       background: var(--bg); color: var(--ink); border: 1px solid var(--border);
       border-radius: 8px; padding: 9px 12px; font-size: 13px; outline: none; font-family: inherit;
-      transition: border-color .15s ease, box-shadow .15s ease;
+      transition: border-color .14s ease, box-shadow .14s ease;
     }
     input:focus, textarea:focus, select:focus {
-      border-color: var(--ink); box-shadow: 0 0 0 3px rgba(9,9,11,.07);
+      border-color: var(--ink); box-shadow: 0 0 0 3px rgba(9,9,11,.06);
     }
 
     .tag {
@@ -100,120 +95,133 @@
     .tag-ok { background: var(--green-bg); color: var(--green); border-color: #BBF7D0; }
     .kicker {
       font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 600;
-      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
     }
-    .live-dot {
-      width: 7px; height: 7px; border-radius: 50%; background: var(--green);
-      display: inline-block; animation: pulseDot 2s infinite;
-    }
-    .spinner {
-      width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent;
-      border-radius: 50%; display: inline-block; animation: spin .65s linear infinite;
-    }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: inline-block; animation: pulseDot 2s infinite; }
+    .spinner { width: 13px; height: 13px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; display: inline-block; animation: spin .65s linear infinite; }
 
-    /* ==================== LANDING / LOGIN PAGE ==================== */
-    #landingView {
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(9,9,11,.04), transparent 55%),
-        linear-gradient(to right, rgba(9,9,11,.035) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(9,9,11,.035) 1px, transparent 1px);
-      background-size: 100% 100%, 40px 40px, 40px 40px;
-    }
-    .land-nav {
+    /* ==================== 1. CLEAN HOME PAGE ==================== */
+    .nav {
       position: sticky; top: 0; z-index: 30;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 36px; background: rgba(255,255,255,.88); backdrop-filter: blur(12px);
+      padding: 15px 36px; background: rgba(255,255,255,.92); backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
     }
-    .land-brand { display: flex; align-items: center; gap: 10px; }
+    .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
     .brand-mark {
       width: 28px; height: 28px; border-radius: 7px; background: var(--ink); color: #FFF;
-      display: grid; place-items: center; font-weight: 800; font-size: 14px; letter-spacing: -0.04em;
+      display: grid; place-items: center; font-weight: 800; font-size: 14px;
     }
-    .brand-name { font-size: 16px; font-weight: 800; letter-spacing: -0.04em; }
-    .land-links { display: flex; align-items: center; gap: 24px; font-size: 13px; font-weight: 500; color: var(--ink-2); }
-    .land-links a { color: inherit; text-decoration: none; }
-    .land-links a:hover { color: var(--ink); }
-    .land-container { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+    .brand-name { font-size: 15px; font-weight: 800; letter-spacing: -0.03em; }
+    .nav-links { display: flex; align-items: center; gap: 26px; font-size: 13.5px; font-weight: 500; color: var(--ink-2); }
+    .nav-links a { color: inherit; text-decoration: none; }
+    .nav-links a:hover { color: var(--ink); }
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
 
     .hero {
-      display: grid; grid-template-columns: 1.05fr .95fr; gap: 44px; align-items: center;
-      padding: 68px 0 56px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center;
+      padding: 80px 0 72px;
     }
-    @media (max-width: 980px) {
-      .hero { grid-template-columns: 1fr; padding: 40px 0; }
-      .land-links { display: none; }
+    @media (max-width: 960px) {
+      .hero { grid-template-columns: 1fr; padding: 44px 0; gap: 36px; }
+      .nav-links { display: none; }
     }
     .hero h1 {
-      font-size: clamp(34px, 4.4vw, 54px); font-weight: 800; letter-spacing: -0.045em;
-      line-height: 1.06; margin: 16px 0 18px;
+      font-size: clamp(36px, 4.3vw, 54px); font-weight: 800; letter-spacing: -0.045em;
+      line-height: 1.07; margin: 16px 0 18px;
     }
-    .hero p.lead { font-size: 16px; color: var(--ink-2); max-width: 540px; line-height: 1.6; }
-    .hero-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
-    .hero-meta { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 22px; font-size: 12px; color: var(--muted); }
-    .hero-meta span { display: inline-flex; align-items: center; gap: 6px; }
+    .hero p.lead { font-size: 16.5px; color: var(--ink-2); max-width: 470px; line-height: 1.6; }
+    .hero-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+    .hero-sub { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 20px; font-size: 12.5px; color: var(--muted); }
 
-    /* Hero PR Diff Card */
-    .pr-showcase {
-      background: var(--bg); border: 1px solid var(--border); border-radius: 14px;
-      box-shadow: var(--shadow-lg); overflow: hidden;
+    /* Clean Visual Product Diagram on Right of Hero (Zero Wrapping) */
+    .visual-stage {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      padding: 22px; box-shadow: var(--shadow-lg); display: flex; flex-direction: column; gap: 14px;
     }
-    .pr-head {
+    .vs-top {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 16px; background: var(--surface); border-bottom: 1px solid var(--border);
-      font-size: 12px; font-family: "JetBrains Mono", monospace;
+      padding-bottom: 12px; border-bottom: 1px solid var(--border);
     }
-    .pr-code { padding: 14px 16px; font-family: "JetBrains Mono", monospace; font-size: 12px; line-height: 1.65; }
-    .pr-del { background: var(--red-line); color: var(--red); padding: 2px 8px; border-radius: 4px; margin: 3px 0; }
-    .pr-add { background: var(--green-line); color: var(--green); padding: 2px 8px; border-radius: 4px; margin: 3px 0; }
-    .pr-foot {
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
-      padding: 12px 16px; background: var(--surface); border-top: 1px solid var(--border); font-size: 12px;
+    .vs-dots { display: flex; gap: 6px; }
+    .vs-dots span { width: 9px; height: 9px; border-radius: 50%; background: var(--border); }
+    .vs-step {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+      padding: 13px 15px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
     }
+    .vs-step.dark { background: var(--ink); color: #FFF; border-color: var(--ink); }
+    .vs-step-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .vs-icon {
+      width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; flex-shrink: 0;
+      background: var(--surface-2); color: var(--ink);
+    }
+    .vs-step.dark .vs-icon { background: #27272A; color: #FFF; }
+    .vs-step.err .vs-icon { background: var(--red-bg); color: var(--red); }
+    .vs-step.pass .vs-icon { background: var(--green-bg); color: var(--green); }
+    .vs-title { font-size: 13.5px; font-weight: 700; letter-spacing: -0.01em; }
+    .vs-desc { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .vs-step.dark .vs-desc { color: #A1A1AA; }
+    .vs-arrow { text-align: center; color: var(--muted); font-size: 12px; line-height: 1; }
+    .vs-metrics {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding-top: 4px;
+    }
+    .vs-m {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 9px 10px; text-align: center;
+    }
+    .vs-m strong { display: block; font-size: 15px; font-weight: 800; letter-spacing: -0.03em; }
+    .vs-m span { font-size: 11px; color: var(--muted); }
 
-    /* Proof Strip & Sections */
-    .proof-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 64px;
-    }
-    @media (max-width: 900px) { .proof-grid { grid-template-columns: repeat(2, 1fr); } }
-    .proof-card {
-      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 18px; box-shadow: var(--shadow-sm);
-    }
-    .proof-val { font-size: 26px; font-weight: 800; letter-spacing: -0.04em; margin: 6px 0 4px; font-variant-numeric: tabular-nums; }
-    .section { padding: 56px 0; border-top: 1px solid var(--border); }
-    .section-head { max-width: 660px; margin-bottom: 30px; }
-    .section-head h2 { font-size: 28px; font-weight: 800; letter-spacing: -0.035em; margin: 8px 0; }
-    .section-head p { font-size: 14px; color: var(--ink-2); }
-    .grid-3-land { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .grid-2-land { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-    .grid-4-land { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-    @media (max-width: 980px) {
-      .grid-3-land, .grid-2-land, .grid-4-land { grid-template-columns: 1fr; }
-    }
+    .section { padding: 68px 0; border-top: 1px solid var(--border); }
+    .section-head { max-width: 560px; margin-bottom: 34px; }
+    .section-head h2 { font-size: 28px; font-weight: 800; letter-spacing: -0.035em; margin: 6px 0 8px; }
+    .section-head p { font-size: 14.5px; color: var(--ink-2); }
+
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    @media (max-width: 960px) { .grid-3, .grid-2, .grid-4 { grid-template-columns: 1fr; } }
+
     .card {
       background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow-sm);
+      padding: 22px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow-sm);
     }
     .card.featured { border-color: var(--ink); box-shadow: var(--shadow-md); }
+    .price { font-size: 28px; font-weight: 800; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
 
-    /* ==================== APP WORKSPACE SHELL ==================== */
+    /* ==================== 2. DEDICATED LOGIN PAGE ==================== */
+    #loginView {
+      min-height: 100vh; display: flex; flex-direction: column;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(9,9,11,.035), transparent 55%),
+        var(--surface);
+    }
+    .login-wrap { flex: 1; display: grid; place-items: center; padding: 32px 20px; }
+    .login-card {
+      width: 100%; max-width: 430px; background: var(--bg);
+      border: 1px solid var(--border); border-radius: 16px;
+      padding: 30px; box-shadow: var(--shadow-lg);
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .divider {
+      display: flex; align-items: center; gap: 10px; font-size: 11.5px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+    /* ==================== 3. APP WORKSPACE SHELL ==================== */
     #appShell {
-      display: grid; grid-template-columns: 252px 1fr; min-height: 100vh; background: var(--surface);
+      display: grid; grid-template-columns: 248px 1fr; min-height: 100vh; background: var(--surface);
     }
     @media (max-width: 960px) { #appShell { grid-template-columns: 1fr; } }
 
     .sidebar {
       background: var(--bg); border-right: 1px solid var(--border);
-      display: flex; flex-direction: column; padding: 16px 14px; gap: 16px;
+      display: flex; flex-direction: column; padding: 16px 14px; gap: 14px;
       position: sticky; top: 0; height: 100vh; overflow-y: auto;
     }
     @media (max-width: 960px) { .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); } }
-    .side-brand {
-      display: flex; align-items: center; justify-content: space-between; padding: 4px 6px 12px;
-      border-bottom: 1px solid var(--border);
-    }
+    .side-top { display: flex; align-items: center; justify-content: space-between; padding: 4px 6px 12px; border-bottom: 1px solid var(--border); }
     .nav-list { display: flex; flex-direction: column; gap: 4px; flex: 1; }
     .nav-item {
       display: flex; align-items: center; gap: 10px; width: 100%; justify-content: flex-start;
@@ -221,22 +229,15 @@
       background: transparent; color: var(--ink-2); font-size: 13px; font-weight: 500;
     }
     .nav-item:hover { background: var(--surface-2); color: var(--ink); border-color: transparent; }
-    .nav-item.active {
-      background: var(--ink); color: #FFFFFF; font-weight: 600; border-color: var(--ink);
-    }
+    .nav-item.active { background: var(--ink); color: #FFF; font-weight: 600; border-color: var(--ink); }
     .nav-item i { width: 16px; height: 16px; flex-shrink: 0; }
 
-    /* Quota Card in Sidebar */
     .quota-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 9px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
       padding: 13px; display: flex; flex-direction: column; gap: 8px;
     }
-    .progress-track {
-      height: 6px; background: var(--border); border-radius: 999px; overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%; background: var(--ink); border-radius: 999px; transition: width .35s ease;
-    }
+    .progress-track { height: 6px; background: var(--border); border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--ink); border-radius: 999px; transition: width .35s ease; }
     .progress-fill.warn { background: var(--amber); }
     .progress-fill.crit { background: var(--red); }
 
@@ -244,20 +245,28 @@
       display: flex; align-items: center; justify-content: space-between; gap: 8px;
       padding-top: 12px; border-top: 1px solid var(--border); font-size: 12px;
     }
-    .avatar { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border); object-fit: cover; }
+    .avatar-pill {
+      width: 28px; height: 28px; border-radius: 50%; background: var(--ink); color: #FFF;
+      display: grid; place-items: center; font-weight: 700; font-size: 12px; flex-shrink: 0;
+    }
 
-    /* Main Workspace Area */
     .workspace { display: flex; flex-direction: column; min-width: 0; }
     .ws-top {
       display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
       padding: 14px 26px; background: var(--bg); border-bottom: 1px solid var(--border);
       position: sticky; top: 0; z-index: 20;
     }
-    .ws-body { padding: 22px 26px 40px; max-width: 1440px; width: 100%; }
-    .screen { display: none; flex-direction: column; gap: 18px; }
+    .ws-body { padding: 20px 26px 40px; max-width: 1400px; width: 100%; }
+    .screen { display: none; flex-direction: column; gap: 16px; }
     .screen.active { display: flex; animation: fadeUp .2s ease both; }
 
-    /* Workspace Panels & Grids */
+    /* Subtle Page Guide Banner */
+    .guide-bar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      padding: 10px 14px; background: var(--bg); border: 1px solid var(--border);
+      border-left: 3px solid var(--ink); border-radius: 8px; font-size: 12.5px; color: var(--ink-2);
+    }
+
     .panel {
       background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
       padding: 18px; display: flex; flex-direction: column; gap: 14px; box-shadow: var(--shadow-sm);
@@ -269,20 +278,19 @@
       background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
       padding: 15px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
     }
-    .kpi-val { font-size: 28px; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .kpi-val { font-size: 26px; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; font-variant-numeric: tabular-nums; }
 
     .scan-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .chip-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
     .chip {
-      padding: 4px 10px; font-size: 12px; font-weight: 500; border-radius: 999px;
+      padding: 5px 11px; font-size: 12px; font-weight: 500; border-radius: 999px;
       border: 1px solid var(--border); background: var(--surface); color: var(--ink-2);
     }
     .chip:hover { border-color: var(--ink); color: var(--ink); background: var(--bg); }
 
-    .inspector-grid { display: grid; grid-template-columns: 1fr 340px; gap: 18px; align-items: start; }
+    .inspector-grid { display: grid; grid-template-columns: 1fr 330px; gap: 16px; align-items: start; }
     @media (max-width: 1220px) { .inspector-grid { grid-template-columns: 1fr; } }
 
-    /* Table */
     .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th {
@@ -292,83 +300,72 @@
     }
     td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
     tr:last-child td { border-bottom: none; }
-    tbody tr { cursor: pointer; transition: background .1s ease; }
+    tbody tr { cursor: pointer; }
     tbody tr:hover td { background: var(--surface); }
     tbody tr.selected td { background: var(--surface-2); font-weight: 600; }
 
-    /* Exact Line Code Viewer + Pre-Change Suggestion Split */
     .code-split { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     @media (max-width: 960px) { .code-split { grid-template-columns: 1fr; } }
-    .code-card {
-      border: 1px solid var(--border); border-radius: 9px; overflow: hidden;
-      display: flex; flex-direction: column; background: var(--bg);
-    }
+    .code-card { border: 1px solid var(--border); border-radius: 9px; overflow: hidden; display: flex; flex-direction: column; background: var(--bg); }
     .code-head {
       display: flex; justify-content: space-between; align-items: center; gap: 8px;
-      padding: 9px 12px; background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 8px 12px; background: var(--surface); border-bottom: 1px solid var(--border);
       font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 600;
     }
-    .code-body {
-      font-family: "JetBrains Mono", monospace; font-size: 12px; line-height: 1.65;
-      overflow-x: auto; max-height: 290px; background: #FFFFFF;
-    }
+    .code-body { font-family: "JetBrains Mono", monospace; font-size: 12px; line-height: 1.65; overflow-x: auto; max-height: 280px; background: #FFF; }
     .code-line { display: flex; padding: 1px 12px; white-space: pre; }
     .code-line.hit { background: var(--red-line); color: var(--red); font-weight: 600; }
     .code-line.fix { background: var(--green-line); color: var(--green); font-weight: 600; }
-    .ln-num { width: 40px; flex-shrink: 0; color: var(--muted); user-select: none; text-align: right; padding-right: 12px; }
+    .ln-num { width: 38px; flex-shrink: 0; color: var(--muted); user-select: none; text-align: right; padding-right: 12px; }
     .code-line.hit .ln-num { color: var(--red); }
 
-    .guideline-box {
-      padding: 12px 14px; background: var(--surface); border-top: 1px solid var(--border);
-      font-size: 12.5px; color: var(--ink-2); line-height: 1.55;
-    }
-    .diff-pre {
-      background: #09090B; color: #F4F4F5; padding: 14px; border-radius: 8px;
-      font-size: 12px; line-height: 1.6; overflow-x: auto; max-height: 300px;
-    }
+    .guideline-box { padding: 11px 13px; background: var(--surface); border-top: 1px solid var(--border); font-size: 12.5px; color: var(--ink-2); }
+    .diff-pre { background: #09090B; color: #F4F4F5; padding: 13px; border-radius: 8px; font-size: 12px; line-height: 1.6; overflow-x: auto; max-height: 280px; }
     .d-add { color: #86EFAC; }
     .d-del { color: #FCA5A5; }
     .d-hdr { color: #93C5FD; font-weight: 600; }
 
-    /* Chat */
     .chat-log {
-      display: flex; flex-direction: column; gap: 8px; max-height: 330px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto;
       padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
     }
     .msg { padding: 9px 12px; border-radius: 8px; font-size: 12.5px; line-height: 1.5; white-space: pre-wrap; }
     .msg.u { background: var(--ink); color: #FFF; align-self: flex-end; max-width: 88%; }
     .msg.a { background: #FFF; border: 1px solid var(--border); align-self: flex-start; max-width: 96%; }
 
-    /* Language Pills */
     .lang-row { display: flex; flex-wrap: wrap; gap: 6px; }
-    .lang-pill {
-      padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 600;
-      border: 1px solid var(--border); background: var(--bg); color: var(--ink-2);
-    }
+    .lang-pill { padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); background: var(--bg); color: var(--ink-2); }
     .lang-pill.active { background: var(--ink); color: #FFF; border-color: var(--ink); }
 
-    /* Modal */
+    /* Payment Tabs & QR */
+    .pay-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: var(--surface-2); padding: 4px; border-radius: 9px; }
+    .pay-tab { border: none; background: transparent; padding: 8px; font-size: 12.5px; border-radius: 7px; color: var(--ink-2); }
+    .pay-tab.active { background: var(--bg); color: var(--ink); box-shadow: var(--shadow-sm); }
+    .qr-box {
+      display: flex; gap: 16px; align-items: center; padding: 14px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    }
+
+    /* Modals & Toast */
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(9,9,11,.55); backdrop-filter: blur(4px);
       display: grid; place-items: center; z-index: 100; padding: 20px;
     }
     .modal {
       background: var(--bg); border: 1px solid var(--border); border-radius: 14px;
-      max-width: 460px; width: 100%; padding: 24px; box-shadow: var(--shadow-lg);
-      display: flex; flex-direction: column; gap: 16px; animation: fadeUp .2s ease both;
+      max-width: 500px; width: 100%; padding: 24px; box-shadow: var(--shadow-lg);
+      display: flex; flex-direction: column; gap: 15px; animation: fadeUp .18s ease both;
+      max-height: 90vh; overflow-y: auto;
     }
-
-    /* Toast */
     .toast {
       position: fixed; bottom: 22px; right: 22px; z-index: 120;
       background: var(--ink); color: #FFF; padding: 11px 16px; border-radius: 9px;
       font-size: 13px; font-weight: 500; box-shadow: var(--shadow-lg);
-      display: flex; align-items: center; gap: 8px; animation: fadeUp .2s ease both;
+      animation: fadeUp .18s ease both;
     }
 
-    /* Print Passport */
     @media print {
-      .sidebar, .ws-top, .no-print { display: none !important; }
+      .sidebar, .ws-top, .no-print, .guide-bar { display: none !important; }
       #appShell { display: block; background: #FFF; }
       .panel { box-shadow: none; break-inside: avoid; }
     }
@@ -376,261 +373,300 @@
 </head>
 <body>
 
-<!-- ==================== 1. LANDING & LOGIN PAGE ==================== -->
-<div id="landingView">
-  <nav class="land-nav">
-    <div class="land-brand">
+<!-- ==================== 1. MINIMAL HOME PAGE ==================== -->
+<div id="homeView">
+  <nav class="nav">
+    <div class="brand" onclick="showView('home')">
       <div class="brand-mark">S</div>
       <span class="brand-name">Sentinel-DPDP</span>
-      <span class="tag">INDIA DPDP ACT 2023</span>
     </div>
-    <div class="land-links">
-      <a href="#proof">Real Repo Proof</a>
-      <a href="#architecture">How It Works</a>
-      <a href="#deployments">Startups vs Banks</a>
-      <a href="#pricing">Indian Pricing</a>
+    <div class="nav-links">
+      <a href="#workflow">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#" onclick="openLegalModal();return false;">Terms &amp; Privacy</a>
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
-      <button class="ghost" onclick="enterWorkspace(true)">Live Demo</button>
-      <a class="btn primary" id="landGithubBtn" href="/auth/github/login">
-        <i data-lucide="github" style="width:15px;height:15px;"></i> Continue with GitHub
-      </a>
+      <button class="ghost" onclick="showView('login')">Sign in</button>
+      <button class="primary" onclick="guestStart()">Launch Sandbox</button>
     </div>
   </nav>
 
-  <div class="land-container">
+  <div class="container">
     <section class="hero">
-      <div class="animate-in">
-        <span class="tag tag-ok"><span class="live-dot"></span> LIVE ON CLOUD RUN · BIGQUERY TELEMETRY · GEMINI 3.8 FLASH</span>
-        <h1>Stop AI-generated PII leaks before they merge.</h1>
+      <div class="fade-in">
+        <span class="tag tag-ok"><span class="live-dot"></span> INDIA DPDP ACT 2023 · PRE-MERGE GATE</span>
+        <h1>Catch PII leaks before they merge.</h1>
         <p class="lead">
-          AI coding tools ship 5× faster while introducing runtime privacy and security flaws in 40%–90% of code.
-          Sentinel-DPDP audits every GitHub Pull Request for <strong>India's DPDP Act 2023 (up to ₹250 Cr fines)</strong>,
-          proves the exact line via AST taint analysis, and opens a <strong>compiler-verified auto-fix PR</strong>.
+          Deterministic AST taint analysis and verified AI fixes for GitHub Pull Requests — protecting Indian startups from ₹250 Cr DPDP penalties without slowing engineers down.
         </p>
         <div class="hero-cta">
-          <a class="btn primary lg" id="heroGithubBtn" href="/auth/github/login">
-            <i data-lucide="github" style="width:16px;height:16px;"></i> Sign in with GitHub
-          </a>
-          <button class="lg" onclick="enterWorkspace(true)">
-            <i data-lucide="play" style="width:15px;height:15px;"></i> Launch Interactive Demo
+          <button class="primary lg" onclick="showView('login')">
+            Get Started Free <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
+          </button>
+          <button class="lg" onclick="guestStart()">
+            <i data-lucide="play" style="width:14px;height:14px;"></i> Try Live Sandbox
           </button>
         </div>
-        <div class="hero-meta">
-          <span><i data-lucide="check" style="width:14px;height:14px;"></i> Free Tier: 1 Repo · 20 PRs/mo</span>
-          <span><i data-lucide="check" style="width:14px;height:14px;"></i> ₹0.28 / PR via SKILL.md</span>
-          <span><i data-lucide="check" style="width:14px;height:14px;"></i> 0.1ms In-VPC Bank Sidecar</span>
+        <div class="hero-sub">
+          <span>100,000 free evaluator tokens</span>
+          <span>·</span>
+          <span>No GitHub login required to test</span>
+          <span>·</span>
+          <span>0.1ms Bank VPC sidecar</span>
         </div>
       </div>
 
-      <div class="pr-showcase animate-in">
-        <div class="pr-head">
-          <span><strong>sentinel-dpdp/verify</strong> · PR #42 · backend/main.py:29</span>
-          <span class="tag tag-ok">VERIFIED · 80 → 0</span>
+      <!-- Crisp, Clean Visual Pipeline Card (Zero Wrapped Code) -->
+      <div class="visual-stage fade-in">
+        <div class="vs-top">
+          <div class="vs-dots"><span></span><span></span><span></span></div>
+          <span class="kicker">PRE-MERGE VERIFICATION PIPELINE</span>
+          <span class="tag tag-ok">PASS · 80 → 0</span>
         </div>
-        <div class="pr-code">
-          <div style="color:var(--muted);">28 &nbsp; def verify_kyc(req: KYCRequest):</div>
-          <div class="pr-del">- 29 &nbsp; logger.info(f"KYC user={req.aadhaar} pan={req.pan}") &nbsp;# CWE-532 · DPDP Sec 8(5)</div>
-          <div class="pr-add">+ 29 &nbsp; logger.info(f"KYC user={mask_pii(req.aadhaar)} pan={mask_pii(req.pan)}")</div>
-          <div style="color:var(--muted);">30 &nbsp; &nbsp; &nbsp; return {"status": "verified"}</div>
-        </div>
-        <div class="pr-foot">
-          <span><strong>SecReason Gate:</strong> AST Re-scan 0 · Syntax PASS · 0 New Vulns</span>
-          <span class="tag">Penalty Prevented: ₹250 Cr</span>
-        </div>
-      </div>
-    </section>
 
-    <!-- Real Benchmark Proof Strip -->
-    <section id="proof" class="proof-grid">
-      <div class="proof-card">
-        <div class="kicker">tiangolo / fastapi-template (30K★)</div>
-        <div class="proof-val">1 / 207</div>
-        <div style="font-size:12.5px;color:var(--ink-2);">Surgical real email log leak caught at <code>utils.py:57</code> · <strong>0 false positives</strong> across 206 files.</div>
-      </div>
-      <div class="proof-card">
-        <div class="kicker">OWASP / crAPI (Real AppSec)</div>
-        <div class="proof-val">24 Leaks</div>
-        <div style="font-size:12.5px;color:var(--ink-2);">355 files scanned in seconds · 13 Critical + 11 Medium Python &amp; TypeScript findings.</div>
-      </div>
-      <div class="proof-card">
-        <div class="kicker">Progressive SKILL.md Cost</div>
-        <div class="proof-val">₹0.28 / PR</div>
-        <div style="font-size:12.5px;color:var(--ink-2);">On-demand rule loading cuts LLM tokens ~75% · <strong>96% gross margin</strong> at ₹1,999/mo.</div>
-      </div>
-      <div class="proof-card">
-        <div class="kicker">In-VPC Gemma Privacy Sidecar</div>
-        <div class="proof-val">0.1 ms</div>
-        <div style="font-size:12.5px;color:var(--ink-2);">Masks Aadhaar (Verhoeff), PAN, +91 Phone &amp; UPI locally before any cloud inference.</div>
-      </div>
-    </section>
-
-    <!-- How It Works -->
-    <section id="architecture" class="section">
-      <div class="section-head">
-        <div class="kicker">Zero-Hallucination SecReason Architecture</div>
-        <h2>Deterministic Proof. Agentic Repair. Compiler Gate.</h2>
-        <p>Unlike noisy LLM wrappers that hallucinate line numbers, Sentinel-DPDP separates proof from repair using peer-reviewed SecReason verification.</p>
-      </div>
-      <div class="grid-3-land">
-        <div class="card">
-          <span class="tag tag-dark" style="width:fit-content;">01 · AST TAINT ENGINE</span>
-          <h3 style="font-size:16px;">Exact Runtime Flow Proof</h3>
-          <p style="font-size:13px;color:var(--ink-2);"><code>scan_pii_ast.py</code> tracks live runtime variables (<code>req.aadhaar</code>, <code>user.email</code>, <code>pan</code>) flowing into logs, outbound LLM APIs, SQL schemas without erasure TTL, and pre-checked consent UIs.</p>
-        </div>
-        <div class="card">
-          <span class="tag tag-dark" style="width:fit-content;">02 · SKILL.MD + GEMINI 3.8 FLASH</span>
-          <h3 style="font-size:16px;">Context-Matched Code Repair</h3>
-          <p style="font-size:13px;color:var(--ink-2);">Loads only the matched DPDP Act 2023 section on demand, wraps source inside <code>&lt;code_slice&gt;</code> anti-prompt-injection boundaries, and previews exact Python, TypeScript, or SQL fixes.</p>
-        </div>
-        <div class="card">
-          <span class="tag tag-dark" style="width:fit-content;">03 · VERIFY_PATCH.PY GATE</span>
-          <h3 style="font-size:16px;">No Unverified Code Ever Merges</h3>
-          <p style="font-size:13px;color:var(--ink-2);">Re-scans the patched tree, proves zero regressions, compiles syntax, logs audit proof to <strong>BigQuery</strong>, and opens a 1-click GitHub Fix PR + 7-language DPDP Notice.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Cloud SaaS vs Bank VPC -->
-    <section id="deployments" class="section">
-      <div class="section-head">
-        <div class="kicker">Two Deployment Modes · Built for India</div>
-        <h2>1-Click GitHub App for Startups. Air-Gapped VPC for Banks.</h2>
-        <p>Startups install in 60 seconds like CodeRabbit. Regulated FinTechs &amp; Banks keep 100% of source code and PII inside their own AWS/GCP VPC.</p>
-      </div>
-      <div class="grid-2-land">
-        <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span class="kicker">Mode 1 · Cloud SaaS (90% of Startups)</span>
-            <span class="tag tag-ok">Live Now</span>
+        <div class="vs-step err">
+          <div class="vs-step-left">
+            <div class="vs-icon"><i data-lucide="scan-search" style="width:17px;height:17px;"></i></div>
+            <div style="min-width:0;">
+              <div class="vs-title">1. Deterministic AST Taint Proof</div>
+              <div class="vs-desc mono">backend/main.py:29 · req.aadhaar → logger.info()</div>
+            </div>
           </div>
-          <h3 style="font-size:18px;">GitHub App &amp; PR Gate</h3>
-          <p style="font-size:13px;color:var(--ink-2);">Install on chosen repos → signed webhook triggers scan on every PR → posts inline fix + status check → Razorpay/UPI webhooks meter the 20-PR Free / Unlimited Pro limits automatically.</p>
+          <span class="tag tag-crit">Sec 8(5)</span>
         </div>
-        <div class="card featured">
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span class="kicker">Mode 2 · Regulated Banks &amp; FinTechs</span>
-            <span class="tag tag-dark">Zero Egress</span>
+
+        <div class="vs-arrow">↓</div>
+
+        <div class="vs-step dark">
+          <div class="vs-step-left">
+            <div class="vs-icon"><i data-lucide="sparkles" style="width:17px;height:17px;"></i></div>
+            <div style="min-width:0;">
+              <div class="vs-title">2. SKILL.md + Gemini 3.8 Flash</div>
+              <div class="vs-desc mono">mask_pii(req.aadhaar) · 7-Lang Notice Synced</div>
+            </div>
           </div>
-          <h3 style="font-size:18px;">Private VPC Docker + RS256 License JWT</h3>
-          <p style="font-size:13px;color:var(--ink-2);">Customer deploys our Dockerized scanner + 0.1ms Gemma sidecar inside their own VPC. Authorized by a cryptographically signed RS256 License JWT with metadata-only heartbeat (zero source code leaves).</p>
+          <span class="tag" style="background:#27272A;color:#FFF;border-color:#3F3F46;">₹0.28/PR</span>
+        </div>
+
+        <div class="vs-arrow">↓</div>
+
+        <div class="vs-step pass">
+          <div class="vs-step-left">
+            <div class="vs-icon"><i data-lucide="shield-check" style="width:17px;height:17px;"></i></div>
+            <div style="min-width:0;">
+              <div class="vs-title">3. SecReason Compiler Gate</div>
+              <div class="vs-desc">AST Re-scan: 0 · Syntax PASS · BigQuery Logged</div>
+            </div>
+          </div>
+          <span class="tag tag-ok">MERGED</span>
+        </div>
+
+        <div class="vs-metrics">
+          <div class="vs-m"><strong>1 / 207</strong><span>FastAPI 30K★ · 0 FP</span></div>
+          <div class="vs-m"><strong>24 Leaks</strong><span>OWASP crAPI Audit</span></div>
+          <div class="vs-m"><strong>0.1 ms</strong><span>In-VPC Gemma Mask</span></div>
         </div>
       </div>
     </section>
 
-    <!-- Indian Pricing -->
+    <!-- How it works -->
+    <section id="workflow" class="section">
+      <div class="section-head">
+        <div class="kicker">Product Capabilities</div>
+        <h2>Built for Indian engineering teams.</h2>
+        <p>Startups connect in 60 seconds. Regulated banks deploy inside their private VPC with zero data egress.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <i data-lucide="git-pull-request" style="width:20px;height:20px;"></i>
+          <h3 style="font-size:16px;">Verified PR Auto-Fix</h3>
+          <p style="font-size:13.5px;color:var(--ink-2);">Finds runtime PII flows across Python, TypeScript, and SQL — then proves the fix compiles with zero new leaks before unlocking merge.</p>
+        </div>
+        <div class="card">
+          <i data-lucide="languages" style="width:20px;height:20px;"></i>
+          <h3 style="font-size:16px;">Code-to-Consent Sync</h3>
+          <p style="font-size:13.5px;color:var(--ink-2);">Auto-generates DPDP Rule 3 consent notices in 7 Indian languages plus non-prechecked React JSX directly from the PII detected in your code.</p>
+        </div>
+        <div class="card">
+          <i data-lucide="lock" style="width:20px;height:20px;"></i>
+          <h3 style="font-size:16px;">Air-Gapped Bank VPC</h3>
+          <p style="font-size:13.5px;color:var(--ink-2);">Dockerized runner + 0.1ms local Gemma sidecar masks Aadhaar, PAN, and UPI inside your VPC, licensed via signed RS256 JWT.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
     <section id="pricing" class="section">
       <div class="section-head">
-        <div class="kicker">Indian Pricing · UPI / Razorpay Autopay</div>
-        <h2>₹1,999/month instead of ₹15 Lakh/year legacy audits.</h2>
-        <p>Start free on 1 repository. Upgrade instantly when your team scales or pitches enterprise banking clients.</p>
+        <div class="kicker">Indian Pricing · UPI QR &amp; Card Autopay</div>
+        <h2>Start free. Scale as you ship.</h2>
+        <p>Transparent INR pricing via Razorpay UPI Autopay or Corporate Cards. Cancel anytime.</p>
       </div>
-      <div class="grid-4-land">
+      <div class="grid-4">
         <div class="card">
-          <span class="kicker">Free Tier</span>
-          <div class="proof-val">₹0 <span style="font-size:13px;font-weight:500;color:var(--muted);">/mo</span></div>
-          <p style="font-size:12.5px;color:var(--ink-2);">1 Repo · 20 PR scans/month · AST Scanner + SecReason Gate + 7-Lang Notice.</p>
-          <button style="margin-top:auto;" onclick="enterWorkspace(true)">Start Free</button>
+          <span class="kicker">Free Evaluator</span>
+          <div class="price">₹0<span style="font-size:13px;font-weight:500;color:var(--muted);">/mo</span></div>
+          <p style="font-size:13px;color:var(--ink-2);">100 test scans · 100K tokens · 1 repo · Full AST + 7-Lang Notice.</p>
+          <button style="margin-top:auto;" onclick="showView('login')">Start Free</button>
         </div>
         <div class="card featured">
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <span class="kicker">Startup Pro</span>
             <span class="tag tag-dark">Popular</span>
           </div>
-          <div class="proof-val">₹1,999 <span style="font-size:13px;font-weight:500;color:var(--muted);">/mo</span></div>
-          <p style="font-size:12.5px;color:var(--ink-2);">1 Repo · Unlimited PRs · Auto-Fix PRs · BigQuery Vendor Readiness Passport.</p>
-          <button class="primary" style="margin-top:auto;" onclick="enterWorkspace(false,'billing')">Choose Pro</button>
+          <div class="price">₹1,999<span style="font-size:13px;font-weight:500;color:var(--muted);">/mo</span></div>
+          <p style="font-size:13px;color:var(--ink-2);">3 repos · 10,000 PRs · 5M tokens · BigQuery Audit Passport.</p>
+          <button class="primary" style="margin-top:auto;" onclick="showView('login')">Choose Pro</button>
         </div>
         <div class="card">
           <span class="kicker">Agency Growth</span>
-          <div class="proof-val">₹7,999 <span style="font-size:13px;font-weight:500;color:var(--muted);">/mo</span></div>
-          <p style="font-size:12.5px;color:var(--ink-2);">Up to 15 Client Repos · Multi-org GitHub App · White-label Compliance PDF.</p>
-          <button style="margin-top:auto;" onclick="enterWorkspace(false,'billing')">Choose Agency</button>
+          <div class="price">₹7,999<span style="font-size:13px;font-weight:500;color:var(--muted);">/mo</span></div>
+          <p style="font-size:13px;color:var(--ink-2);">15 client repos · 50K PRs · 25M tokens · White-label PDFs.</p>
+          <button style="margin-top:auto;" onclick="showView('login')">Choose Agency</button>
         </div>
         <div class="card">
           <span class="kicker">Enterprise VPC</span>
-          <div class="proof-val">₹49,999 <span style="font-size:13px;font-weight:500;color:var(--muted);">/mo</span></div>
-          <p style="font-size:12.5px;color:var(--ink-2);">Unlimited Repos · Air-Gapped VPC Docker + Gemma Sidecar + RS256 License JWT.</p>
-          <button style="margin-top:auto;" onclick="enterWorkspace(false,'vpc')">Inspect VPC Mode</button>
+          <div class="price">₹49,999<span style="font-size:13px;font-weight:500;color:var(--muted);">/mo</span></div>
+          <p style="font-size:13px;color:var(--ink-2);">Unlimited repos · Private VPC Docker · RS256 License JWT.</p>
+          <button style="margin-top:auto;" onclick="showView('login')">Explore VPC</button>
         </div>
       </div>
     </section>
 
-    <footer style="padding:28px 0 44px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--muted);">
-      <span><strong>Sentinel-DPDP</strong> · Built for Google DeepMind × Google Cloud Startup Buildathon India 2026</span>
-      <span>Roadmap: GitHub App → VS Code / Cursor / Antigravity IDE Extensions → Global GDPR / PDPA / HIPAA Packs</span>
+    <footer style="padding:26px 0 42px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted);">
+      <span>© 2026 Sentinel-DPDP · Shift-Left Privacy &amp; AppSec for India</span>
+      <div style="display:flex;gap:18px;">
+        <a href="#" style="color:inherit;text-decoration:none;" onclick="openLegalModal('terms');return false;">Terms &amp; Conditions</a>
+        <a href="#" style="color:inherit;text-decoration:none;" onclick="openLegalModal('privacy');return false;">DPDP Privacy Policy</a>
+        <a href="#" style="color:inherit;text-decoration:none;" onclick="openLegalModal('refund');return false;">Refund &amp; Autopay Policy</a>
+      </div>
     </footer>
   </div>
 </div>
 
-<!-- ==================== 2. PERSISTENT SAAS WORKSPACE ==================== -->
+<!-- ==================== 2. DEDICATED CLEAN LOGIN PAGE ==================== -->
+<div id="loginView" class="hidden">
+  <nav class="nav">
+    <div class="brand" onclick="showView('home')">
+      <div class="brand-mark">S</div>
+      <span class="brand-name">Sentinel-DPDP</span>
+    </div>
+    <button class="ghost sm" onclick="showView('home')">← Back to Home</button>
+  </nav>
+
+  <div class="login-wrap">
+    <div class="login-card fade-in">
+      <div>
+        <span class="tag tag-ok">100,000 FREE TOKENS INCLUDED</span>
+        <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.03em;margin-top:10px;">Sign in to your workspace</h2>
+        <p style="font-size:13px;color:var(--muted);margin-top:4px;">Each evaluator gets an isolated workspace — no GitHub account required.</p>
+      </div>
+
+      <!-- 1-Click Judge / Evaluator Access -->
+      <button class="primary lg" style="width:100%;" onclick="guestStart()">
+        <i data-lucide="sparkles" style="width:15px;height:15px;"></i> Continue as Guest Evaluator (Instant)
+      </button>
+
+      <!-- Google Workspace Demo Auth -->
+      <button class="lg" style="width:100%;" onclick="emailSignIn('google')">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.7-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.8z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-3l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.2 0-5.9-2.1-6.8-5H1.2v3.1C3.2 21.3 7.3 24 12 24z"/><path fill="#FBBC05" d="M5.2 14.2c-.2-.7-.4-1.4-.4-2.2s.1-1.5.4-2.2V6.7H1.2C.4 8.3 0 10.1 0 12s.4 3.7 1.2 5.3l4-3.1z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.4.6 4.6 1.8l3.5-3.5C18 1.1 15.2 0 12 0 7.3 0 3.2 2.7 1.2 6.7l4 3.1c.9-2.9 3.6-5 6.8-5z"/></svg>
+        Continue with Google
+      </button>
+
+      <div class="divider">or sign in with work email</div>
+
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <input id="loginName" placeholder="Your name (e.g. Priya Sharma)" />
+        <input id="loginEmail" type="email" placeholder="work@company.in" onkeydown="if(event.key==='Enter') emailSignIn('email')" />
+        <button onclick="emailSignIn('email')">Continue with Email</button>
+      </div>
+
+      <div class="divider">optional · private repos</div>
+
+      <a class="btn sm" id="loginGithubBtn" href="/auth/github/login" style="width:100%;color:var(--ink-2);">
+        <i data-lucide="github" style="width:14px;height:14px;"></i> Connect Personal GitHub (Optional)
+      </a>
+
+      <p style="font-size:11.5px;color:var(--muted);text-align:center;">
+        By continuing, you agree to our
+        <a href="#" style="color:var(--ink);" onclick="openLegalModal('terms');return false;">Terms &amp; Conditions</a> and
+        <a href="#" style="color:var(--ink);" onclick="openLegalModal('privacy');return false;">DPDP Privacy Policy</a>.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 3. REAL PRODUCT WORKSPACE ==================== -->
 <div id="appShell" class="hidden">
   <!-- Left Sidebar -->
   <aside class="sidebar">
-    <div class="side-brand">
-      <div class="land-brand">
+    <div class="side-top">
+      <div class="brand" onclick="showView('home')">
         <div class="brand-mark">S</div>
         <div>
           <div class="brand-name" style="line-height:1.1;">Sentinel-DPDP</div>
-          <div style="font-size:10.5px;color:var(--muted);font-family:'JetBrains Mono',monospace;">CONTROL PLANE v2.0</div>
+          <div style="font-size:10.5px;color:var(--muted);font-family:'JetBrains Mono',monospace;">WORKSPACE</div>
         </div>
       </div>
     </div>
 
     <nav class="nav-list">
       <button class="nav-item active" data-screen="inspector" onclick="switchScreen('inspector')">
-        <i data-lucide="shield-alert"></i> Code Inspector &amp; PR Gate
+        <i data-lucide="shield-alert"></i> Code Inspector
       </button>
       <button class="nav-item" data-screen="github" onclick="switchScreen('github')">
-        <i data-lucide="git-pull-request"></i> GitHub App &amp; Webhooks
+        <i data-lucide="git-pull-request"></i> GitHub PR Gate
       </button>
       <button class="nav-item" data-screen="vault" onclick="switchScreen('vault')">
-        <i data-lucide="languages"></i> DPDP Vault &amp; Notices
+        <i data-lucide="languages"></i> Notices &amp; BigQuery
       </button>
       <button class="nav-item" data-screen="vpc" onclick="switchScreen('vpc')">
-        <i data-lucide="lock"></i> Enterprise VPC &amp; Gemma
+        <i data-lucide="lock"></i> Bank VPC &amp; Gemma
       </button>
       <button class="nav-item" data-screen="billing" onclick="switchScreen('billing')">
-        <i data-lucide="credit-card"></i> Billing &amp; Quotas
+        <i data-lucide="credit-card"></i> Billing &amp; Credits
       </button>
     </nav>
 
-    <!-- Live Sidebar Quota Meter -->
+    <!-- Live Credits & Token Meter -->
     <div class="quota-card">
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span class="kicker" id="sidePlanName">Free Tier</span>
-        <span class="mono" style="font-size:11px;font-weight:600;" id="sideQuotaText">0 / 20 PRs</span>
+        <span class="kicker" id="sidePlanName">Free Evaluator</span>
+        <span class="mono" style="font-size:11px;font-weight:700;" id="sideTokensText">100K left</span>
       </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="sideQuotaBar" style="width:0%;"></div>
+      <div class="progress-track"><div class="progress-fill" id="sideQuotaBar" style="width:4%;"></div></div>
+      <div style="font-size:11.5px;color:var(--muted);" id="sideQuotaSub">0 / 100 scans used</div>
+      <div style="display:flex;gap:6px;">
+        <button class="primary sm" style="flex:1;" onclick="openUpgradeModal('pro')">Upgrade</button>
+        <button class="sm" title="Reset free evaluator tokens" onclick="resetCredits()">Reset</button>
       </div>
-      <div style="font-size:11.5px;color:var(--muted);" id="sideQuotaSub">1 repo · UPI/Razorpay metering</div>
-      <button class="primary sm" style="width:100%;" onclick="openUpgradeModal('pro')">
-        <i data-lucide="zap" style="width:13px;height:13px;"></i> Upgrade Plan
-      </button>
     </div>
 
-    <!-- Account Footer -->
+    <!-- Account Box -->
     <div class="account-box">
       <div id="sideAccountInfo" style="display:flex;align-items:center;gap:8px;min-width:0;">
-        <a class="btn sm" href="/auth/github/login" id="sideLoginBtn">
-          <i data-lucide="github" style="width:13px;height:13px;"></i> Sign in GitHub
-        </a>
+        <div class="avatar-pill">G</div>
+        <div style="min-width:0;">
+          <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Guest Evaluator</div>
+          <button class="ghost" style="padding:0;font-size:11px;color:var(--muted);" onclick="logout()">Switch account</button>
+        </div>
       </div>
-      <button class="ghost sm" title="Back to Landing Overview" onclick="showLanding()">Overview</button>
+      <button class="ghost sm" onclick="openLegalModal('terms')" title="Terms & Privacy">Legal</button>
     </div>
   </aside>
 
-  <!-- Right Workspace -->
+  <!-- Right Main Content -->
   <div class="workspace">
     <header class="ws-top">
       <div>
-        <div style="font-size:16px;font-weight:700;letter-spacing:-0.02em;" id="wsTitle">Code Inspector &amp; PR Gate</div>
-        <div style="font-size:12px;color:var(--muted);" id="wsSub">Deterministic AST taint proof + Gemini 3.8 Flash repair + verify_patch.py gate</div>
+        <div style="font-size:16px;font-weight:700;letter-spacing:-0.02em;" id="wsTitle">Code Inspector</div>
+        <div style="font-size:12px;color:var(--muted);" id="wsSub">Scan any repo, inspect exact leaks, verify patches before merge</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
         <span class="tag tag-ok" id="statusBadge"><span class="live-dot"></span> READY</span>
-        <span class="tag">SKILL.md · 7 DPDP Rules</span>
+        <button class="sm" onclick="openTour(0)">
+          <i data-lucide="help-circle" style="width:13px;height:13px;"></i> Quick Tour
+        </button>
         <button class="sm" onclick="window.print()">
           <i data-lucide="printer" style="width:13px;height:13px;"></i> Export PDF
         </button>
@@ -638,41 +674,46 @@
     </header>
 
     <main class="ws-body">
-      <!-- ==================== SCREEN 1: CODE INSPECTOR & PR GATE ==================== -->
+      <!-- ==================== SCREEN 1: CODE INSPECTOR ==================== -->
       <section id="screen-inspector" class="screen active">
-        <!-- Scanner Controls -->
+        <div class="guide-bar no-print">
+          <span><strong>How to test:</strong> 1) Click <strong>PaisaFlow Demo</strong> or paste any public GitHub URL → 2) Click a leak row to preview the AI fix → 3) Click <strong>Run Verification Gate</strong>.</span>
+          <button class="ghost sm" onclick="openTour(0)">Open full guide →</button>
+        </div>
+
+        <!-- Scanner Bar -->
         <div class="panel no-print">
           <div class="scan-bar">
-            <select id="repoPicker" class="hidden" style="min-width:220px;" onchange="if(this.value) document.getElementById('repoUrl').value=this.value">
+            <select id="repoPicker" class="hidden" style="min-width:210px;" onchange="if(this.value) document.getElementById('repoUrl').value=this.value">
               <option value="">Select your GitHub repo…</option>
             </select>
-            <input id="repoUrl" style="flex:1;min-width:240px;" placeholder="Paste any GitHub repo URL (e.g. https://github.com/tiangolo/full-stack-fastapi-template)" />
+            <input id="repoUrl" style="flex:1;min-width:240px;" placeholder="Paste any public GitHub URL (no login needed)…" />
             <button class="primary" id="btnScan" onclick="runScan()">
-              <i data-lucide="scan-search" style="width:15px;height:15px;"></i> Scan Repository
+              <i data-lucide="scan-search" style="width:15px;height:15px;"></i> Scan Repo
             </button>
           </div>
           <div class="chip-row">
-            <span class="kicker" style="margin-right:4px;">Quick Test:</span>
-            <button class="chip" onclick="quickScan('')">PaisaFlow FinTech Demo</button>
+            <span class="kicker" style="margin-right:4px;">1-Click Test:</span>
+            <button class="chip" onclick="quickScan('')">PaisaFlow Demo (4 leaks)</button>
             <button class="chip" onclick="quickScan('https://github.com/tiangolo/full-stack-fastapi-template')">tiangolo/fastapi (30K★)</button>
             <button class="chip" onclick="quickScan('https://github.com/OWASP/crAPI')">OWASP/crAPI (355 files)</button>
-            <span style="margin-left:auto;font-size:12px;color:var(--muted);" id="scanTargetLabel">Target: not scanned yet</span>
+            <span style="margin-left:auto;font-size:12px;color:var(--muted);" id="scanTargetLabel">Ready to scan</span>
           </div>
         </div>
 
-        <!-- KPI Summary Row -->
+        <!-- KPIs -->
         <div class="kpi-grid">
           <div class="kpi-card">
             <div>
-              <div class="kicker">DPDP Risk Score</div>
+              <div class="kicker">Risk Score</div>
               <div class="kpi-val" id="kpiRisk">—</div>
-              <div style="font-size:11.5px;color:var(--muted);" id="kpiRiskSub">Run a scan to compute</div>
+              <div style="font-size:11.5px;color:var(--muted);" id="kpiRiskSub">Awaiting scan</div>
             </div>
-            <svg width="58" height="58" viewBox="0 0 64 64">
+            <svg width="54" height="54" viewBox="0 0 64 64">
               <circle cx="32" cy="32" r="26" fill="none" stroke="#E4E4E7" stroke-width="6" />
               <circle id="riskRing" cx="32" cy="32" r="26" fill="none" stroke="#09090B" stroke-width="6"
                 stroke-dasharray="163.36" stroke-dashoffset="163.36" stroke-linecap="round"
-                transform="rotate(-90 32 32)" style="transition:stroke-dashoffset .5s ease, stroke .3s ease;" />
+                transform="rotate(-90 32 32)" style="transition:stroke-dashoffset .45s ease, stroke .3s ease;" />
             </svg>
           </div>
           <div class="kpi-card">
@@ -681,100 +722,97 @@
               <div class="kpi-val" id="kpiFiles">0</div>
               <div style="font-size:11.5px;color:var(--muted);" id="kpiFindings">0 findings</div>
             </div>
-            <i data-lucide="file-code-2" style="width:24px;height:24px;color:var(--muted);"></i>
+            <i data-lucide="file-code-2" style="width:22px;height:22px;color:var(--muted);"></i>
           </div>
           <div class="kpi-card">
             <div>
-              <div class="kicker">Severity Breakdown</div>
-              <div style="display:flex;gap:6px;margin-top:8px;">
+              <div class="kicker">Severity</div>
+              <div style="display:flex;gap:5px;margin-top:8px;">
                 <span class="tag tag-crit" id="kpiCrit">0 CRIT</span>
                 <span class="tag tag-high" id="kpiHigh">0 HIGH</span>
                 <span class="tag" id="kpiMed">0 MED</span>
               </div>
-              <div style="font-size:11.5px;color:var(--muted);margin-top:6px;">Deterministic AST proof</div>
             </div>
           </div>
           <div class="kpi-card">
             <div>
-              <div class="kicker">Unit Cost / BigQuery</div>
+              <div class="kicker">BigQuery &amp; Cost</div>
               <div class="kpi-val">₹0.28</div>
-              <div style="font-size:11.5px;color:var(--muted);" id="kpiBqStatus">BigQuery: awaiting scan</div>
+              <div style="font-size:11.5px;color:var(--muted);" id="kpiBqStatus">BigQuery: ready</div>
             </div>
-            <i data-lucide="database" style="width:24px;height:24px;color:var(--muted);"></i>
+            <i data-lucide="database" style="width:22px;height:22px;color:var(--muted);"></i>
           </div>
         </div>
 
-        <!-- Main Inspector + Auditor Copilot Split -->
+        <!-- Inspector + Copilot -->
         <div class="inspector-grid">
-          <div style="display:flex;flex-direction:column;gap:18px;min-width:0;">
-            <!-- Findings Table -->
+          <div style="display:flex;flex-direction:column;gap:16px;min-width:0;">
+            <!-- Table -->
             <div class="panel">
               <div class="panel-head">
                 <div>
-                  <div class="kicker">Step 1 · Detected Personal-Data &amp; AppSec Leaks</div>
-                  <div style="font-size:13px;color:var(--muted);">Click any row to inspect the exact vulnerable line and preview the pre-change AI fix.</div>
+                  <div class="kicker">Step 1 · Findings</div>
+                  <div style="font-size:13px;color:var(--muted);">Select a row to view the exact leak line and suggested fix.</div>
                 </div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
                   <button class="primary" id="btnVerify" disabled onclick="runVerifyGate()">
                     <i data-lucide="check-circle-2" style="width:14px;height:14px;"></i> Run Verification Gate
                   </button>
                   <button class="ok" id="btnFixPR" disabled onclick="openFixPR()">
-                    <i data-lucide="git-pull-request" style="width:14px;height:14px;"></i> Open Verified PR
+                    <i data-lucide="git-pull-request" style="width:14px;height:14px;"></i> Create Verified PR
                   </button>
                 </div>
               </div>
               <div class="table-wrap">
                 <table>
                   <thead>
-                    <tr><th>File &amp; Line</th><th>Rule</th><th>DPDP Act Section</th><th>PII Flow</th><th>Severity</th></tr>
+                    <tr><th>File &amp; Line</th><th>Rule</th><th>DPDP Section</th><th>PII Flow</th><th>Severity</th></tr>
                   </thead>
                   <tbody id="findingsBody">
-                    <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:26px;">Click <strong>Scan Repository</strong> or choose a quick-test repo above.</td></tr>
+                    <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">Click a 1-Click Test repo above to start.</td></tr>
                   </tbody>
                 </table>
               </div>
             </div>
 
-            <!-- Side-by-Side Exact Line Inspector & Pre-Change AI Suggested Fix -->
+            <!-- Code Split -->
             <div class="panel">
               <div class="panel-head">
                 <div>
-                  <div class="kicker">Step 2 · Exact Source Line &amp; Pre-Change AI Suggested Fix</div>
-                  <div style="font-size:13px;color:var(--muted);" id="selectedMeta">Select a finding to inspect surrounding lines and DPDP legal obligations.</div>
+                  <div class="kicker">Step 2 · Exact Source &amp; Pre-Change Fix</div>
+                  <div style="font-size:12.5px;color:var(--muted);" id="selectedMeta">Select a finding above.</div>
                 </div>
                 <span class="tag" id="penaltyTag">DPDP Act 2023</span>
               </div>
               <div class="code-split">
                 <div class="code-card">
                   <div class="code-head">
-                    <span id="srcFileLabel">DETECTED LEAK (EXACT LINE)</span>
+                    <span id="srcFileLabel">DETECTED LEAK</span>
                     <span class="tag tag-crit" id="srcLineTag">LINE —</span>
                   </div>
                   <div class="code-body" id="srcCodeBody">
-                    <div style="padding:18px;color:var(--muted);">Exact source context with highlighted leak line will render here.</div>
+                    <div style="padding:18px;color:var(--muted);">Source code context renders here.</div>
                   </div>
                 </div>
                 <div class="code-card">
                   <div class="code-head">
-                    <span>PRE-CHANGE SUGGESTED FIX (GEMINI 3.8 FLASH)</span>
+                    <span>SUGGESTED FIX (PREVIEW)</span>
                     <span class="tag tag-ok" id="fixModeTag">READY</span>
                   </div>
                   <div class="code-body" id="fixCodeBody">
-                    <div style="padding:18px;color:var(--muted);">Codebase-matched Python / TypeScript / SQL remediation preview loads automatically.</div>
+                    <div style="padding:18px;color:var(--muted);">Language-matched remediation preview loads here.</div>
                   </div>
-                  <div class="guideline-box" id="guidelineBox">
-                    <strong>DPDP Compliance Guideline:</strong> Progressive disclosure loads the exact Act section &amp; remediation pattern on demand.
-                  </div>
+                  <div class="guideline-box" id="guidelineBox"><strong>Compliance Note:</strong> Matched DPDP rule appears here.</div>
                 </div>
               </div>
             </div>
 
-            <!-- Step 3: SecReason Verification Gate Output -->
+            <!-- Verification Output -->
             <div class="panel hidden" id="verifyPanel">
               <div class="panel-head">
                 <div>
-                  <div class="kicker">Step 3 · SecReason Verification Gate (verify_patch.py)</div>
-                  <div style="font-size:13px;color:var(--muted);" id="verifySummary">Zero-hallucination compiler &amp; AST re-scan results.</div>
+                  <div class="kicker">Step 3 · SecReason Verification Gate</div>
+                  <div style="font-size:13px;color:var(--muted);" id="verifySummary">Re-scan &amp; compiler verification</div>
                 </div>
                 <div style="display:flex;gap:6px;flex-wrap:wrap;" id="verifyPills"></div>
               </div>
@@ -783,134 +821,107 @@
             </div>
           </div>
 
-          <!-- Right Column: Ask the Auditor Copilot -->
+          <!-- Copilot -->
           <div class="panel" style="position:sticky;top:76px;">
             <div class="panel-head">
               <div>
-                <div class="kicker">Gemini Compliance Copilot</div>
-                <div style="font-size:14px;font-weight:700;">Ask the DPDP Auditor</div>
+                <div class="kicker">Gemini Copilot</div>
+                <div style="font-size:14px;font-weight:700;">Ask the Auditor</div>
               </div>
-              <button class="sm" id="micBtn" onclick="toggleVoice()" title="Voice Input">
+              <button class="sm" id="micBtn" onclick="toggleVoice()">
                 <i data-lucide="mic" style="width:13px;height:13px;"></i> Voice
               </button>
             </div>
             <div class="chat-log" id="chatLog">
-              <div class="msg a">Hi! I have full context of your active AST scan and the India DPDP Act 2023 rules. Ask why a leak matters, its ₹250 Cr penalty exposure, or how to fix it in your stack.</div>
+              <div class="msg a">Ask me about any detected leak, its DPDP Act penalty exposure, or how to fix it safely.</div>
             </div>
             <div style="display:flex;gap:6px;">
-              <input id="askInput" style="flex:1;" placeholder="Ask about Sec 8(5), penalties, or fixes…" onkeydown="if(event.key==='Enter') askAuditor()" />
+              <input id="askInput" style="flex:1;" placeholder="Ask about Sec 8(5) or fixes…" onkeydown="if(event.key==='Enter') askAuditor()" />
               <button class="primary sm" onclick="askAuditor()">Ask</button>
             </div>
             <div class="chip-row">
-              <button class="chip" onclick="quickAsk('Which finding has the highest DPDP penalty risk?')">Highest penalty?</button>
-              <button class="chip" onclick="quickAsk('How does verify_patch.py stop LLM hallucinations?')">Why zero hallucinations?</button>
+              <button class="chip" onclick="quickAsk('Which finding has the highest DPDP penalty?')">Highest penalty?</button>
+              <button class="chip" onclick="quickAsk('How does verify_patch.py prevent hallucinations?')">Zero hallucinations?</button>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ==================== SCREEN 2: GITHUB APP & WEBHOOKS ==================== -->
+      <!-- ==================== SCREEN 2: GITHUB PR GATE ==================== -->
       <section id="screen-github" class="screen">
-        <div class="grid-2-land">
+        <div class="guide-bar no-print">
+          <span><strong>How to test:</strong> Click <strong>Simulate Incoming PR #42</strong> to see how Sentinel-DPDP reviews a live Pull Request automatically — no GitHub login needed.</span>
+        </div>
+
+        <div class="grid-2">
           <div class="panel">
             <div class="panel-head">
               <div>
-                <div class="kicker">CodeRabbit-Style Pre-Merge PR Gate</div>
-                <h3 style="font-size:17px;">1-Click GitHub App &amp; Webhook</h3>
+                <div class="kicker">GitHub App Webhook</div>
+                <h3 style="font-size:16px;">CodeRabbit-Style Pre-Merge Gate</h3>
               </div>
-              <span class="tag tag-ok">POST /api/webhook/github</span>
+              <span class="tag tag-ok">ACTIVE</span>
             </div>
-            <p style="font-size:13px;color:var(--ink-2);">
-              Startups authorize Sentinel-DPDP on selected repositories via GitHub App installation. Every Pull Request sends a signed webhook (`X-Hub-Signature-256`) to your Cloud Run control plane, checks tenant plan quotas, runs AST + Gemini + `verify_patch.py`, and posts an inline review.
-            </p>
             <div>
-              <div class="kicker" style="margin-bottom:6px;">Live Webhook Endpoint</div>
+              <div class="kicker" style="margin-bottom:6px;">Live Webhook URL</div>
               <div style="display:flex;gap:8px;">
                 <input id="webhookUrlInput" readonly style="flex:1;font-family:'JetBrains Mono',monospace;font-size:12px;" />
                 <button class="sm" onclick="copyText(document.getElementById('webhookUrlInput').value,'Webhook URL copied')">Copy</button>
               </div>
             </div>
             <div>
-              <div class="kicker" style="margin-bottom:6px;">Drop-In GitHub Action (.github/workflows/sentinel-dpdp.yml)</div>
-              <pre class="diff-pre mono" id="yamlSnippet" style="max-height:220px;">name: Sentinel-DPDP Pre-Merge Gate
+              <div class="kicker" style="margin-bottom:6px;">Drop-In GitHub Action</div>
+              <pre class="diff-pre mono" id="yamlSnippet">name: Sentinel-DPDP PR Gate
 on: [pull_request]
 jobs:
-  dpdp-verify:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run Deterministic AST Taint &amp; SecReason Gate
-        run: python .agent/skills/dpdp-compliance-auditor/scripts/scan_pii_ast.py . --fail-on critical</pre>
-              <button class="sm" style="margin-top:8px;" onclick="copyText(document.getElementById('yamlSnippet').innerText,'GitHub Action YAML copied')">
-                <i data-lucide="copy" style="width:13px;height:13px;"></i> Copy Workflow YAML
-              </button>
+      - run: python .agent/skills/dpdp-compliance-auditor/scripts/scan_pii_ast.py . --fail-on critical</pre>
+              <button class="sm" style="margin-top:8px;" onclick="copyText(document.getElementById('yamlSnippet').innerText,'Workflow YAML copied')">Copy YAML</button>
             </div>
           </div>
 
           <div class="panel">
             <div class="panel-head">
               <div>
-                <div class="kicker">Live Interactive Webhook Test</div>
-                <h3 style="font-size:17px;">Simulate GitHub Pull Request Check</h3>
+                <div class="kicker">Live Webhook Simulator</div>
+                <h3 style="font-size:16px;">Test PR Check Right Now</h3>
               </div>
               <span class="tag">sentinel-dpdp/verify</span>
             </div>
-            <p style="font-size:13px;color:var(--ink-2);">
-              Trigger a real end-to-end <code>POST /api/webhook/github</code> call right now. Watch Sentinel-DPDP scan, generate fixes, run the verification gate, and render the exact GitHub PR comment.
-            </p>
             <div style="display:flex;gap:8px;">
-              <input id="simPrNum" value="42" style="width:90px;" />
+              <input id="simPrNum" value="42" style="width:82px;" />
               <button class="primary" id="btnSimWebhook" onclick="simulateWebhook()">
-                <i data-lucide="play" style="width:14px;height:14px;"></i> Simulate Incoming PR #42 Webhook
+                <i data-lucide="play" style="width:14px;height:14px;"></i> Simulate Incoming PR #42
               </button>
             </div>
-            <div id="webhookResult" class="card" style="background:var(--surface);min-height:170px;">
-              <div class="kicker">GitHub PR Status Check Preview</div>
-              <div style="font-size:13px;color:var(--muted);">Click Simulate to run the live webhook pipeline on <code>demo_vulnerable_app</code>.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Future Roadmap Strip -->
-        <div class="panel">
-          <div class="kicker">Product Expansion Roadmap · Global Compliance OS</div>
-          <div class="grid-3-land">
-            <div class="card" style="background:var(--surface);">
-              <span class="tag tag-ok" style="width:fit-content;">PHASE 1 · LIVE NOW</span>
-              <strong>Web Control Plane + GitHub App</strong>
-              <span style="font-size:12.5px;color:var(--ink-2);">Real GitHub OAuth, PR pre-merge gate, verified fix PRs, UPI billing, and BigQuery audit trail.</span>
-            </div>
-            <div class="card" style="background:var(--surface);">
-              <span class="tag tag-dark" style="width:fit-content;">PHASE 2 · NEXT</span>
-              <strong>IDE Extensions (VS Code · Cursor · Antigravity)</strong>
-              <span style="font-size:12.5px;color:var(--ink-2);">Real-time inline red squiggles on PII leaks *as the AI assistant types*, powered by the exact same `SKILL.md` engine.</span>
-            </div>
-            <div class="card" style="background:var(--surface);">
-              <span class="tag" style="width:fit-content;">PHASE 3 · GLOBAL SCALE</span>
-              <strong>Plug-in Rule Packs (GDPR · PDPA · HIPAA · RBI)</strong>
-              <span style="font-size:12.5px;color:var(--ink-2);">Drop in jurisdiction JSON rule packs without rewriting the core AST or SecReason verification loop.</span>
+            <div id="webhookResult" class="card" style="background:var(--surface);min-height:175px;">
+              <div class="kicker">PR Comment Preview</div>
+              <div style="font-size:13px;color:var(--muted);">Run simulation to execute live scan → repair → verification gate.</div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ==================== SCREEN 3: DPDP VAULT, 7-LANG NOTICE & BIGQUERY ==================== -->
+      <!-- ==================== SCREEN 3: NOTICES & BIGQUERY ==================== -->
       <section id="screen-vault" class="screen">
-        <!-- 7-Language DPDP Sec 5 Notice Generator -->
+        <div class="guide-bar no-print">
+          <span><strong>How to test:</strong> Click any Indian language pill (Hindi, Marathi, Tamil…) to auto-generate a DPDP Sec 5 legal notice + compliant React JSX synced with your code scan.</span>
+        </div>
+
         <div class="panel">
           <div class="panel-head">
             <div>
-              <div class="kicker">India-First Differentiator · DPDP Act Sec 5 &amp; Rule 3 (Schedule VIII)</div>
-              <h3 style="font-size:17px;">Multilingual Consent Notice &amp; Compliant JSX Generator</h3>
+              <div class="kicker">DPDP Act Sec 5 &amp; Rule 3 · Schedule VIII</div>
+              <h3 style="font-size:16px;">7-Language Consent Notice &amp; JSX Generator</h3>
             </div>
-            <span class="tag tag-dark">Auto-synced with AST Scan</span>
+            <span class="tag tag-dark">Code-to-Consent Sync</span>
           </div>
-          <p style="font-size:13px;color:var(--ink-2);">
-            DPDP Rules 2025 mandate itemized consent notices in English or any Eighth Schedule Indian language—and forbid pre-checked boxes (`Sec 6(1)`). Generate compliant notices directly from the PII entities detected in your codebase.
-          </p>
           <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-            <input id="noticeCompany" value="PaisaFlow FinTech Pvt. Ltd." style="min-width:250px;" placeholder="Your Company Legal Name" />
-            <div class="lang-row" id="langPills">
+            <input id="noticeCompany" value="PaisaFlow FinTech Pvt. Ltd." style="min-width:240px;" />
+            <div class="lang-row">
               <button class="lang-pill active" data-lang="en" onclick="generateNotice('en')">English</button>
               <button class="lang-pill" data-lang="hi" onclick="generateNotice('hi')">हिन्दी</button>
               <button class="lang-pill" data-lang="mr" onclick="generateNotice('mr')">मराठी</button>
@@ -923,32 +934,31 @@ jobs:
           <div class="code-split">
             <div class="card" style="background:var(--surface);">
               <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="kicker" id="noticeLangLabel">English · Sec 5 Notice</span>
-                <span class="tag" id="noticePiiTag">AADHAAR, PAN, PHONE, EMAIL</span>
+                <span class="kicker" id="noticeLangLabel">English</span>
+                <span class="tag" id="noticePiiTag">AADHAAR, PAN</span>
               </div>
-              <p id="noticeText" style="font-size:13.5px;line-height:1.65;color:var(--ink);"></p>
-              <button class="sm" style="width:fit-content;" onclick="copyText(document.getElementById('noticeText').innerText,'Notice text copied')">Copy Legal Notice</button>
+              <p id="noticeText" style="font-size:13.5px;line-height:1.65;"></p>
+              <button class="sm" style="width:fit-content;" onclick="copyText(document.getElementById('noticeText').innerText,'Notice copied')">Copy Notice</button>
             </div>
             <div class="code-card">
               <div class="code-head">
-                <span>DPDP SEC 6(1) COMPLIANT REACT JSX (NO DEFAULTCHECKED)</span>
-                <button class="sm" onclick="copyText(document.getElementById('noticeJsx').innerText,'JSX snippet copied')">Copy JSX</button>
+                <span>COMPLIANT REACT JSX (SEC 6(1))</span>
+                <button class="sm" onclick="copyText(document.getElementById('noticeJsx').innerText,'JSX copied')">Copy JSX</button>
               </div>
               <pre class="diff-pre mono" id="noticeJsx" style="border-radius:0;margin:0;flex:1;"></pre>
             </div>
           </div>
         </div>
 
-        <!-- Benchmark & Live BigQuery Audit Trail -->
         <div class="panel">
           <div class="panel-head">
             <div>
-              <div class="kicker">BigQuery Vendor Readiness Passport · Live Telemetry</div>
-              <h3 style="font-size:17px;">Continuous Audit Proof for Enterprise &amp; Bank Procurement</h3>
+              <div class="kicker">BigQuery Vendor Readiness Passport</div>
+              <h3 style="font-size:16px;">Live Immutable Audit Trail</h3>
             </div>
             <div style="display:flex;gap:8px;">
-              <button class="sm" onclick="loadVaultData()">Refresh BigQuery</button>
-              <button class="primary sm" onclick="window.print()">Print Readiness Passport PDF</button>
+              <button class="sm" onclick="loadVaultData()">Refresh</button>
+              <button class="primary sm" onclick="window.print()">Print Passport PDF</button>
             </div>
           </div>
           <div class="kpi-grid" id="benchCards"></div>
@@ -958,98 +968,90 @@ jobs:
                 <tr><th>Timestamp (UTC)</th><th>Repository</th><th>Files</th><th>Risk</th><th>Critical</th><th>DPDP Sections</th></tr>
               </thead>
               <tbody id="telemetryBody">
-                <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">Loading BigQuery telemetry…</td></tr>
+                <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px;">Loading BigQuery audit log…</td></tr>
               </tbody>
             </table>
           </div>
         </div>
       </section>
 
-      <!-- ==================== SCREEN 4: ENTERPRISE VPC & GEMMA SIDECAR ==================== -->
+      <!-- ==================== SCREEN 4: BANK VPC & GEMMA ==================== -->
       <section id="screen-vpc" class="screen">
-        <div class="grid-2-land">
+        <div class="guide-bar no-print">
+          <span><strong>How to test:</strong> Click <strong>Redact PII in VPC</strong> to test 0.1ms local Aadhaar/PAN/UPI stripping, and inspect the signed RS256 License JWT on the right.</span>
+        </div>
+
+        <div class="grid-2">
           <div class="panel">
             <div class="panel-head">
               <div>
-                <div class="kicker">In-VPC Privacy Sidecar · Zero Data Egress</div>
-                <h3 style="font-size:17px;">Local Gemma PII Redaction Tester (0.1ms)</h3>
+                <div class="kicker">In-VPC Privacy Sidecar</div>
+                <h3 style="font-size:16px;">Local PII Redaction Tester (0.1ms)</h3>
               </div>
               <span class="tag tag-ok" id="redactLatency">READY</span>
             </div>
-            <p style="font-size:13px;color:var(--ink-2);">
-              Indian banks and regulated FinTechs run this sidecar inside their private VPC. Aadhaar (Verhoeff), PAN, +91 phone, UPI VPA, and emails are stripped locally before any prompt touches a cloud LLM.
-            </p>
             <textarea id="redactInput" rows="4">Customer Rahul (Aadhaar 2345 6789 0123, PAN ABCPE1234F, Phone +91 9876543210, UPI rahul@okhdfcbank, Email rahul@paisaflow.in) requested KYC review.</textarea>
-            <div style="display:flex;gap:8px;">
-              <button class="primary" onclick="runRedact()">
-                <i data-lucide="shield-check" style="width:14px;height:14px;"></i> Redact PII in VPC
-              </button>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <button class="primary" onclick="runRedact()">Redact PII in VPC</button>
               <span class="tag" id="redactCountTag">0 entities masked</span>
             </div>
-            <pre class="diff-pre mono" id="redactOutput">Click "Redact PII in VPC" to test live masking latency.</pre>
+            <pre class="diff-pre mono" id="redactOutput">Masked output renders here.</pre>
           </div>
 
           <div class="panel">
             <div class="panel-head">
               <div>
-                <div class="kicker">Zero-Piracy Enterprise Licensing</div>
-                <h3 style="font-size:17px;">Air-Gapped Docker Runner &amp; RS256 License JWT</h3>
+                <div class="kicker">Mode 2 · Zero-Egress Bank Licensing</div>
+                <h3 style="font-size:16px;">RS256 License JWT &amp; Docker VPC</h3>
               </div>
-              <span class="tag tag-dark">MODE 2 · BANKS</span>
+              <span class="tag tag-dark">AIR-GAPPED</span>
             </div>
-            <p style="font-size:13px;color:var(--ink-2);">
-              When a bank buys Enterprise VPC, our control plane issues a cryptographically signed <strong>RS256 License JWT</strong>. Their private container validates the signature offline and pings a metadata-only heartbeat (`org_id`, `scan_count` — zero code, zero PII).
-            </p>
             <div>
-              <div class="kicker" style="margin-bottom:6px;">Your Active Signed RS256 License Key</div>
+              <div class="kicker" style="margin-bottom:5px;">Signed RS256 License Key</div>
               <textarea id="jwtBox" readonly rows="3" class="mono" style="width:100%;font-size:11.5px;background:var(--surface);"></textarea>
             </div>
             <div>
-              <div class="kicker" style="margin-bottom:6px;">Decoded JWT Claims (Tamper-Proof)</div>
+              <div class="kicker" style="margin-bottom:5px;">Decoded Claims</div>
               <pre class="diff-pre mono" id="jwtClaimsBox" style="max-height:130px;"></pre>
             </div>
             <div>
-              <div class="kicker" style="margin-bottom:6px;">Private VPC Docker Launch Command</div>
-              <pre class="diff-pre mono" id="dockerCmd" style="max-height:110px;">docker run -d --name sentinel-dpdp-vpc \
-  -e SENTINEL_LICENSE_JWT="$SENTINEL_JWT" \
-  -e VPC_GEMMA_SIDECAR="http://localhost:8090/redact" \
-  -p 8080:8080 gcr.io/sentinel-dpdp/enterprise:latest</pre>
+              <div class="kicker" style="margin-bottom:5px;">Private VPC Docker Command</div>
+              <pre class="diff-pre mono" style="max-height:95px;">docker run -d -e SENTINEL_LICENSE_JWT="$JWT" -p 8080:8080 gcr.io/sentinel-dpdp/enterprise</pre>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ==================== SCREEN 5: BILLING & QUOTAS ==================== -->
+      <!-- ==================== SCREEN 5: BILLING & CREDITS ==================== -->
       <section id="screen-billing" class="screen">
+        <div class="guide-bar no-print">
+          <span><strong>How to test:</strong> View your live token balance, click <strong>Upgrade</strong> to test <strong>Razorpay UPI QR &amp; Card Autopay</strong>, or click <strong>Reset Free Tokens</strong> anytime.</span>
+        </div>
+
         <div class="panel">
           <div class="panel-head">
             <div>
-              <div class="kicker">Multi-Tenant Metering &amp; Razorpay / UPI Subscriptions</div>
-              <h3 style="font-size:18px;" id="billHeader">Current Workspace Plan</h3>
+              <div class="kicker">Workspace Metering &amp; Token Balance</div>
+              <h3 style="font-size:17px;" id="billHeader">Workspace</h3>
             </div>
-            <span class="tag tag-ok" id="billReceiptTag">No active paid receipt</span>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <span class="tag tag-ok" id="billReceiptTag">Free Evaluator</span>
+              <button class="sm" onclick="resetCredits()">Reset Free Tokens</button>
+            </div>
           </div>
           <div class="kpi-grid">
-            <div class="kpi-card">
-              <div><div class="kicker">Active Plan</div><div class="kpi-val" style="font-size:22px;" id="billPlan">—</div></div>
-            </div>
-            <div class="kpi-card">
-              <div><div class="kicker">PR Scans Used</div><div class="kpi-val" style="font-size:22px;" id="billScans">0 / 20</div></div>
-            </div>
-            <div class="kpi-card">
-              <div><div class="kicker">Max Protected Repos</div><div class="kpi-val" style="font-size:22px;" id="billRepos">1</div></div>
-            </div>
-            <div class="kpi-card">
-              <div><div class="kicker">Verified Fix PRs Opened</div><div class="kpi-val" style="font-size:22px;" id="billPRs">0</div></div>
-            </div>
+            <div class="kpi-card"><div><div class="kicker">Active Plan</div><div class="kpi-val" style="font-size:21px;" id="billPlan">—</div></div></div>
+            <div class="kpi-card"><div><div class="kicker">Tokens Remaining</div><div class="kpi-val" style="font-size:21px;" id="billTokens">100,000</div></div></div>
+            <div class="kpi-card"><div><div class="kicker">PR Scans Used</div><div class="kpi-val" style="font-size:21px;" id="billScans">0 / 100</div></div></div>
+            <div class="kpi-card"><div><div class="kicker">Autopay Mandate</div><div class="kpi-val" style="font-size:21px;" id="billAutopay">Off</div></div></div>
           </div>
         </div>
 
-        <div class="grid-4-land">
+        <div class="grid-4">
           <div class="card">
-            <span class="kicker">Free Tier</span>
-            <div class="proof-val">₹0 <span style="font-size:13px;color:var(--muted);">/mo</span></div>
-            <div style="font-size:12.5px;color:var(--ink-2);">1 Repo · 20 PRs/mo · Full AST Taint + SecReason Gate + 7-Language Notice.</div>
+            <span class="kicker">Free Evaluator</span>
+            <div class="price">₹0<span style="font-size:12px;color:var(--muted);">/mo</span></div>
+            <div style="font-size:12.5px;color:var(--ink-2);">100 test scans · 100K tokens · 1 repo.</div>
             <button style="margin-top:auto;" onclick="openUpgradeModal('free')">Switch to Free</button>
           </div>
           <div class="card featured">
@@ -1057,21 +1059,21 @@ jobs:
               <span class="kicker">Startup Pro</span>
               <span class="tag tag-dark">96% Margin</span>
             </div>
-            <div class="proof-val">₹1,999 <span style="font-size:13px;color:var(--muted);">/mo</span></div>
-            <div style="font-size:12.5px;color:var(--ink-2);">1 Repo · 10,000 PRs/mo · Verified Auto-Fix PRs · BigQuery Audit Passport.</div>
-            <button class="primary" style="margin-top:auto;" onclick="openUpgradeModal('pro')">Upgrade via UPI</button>
+            <div class="price">₹1,999<span style="font-size:12px;color:var(--muted);">/mo</span></div>
+            <div style="font-size:12.5px;color:var(--ink-2);">3 repos · 10K PRs · 5M tokens · UPI QR / Card.</div>
+            <button class="primary" style="margin-top:auto;" onclick="openUpgradeModal('pro')">Upgrade via Razorpay</button>
           </div>
           <div class="card">
             <span class="kicker">Agency Growth</span>
-            <div class="proof-val">₹7,999 <span style="font-size:13px;color:var(--muted);">/mo</span></div>
-            <div style="font-size:12.5px;color:var(--ink-2);">15 Client Repos · 50,000 PRs/mo · Multi-org GitHub App &amp; Client PDFs.</div>
-            <button style="margin-top:auto;" onclick="openUpgradeModal('agency')">Upgrade via UPI</button>
+            <div class="price">₹7,999<span style="font-size:12px;color:var(--muted);">/mo</span></div>
+            <div style="font-size:12.5px;color:var(--ink-2);">15 client repos · 50K PRs · 25M tokens.</div>
+            <button style="margin-top:auto;" onclick="openUpgradeModal('agency')">Upgrade via Razorpay</button>
           </div>
           <div class="card">
             <span class="kicker">Enterprise VPC</span>
-            <div class="proof-val">₹49,999 <span style="font-size:13px;color:var(--muted);">/mo</span></div>
-            <div style="font-size:12.5px;color:var(--ink-2);">Unlimited Repos · Private Bank VPC Docker + 0.1ms Gemma Sidecar + RS256 JWT.</div>
-            <button style="margin-top:auto;" onclick="openUpgradeModal('enterprise')">Activate Enterprise JWT</button>
+            <div class="price">₹49,999<span style="font-size:12px;color:var(--muted);">/mo</span></div>
+            <div style="font-size:12.5px;color:var(--ink-2);">Unlimited repos · Air-Gapped VPC + RS256 JWT.</div>
+            <button style="margin-top:auto;" onclick="openUpgradeModal('enterprise')">Activate Enterprise</button>
           </div>
         </div>
       </section>
@@ -1079,39 +1081,131 @@ jobs:
   </div>
 </div>
 
-<!-- ==================== UPI / RAZORPAY UPGRADE MODAL ==================== -->
+<!-- ==================== RAZORPAY UPI QR + CARD AUTOPAY MODAL ==================== -->
 <div id="upgradeModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeUpgradeModal()">
   <div class="modal">
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <div>
-        <div class="kicker">Razorpay · UPI Autopay Checkout</div>
+        <div class="kicker">Razorpay · Secure Indian Checkout</div>
         <h3 style="font-size:18px;margin-top:2px;" id="modalPlanTitle">Upgrade to Startup Pro</h3>
       </div>
       <button class="ghost sm" onclick="closeUpgradeModal()">✕</button>
     </div>
+
     <div id="modalQuotaAlert" class="hidden" style="padding:10px 12px;border-radius:8px;background:var(--amber-bg);border:1px solid #FDE68A;font-size:12.5px;color:var(--amber);"></div>
-    <div style="padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-size:13px;color:var(--ink-2);" id="modalPlanDesc">10,000 PR scans/mo · Instant quota unlock</span>
+
+    <div style="padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:9px;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:13px;color:var(--ink-2);" id="modalPlanDesc">5M AI tokens · 10,000 PR scans/mo</span>
       <strong class="mono" style="font-size:16px;" id="modalPlanPrice">₹1,999/mo</strong>
     </div>
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      <label class="kicker">Payment Method</label>
-      <select id="payMethod">
-        <option value="upi">UPI Autopay (GPay / PhonePe / Paytm)</option>
-        <option value="razorpay_card">Corporate Card / NetBanking (Razorpay)</option>
-        <option value="invoice">Enterprise PO / Bank Transfer (NEFT/RTGS)</option>
-      </select>
-      <label class="kicker" style="margin-top:4px;">UPI ID / Billing Handle</label>
-      <input id="upiInput" value="founder@okhdfcbank" placeholder="yourname@okhdfcbank" />
+
+    <!-- Payment Method Switcher -->
+    <div class="pay-tabs">
+      <button class="pay-tab active" id="tabUpi" onclick="selectPayTab('upi_qr')">UPI QR &amp; Autopay</button>
+      <button class="pay-tab" id="tabCard" onclick="selectPayTab('card')">Credit / Debit Card</button>
     </div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px;">
-      <button onclick="closeUpgradeModal()">Cancel</button>
-      <button class="primary" id="confirmUpgradeBtn" onclick="confirmUpgrade()">Pay &amp; Activate Instantly</button>
+
+    <!-- Pane 1: UPI QR + UPI ID -->
+    <div id="paneUpi" style="display:flex;flex-direction:column;gap:10px;">
+      <div class="qr-box">
+        <!-- Crisp Razorpay-style UPI QR SVG -->
+        <svg width="96" height="96" viewBox="0 0 29 29" style="background:#FFF;padding:5px;border:1px solid var(--border);border-radius:8px;flex-shrink:0;" aria-label="Razorpay UPI Autopay QR">
+          <rect width="29" height="29" fill="#FFF"/>
+          <path fill="#09090B" d="M2,2 h7 v7 h-7 z M3,3 v5 h5 v-5 z M4,4 h3 v3 h-3 z M20,2 h7 v7 h-7 z M21,3 v5 h5 v-5 z M22,4 h3 v3 h-3 z M2,20 h7 v7 h-7 z M3,21 v5 h5 v-5 z M4,22 h3 v3 h-3 z M11,2 h2 v2 h-2 z M15,2 h3 v2 h-3 z M11,6 h4 v2 h-4 z M17,6 h1 v4 h-1 z M2,11 h4 v2 h-4 z M8,11 h3 v3 h-3 z M13,11 h3 v2 h-3 z M18,11 h2 v4 h-2 z M22,11 h5 v2 h-5 z M3,15 h3 v3 h-3 z M9,16 h4 v2 h-4 z M15,15 h2 v4 h-2 z M20,17 h3 v2 h-3 z M25,15 h2 v5 h-2 z M11,20 h3 v2 h-3 z M16,21 h4 v2 h-4 z M22,21 h5 v2 h-5 z M11,24 h2 v3 h-2 z M15,25 h5 v2 h-5 z M22,25 h3 v2 h-3 z"/>
+        </svg>
+        <div style="font-size:12.5px;">
+          <div style="font-weight:700;">Scan with GPay, PhonePe or Paytm</div>
+          <div style="color:var(--muted);margin:3px 0 6px;">UPI ID: <code style="color:var(--ink);">sentinel.dpdp@okhdfcbank</code></div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;">
+            <span class="tag">GPay</span><span class="tag">PhonePe</span><span class="tag">Paytm</span><span class="tag tag-ok">UPI Autopay</span>
+          </div>
+        </div>
+      </div>
+      <input id="upiInput" value="founder@okhdfcbank" placeholder="Or enter your UPI ID (e.g. name@okhdfcbank)" />
+    </div>
+
+    <!-- Pane 2: Card Autopay -->
+    <div id="paneCard" class="hidden" style="display:flex;flex-direction:column;gap:9px;">
+      <input id="cardName" placeholder="Cardholder name (e.g. Aayush Patel)" />
+      <input id="cardNum" class="mono" placeholder="4242 •••• •••• 4242 (Razorpay Test Card)" />
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <input id="cardExp" class="mono" placeholder="MM / YY" />
+        <input id="cardCvv" class="mono" type="password" placeholder="CVV" />
+      </div>
+    </div>
+
+    <!-- Autopay & Mandatory Legal Terms -->
+    <label style="display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--ink-2);cursor:pointer;">
+      <input type="checkbox" id="autopayCheck" checked style="margin-top:2px;" />
+      <span>Enable monthly <strong>Razorpay Autopay</strong> (cancel anytime in 1 click).</span>
+    </label>
+    <label style="display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--ink-2);cursor:pointer;">
+      <input type="checkbox" id="termsCheck" checked style="margin-top:2px;" />
+      <span>I accept the <a href="#" style="color:var(--ink);font-weight:600;" onclick="openLegalModal('terms');return false;">Terms &amp; Conditions</a>, <a href="#" style="color:var(--ink);font-weight:600;" onclick="openLegalModal('privacy');return false;">DPDP Privacy Policy</a>, and <a href="#" style="color:var(--ink);font-weight:600;" onclick="openLegalModal('refund');return false;">Refund Policy</a>.</span>
+    </label>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:4px;">
+      <span style="font-size:11.5px;color:var(--muted);">Sandbox mode · No real charge</span>
+      <div style="display:flex;gap:8px;">
+        <button onclick="closeUpgradeModal()">Cancel</button>
+        <button class="primary" id="confirmUpgradeBtn" onclick="confirmUpgrade()">Activate Plan</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Toast Container -->
+<!-- ==================== INTERACTIVE 5-STEP PRODUCT TOUR MODAL ==================== -->
+<div id="tourModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeTour()">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <span class="tag tag-dark" id="tourStepTag">STEP 1 OF 5</span>
+      <button class="ghost sm" onclick="closeTour()">Skip tour</button>
+    </div>
+    <div>
+      <h3 style="font-size:19px;font-weight:800;letter-spacing:-0.02em;" id="tourTitle">1. Code Inspector &amp; Verified PR Fix</h3>
+      <p style="font-size:13.5px;color:var(--ink-2);margin-top:8px;line-height:1.6;" id="tourBody"></p>
+    </div>
+    <div style="padding:11px 13px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:12.5px;" id="tourActionHint"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+      <button class="sm" id="tourPrevBtn" onclick="stepTour(-1)">← Previous</button>
+      <div style="display:flex;gap:8px;">
+        <button class="sm" onclick="jumpTourScreen()">Open This Page</button>
+        <button class="primary sm" id="tourNextBtn" onclick="stepTour(1)">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LEGAL MODAL (TERMS, DPDP PRIVACY, REFUNDS) ==================== -->
+<div id="legalModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeLegalModal()">
+  <div class="modal" style="max-width:560px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div class="kicker">Legal &amp; Compliance · India DPDP Act 2023</div>
+        <h3 style="font-size:18px;margin-top:2px;">Terms, Privacy &amp; Refund Policy</h3>
+      </div>
+      <button class="ghost sm" onclick="closeLegalModal()">✕</button>
+    </div>
+    <div style="font-size:13px;color:var(--ink-2);display:flex;flex-direction:column;gap:12px;line-height:1.6;">
+      <div>
+        <strong style="color:var(--ink);">1. Terms &amp; Conditions</strong><br/>
+        Sentinel-DPDP provides automated static analysis, remediation previews, and pre-merge verification gates. Customers retain 100% ownership of their source code. Sentinel-DPDP is a technical compliance engineering tool and does not constitute formal legal representation.
+      </div>
+      <div>
+        <strong style="color:var(--ink);">2. DPDP Act 2023 Privacy Policy (Zero Source Retention)</strong><br/>
+        Public/private repositories cloned during Cloud SaaS scans are analyzed in ephemeral temporary containers and purged immediately after verification. Only anonymized metadata (risk score, finding counts, DPDP sections) is written to BigQuery. Enterprise VPC customers process 100% of code and PII inside their own infrastructure. Under DPDP Section 12, you may request data erasure at any time via <code>privacy@sentinel-dpdp.in</code>.
+      </div>
+      <div>
+        <strong style="color:var(--ink);">3. Razorpay UPI Autopay &amp; Cancellation Policy</strong><br/>
+        Subscriptions renew monthly via RBI-compliant UPI Autopay or e-Mandate cards. You may pause or cancel your mandate in 1 click before the next billing cycle with zero cancellation fee. Duplicate charges are refunded within 5–7 business days.
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;">
+      <button class="primary sm" onclick="closeLegalModal()">Close</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast" class="toast hidden"></div>
 
 <script>
@@ -1119,59 +1213,76 @@ const STATE = {
   scanId: null,
   report: null,
   selectedIdx: 0,
-  auth: { authenticated: false, login: null, avatar_url: null, oauth_configured: false },
+  auth: { authenticated: false, login: null, name: null, provider: null, has_github_token: false, oauth_configured: false },
   tenant: null,
   plans: {},
   modalPlanId: 'pro',
+  payMethod: 'upi_qr',
   activeLang: 'en',
+  tourIdx: 0,
 };
 
 const SCREEN_META = {
-  inspector: ['Code Inspector & PR Gate', 'Deterministic AST taint proof + Gemini 3.8 Flash repair + verify_patch.py gate'],
-  github: ['GitHub App & Webhooks', 'CodeRabbit-style automated PR review checks, YAML workflow & webhook simulator'],
-  vault: ['DPDP Vault & 7-Language Notices', 'Schedule VIII multilingual Sec 5 notices + live BigQuery Vendor Readiness Passport'],
-  vpc: ['Enterprise VPC & Gemma Sidecar', '0.1ms local PII redaction + zero-egress Docker runner + RS256 License JWT'],
-  billing: ['Billing & Quotas', 'Multi-tenant plan metering, UPI/Razorpay instant upgrade & usage ledger'],
+  inspector: ['Code Inspector', 'Scan any repo, inspect exact leaks, verify patches before merge'],
+  github: ['GitHub PR Gate', 'CodeRabbit-style PR webhook checks and drop-in GitHub Action'],
+  vault: ['Notices & BigQuery', '7-language DPDP Sec 5 notices synced to your scan + live audit trail'],
+  vpc: ['Bank VPC & Gemma', '0.1ms local PII redaction sidecar + tamper-proof RS256 License JWT'],
+  billing: ['Billing & Credits', 'Token balance, plan limits, Razorpay UPI QR / Card Autopay'],
 };
 
-function esc(s) {
-  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+const TOUR_STEPS = [
+  {
+    screen: 'inspector',
+    title: '1. Code Inspector & Verified Auto-Fix',
+    body: 'Click "PaisaFlow Demo" or paste any public GitHub URL (no GitHub login needed). Click any finding row to see the exact red-highlighted source line alongside a pre-change Gemini fix, then click "Run Verification Gate" to prove zero regressions.',
+    hint: 'Try it: Click "PaisaFlow Demo (4 leaks)" → "Run Verification Gate".',
+  },
+  {
+    screen: 'github',
+    title: '2. GitHub PR Gate (Like CodeRabbit)',
+    body: 'See how startups connect Sentinel-DPDP to every Pull Request. Use the built-in Webhook Simulator to run a real end-to-end PR #42 compliance check and inspect the generated GitHub review comment.',
+    hint: 'Try it: Open GitHub PR Gate → click "Simulate Incoming PR #42".',
+  },
+  {
+    screen: 'vault',
+    title: '3. 7-Language DPDP Notices & BigQuery Passport',
+    body: 'Unique to India: Sentinel-DPDP syncs the PII detected in your code directly to DPDP Sec 5 consent notices in Hindi, Marathi, Tamil, Telugu, Gujarati, Kannada & English — plus live BigQuery audit telemetry.',
+    hint: 'Try it: Pick हिन्दी or मराठी → copy compliant React JSX.',
+  },
+  {
+    screen: 'vpc',
+    title: '4. Air-Gapped Bank VPC & Gemma Sidecar',
+    body: 'Indian banks cannot send customer data outside their VPC. Test our 0.1ms local Aadhaar/PAN/UPI redaction sidecar and inspect the signed RS256 License JWT used for zero-piracy on-prem deployments.',
+    hint: 'Try it: Click "Redact PII in VPC" to see sub-millisecond masking.',
+  },
+  {
+    screen: 'billing',
+    title: '5. Free Tokens, UPI QR & Card Autopay',
+    body: 'You start with 100,000 free evaluator tokens and 100 scans. Test upgrading via Razorpay UPI QR Autopay or Card, read the DPDP Terms & Conditions, or reset your free tokens anytime.',
+    hint: 'Try it: Click "Upgrade" in the sidebar to preview Razorpay UPI QR + Card checkout.',
+  },
+];
 
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function showToast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.classList.remove('hidden');
-  clearTimeout(window._toastTimer);
-  window._toastTimer = setTimeout(() => el.classList.add('hidden'), 3200);
+  clearTimeout(window._t);
+  window._t = setTimeout(() => el.classList.add('hidden'), 3200);
 }
-
-function copyText(text, msg) {
-  navigator.clipboard?.writeText(text);
-  showToast(msg || 'Copied to clipboard');
-}
-
+function copyText(text, msg) { navigator.clipboard?.writeText(text); showToast(msg || 'Copied'); }
 function setStatus(label, ok = true) {
   const b = document.getElementById('statusBadge');
   b.className = ok ? 'tag tag-ok' : 'tag tag-high';
   b.innerHTML = `<span class="live-dot"></span> ${esc(label)}`;
 }
+function refreshIcons() { if (window.lucide) window.lucide.createIcons(); }
 
-function refreshIcons() {
-  if (window.lucide) window.lucide.createIcons();
-}
-
-function enterWorkspace(autoScan = false, screen = 'inspector') {
-  document.getElementById('landingView').classList.add('hidden');
-  document.getElementById('appShell').classList.remove('hidden');
-  switchScreen(screen);
-  refreshIcons();
-  if (autoScan && !STATE.scanId) runScan();
-}
-
-function showLanding() {
-  document.getElementById('appShell').classList.add('hidden');
-  document.getElementById('landingView').classList.remove('hidden');
+function showView(view) {
+  document.getElementById('homeView').classList.toggle('hidden', view !== 'home');
+  document.getElementById('loginView').classList.toggle('hidden', view !== 'login');
+  document.getElementById('appShell').classList.toggle('hidden', view !== 'app');
   refreshIcons();
 }
 
@@ -1187,14 +1298,47 @@ function switchScreen(name) {
   refreshIcons();
 }
 
-/* ==================== AUTH & REPO PICKER ==================== */
+/* ==================== AUTH FLOWS (ISOLATED EVALUATOR / EMAIL / GOOGLE / OPTIONAL GITHUB) ==================== */
 async function initApp() {
   document.getElementById('webhookUrlInput').value = `${window.location.origin}/api/webhook/github`;
   await Promise.all([loadAuth(), loadBilling()]);
   if (STATE.auth.authenticated) {
-    enterWorkspace(false, 'inspector');
+    showView('app');
   }
   refreshIcons();
+}
+
+async function guestStart() {
+  const rnd = Math.random().toString(36).slice(2, 6);
+  await completeEmailLogin(`evaluator-${rnd}@demo.in`, 'Guest Evaluator', 'guest');
+}
+
+async function emailSignIn(provider) {
+  const email = document.getElementById('loginEmail')?.value.trim() || (provider === 'google' ? 'founder@gmail.com' : 'evaluator@startup.in');
+  const name = document.getElementById('loginName')?.value.trim() || (provider === 'google' ? 'Google User' : email.split('@')[0]);
+  await completeEmailLogin(email, name, provider);
+}
+
+async function completeEmailLogin(email, name, provider) {
+  try {
+    const r = await fetch('/api/auth/email-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name, provider }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'Sign in failed');
+    await Promise.all([loadAuth(), loadBilling()]);
+    showView('app');
+    switchScreen('inspector');
+    if (!sessionStorage.getItem('sentinel_tour_seen')) {
+      sessionStorage.setItem('sentinel_tour_seen', '1');
+      openTour(0);
+    }
+    if (!STATE.scanId) runScan();
+  } catch (e) {
+    showToast(e.message);
+  }
 }
 
 async function loadAuth() {
@@ -1203,18 +1347,19 @@ async function loadAuth() {
     STATE.auth = await r.json();
     const box = document.getElementById('sideAccountInfo');
     if (STATE.auth.authenticated) {
+      const initial = (STATE.auth.name || STATE.auth.login || 'E').slice(0, 1).toUpperCase();
+      const badge = STATE.auth.provider === 'github' ? 'GitHub' : STATE.auth.provider === 'google' ? 'Google' : 'Evaluator';
       box.innerHTML = `
-        <img class="avatar" src="${esc(STATE.auth.avatar_url)}" alt="" />
+        <div class="avatar-pill">${esc(initial)}</div>
         <div style="min-width:0;">
-          <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">@${esc(STATE.auth.login)}</div>
-          <button class="ghost" style="padding:0;font-size:11px;color:var(--muted);" onclick="logout()">Sign out</button>
+          <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(STATE.auth.name || STATE.auth.login)}</div>
+          <div style="font-size:10.5px;color:var(--muted);">${esc(badge)} · <button class="ghost" style="padding:0;font-size:10.5px;color:var(--muted);" onclick="logout()">Sign out</button></div>
         </div>`;
-      loadUserRepos();
-    } else if (!STATE.auth.oauth_configured) {
-      ['landGithubBtn', 'heroGithubBtn', 'sideLoginBtn'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) { el.removeAttribute('href'); el.onclick = () => enterWorkspace(true); }
-      });
+      if (STATE.auth.has_github_token) loadUserRepos();
+    }
+    if (!STATE.auth.oauth_configured) {
+      const gh = document.getElementById('loginGithubBtn');
+      if (gh) gh.classList.add('hidden');
     }
   } catch (e) {}
 }
@@ -1233,18 +1378,58 @@ async function loadUserRepos() {
 
 async function logout() {
   await fetch('/api/auth/logout', { method: 'POST' });
-  window.location.reload();
+  STATE.auth.authenticated = false;
+  showView('login');
 }
 
-/* ==================== BILLING & QUOTAS ==================== */
+/* ==================== INTERACTIVE TOUR ==================== */
+function openTour(idx = 0) {
+  STATE.tourIdx = idx;
+  renderTour();
+  document.getElementById('tourModal').classList.remove('hidden');
+}
+function closeTour() { document.getElementById('tourModal').classList.add('hidden'); }
+function stepTour(delta) {
+  const next = STATE.tourIdx + delta;
+  if (next < 0) return;
+  if (next >= TOUR_STEPS.length) { closeTour(); return; }
+  STATE.tourIdx = next;
+  renderTour();
+}
+function jumpTourScreen() {
+  switchScreen(TOUR_STEPS[STATE.tourIdx].screen);
+  closeTour();
+}
+function renderTour() {
+  const s = TOUR_STEPS[STATE.tourIdx];
+  document.getElementById('tourStepTag').textContent = `STEP ${STATE.tourIdx + 1} OF ${TOUR_STEPS.length}`;
+  document.getElementById('tourTitle').textContent = s.title;
+  document.getElementById('tourBody').textContent = s.body;
+  document.getElementById('tourActionHint').textContent = s.hint;
+  document.getElementById('tourPrevBtn').disabled = STATE.tourIdx === 0;
+  document.getElementById('tourNextBtn').textContent = STATE.tourIdx === TOUR_STEPS.length - 1 ? 'Done ✓' : 'Next →';
+}
+
+/* ==================== LEGAL MODAL ==================== */
+function openLegalModal() { document.getElementById('legalModal').classList.remove('hidden'); }
+function closeLegalModal() { document.getElementById('legalModal').classList.add('hidden'); }
+
+/* ==================== BILLING, CREDITS & RAZORPAY UPI QR / CARD ==================== */
 async function loadBilling() {
   try {
     const r = await fetch('/api/billing/usage');
-    const data = await r.json();
-    STATE.tenant = data.tenant;
-    STATE.plans = data.plans;
+    const d = await r.json();
+    STATE.tenant = d.tenant;
+    STATE.plans = d.plans;
     renderBillingUI();
   } catch (e) {}
+}
+
+function fmtTokens(n) {
+  if (n >= 100000000) return 'Unlimited';
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return Math.round(n / 1000) + 'K';
+  return String(n);
 }
 
 function renderBillingUI() {
@@ -1252,59 +1437,75 @@ function renderBillingUI() {
   if (!t) return;
   const pct = Math.min(100, Math.round((t.scans_used / Math.max(1, t.monthly_pr_limit)) * 100));
   document.getElementById('sidePlanName').textContent = t.plan_name;
-  document.getElementById('sideQuotaText').textContent = `${t.scans_used} / ${t.monthly_pr_limit > 9000 ? '∞' : t.monthly_pr_limit} PRs`;
+  document.getElementById('sideTokensText').textContent = `${fmtTokens(t.tokens_remaining)} tokens`;
   const bar = document.getElementById('sideQuotaBar');
   bar.style.width = `${Math.max(4, pct)}%`;
   bar.className = 'progress-fill' + (pct >= 90 ? ' crit' : pct >= 70 ? ' warn' : '');
-  document.getElementById('sideQuotaSub').textContent = `${t.max_repos} repo${t.max_repos > 1 ? 's' : ''} · org: ${t.org}`;
+  document.getElementById('sideQuotaSub').textContent = `${t.scans_used} / ${t.monthly_pr_limit > 9000 ? '∞' : t.monthly_pr_limit} scans used`;
 
-  // Billing screen
-  document.getElementById('billHeader').textContent = `Workspace: @${t.org} · ${t.plan_name}`;
+  document.getElementById('billHeader').textContent = `Workspace @${t.org} · ${t.plan_name}`;
   document.getElementById('billPlan').textContent = t.plan_name;
-  document.getElementById('billScans').textContent = `${t.scans_used} / ${t.monthly_pr_limit > 9000 ? 'Unlimited' : t.monthly_pr_limit}`;
-  document.getElementById('billRepos').textContent = t.max_repos >= 999 ? 'Unlimited' : t.max_repos;
-  document.getElementById('billPRs').textContent = t.prs_opened || 0;
-  document.getElementById('billReceiptTag').textContent = t.receipt_id ? `Paid · ${t.receipt_id}` : 'Free Tier Active';
+  document.getElementById('billTokens').textContent = t.tokens_remaining >= 100000000 ? 'Unlimited' : Number(t.tokens_remaining).toLocaleString('en-IN');
+  document.getElementById('billScans').textContent = `${t.scans_used} / ${t.monthly_pr_limit > 9000 ? '∞' : t.monthly_pr_limit}`;
+  document.getElementById('billAutopay').textContent = t.autopay_active ? 'Active ✓' : 'Off';
+  document.getElementById('billReceiptTag').textContent = t.receipt_id ? `Paid · ${t.receipt_id}` : 'Free Evaluator Credits';
 
-  // VPC JWT Box
   document.getElementById('jwtBox').value = t.vpc_license_jwt || '';
   try {
     const part = (t.vpc_license_jwt || '').split('.')[1] || '';
     const pad = part + '='.repeat((4 - part.length % 4) % 4);
-    const decoded = JSON.parse(atob(pad.replace(/-/g, '+').replace(/_/g, '/')));
-    document.getElementById('jwtClaimsBox').textContent = JSON.stringify(decoded, null, 2);
-  } catch (e) {
-    document.getElementById('jwtClaimsBox').textContent = JSON.stringify({ org: t.org, plan: t.plan_id, max_repos: t.max_repos }, null, 2);
-  }
+    document.getElementById('jwtClaimsBox').textContent = JSON.stringify(JSON.parse(atob(pad.replace(/-/g, '+').replace(/_/g, '/'))), null, 2);
+  } catch (e) {}
+}
+
+async function resetCredits() {
+  try {
+    const r = await fetch('/api/billing/reset', { method: 'POST' });
+    const d = await r.json();
+    STATE.tenant = d.tenant;
+    renderBillingUI();
+    showToast('Free evaluator tokens & scan credits reset to 100%!');
+  } catch (e) {}
+}
+
+function selectPayTab(method) {
+  STATE.payMethod = method;
+  document.getElementById('tabUpi').classList.toggle('active', method === 'upi_qr');
+  document.getElementById('tabCard').classList.toggle('active', method === 'card');
+  document.getElementById('paneUpi').classList.toggle('hidden', method !== 'upi_qr');
+  document.getElementById('paneCard').classList.toggle('hidden', method !== 'card');
 }
 
 function openUpgradeModal(planId = 'pro', quotaMsg = '') {
   STATE.modalPlanId = planId;
-  const p = STATE.plans[planId] || { name: 'Startup Pro', price_inr: 1999, monthly_pr_limit: 10000, max_repos: 1 };
+  const p = STATE.plans[planId] || { name: 'Startup Pro', price_inr: 1999, monthly_pr_limit: 10000, token_limit: 5000000 };
   document.getElementById('modalPlanTitle').textContent = `Activate ${p.name}`;
   document.getElementById('modalPlanPrice').textContent = `₹${Number(p.price_inr).toLocaleString('en-IN')}/mo`;
-  document.getElementById('modalPlanDesc').textContent = `${p.max_repos >= 999 ? 'Unlimited' : p.max_repos} repo(s) · ${p.monthly_pr_limit > 9000 ? 'Unlimited' : p.monthly_pr_limit} PR scans/mo`;
-  const alertEl = document.getElementById('modalQuotaAlert');
-  if (quotaMsg) { alertEl.textContent = quotaMsg; alertEl.classList.remove('hidden'); }
-  else alertEl.classList.add('hidden');
+  document.getElementById('modalPlanDesc').textContent = `${fmtTokens(p.token_limit)} AI tokens · ${p.monthly_pr_limit > 9000 ? 'Unlimited' : p.monthly_pr_limit} PR scans/mo`;
+  const al = document.getElementById('modalQuotaAlert');
+  if (quotaMsg) { al.textContent = quotaMsg; al.classList.remove('hidden'); } else al.classList.add('hidden');
+  selectPayTab('upi_qr');
   document.getElementById('upgradeModal').classList.remove('hidden');
 }
-
-function closeUpgradeModal() {
-  document.getElementById('upgradeModal').classList.add('hidden');
-}
+function closeUpgradeModal() { document.getElementById('upgradeModal').classList.add('hidden'); }
 
 async function confirmUpgrade() {
+  if (!document.getElementById('termsCheck').checked) {
+    showToast('Please accept the Terms & Conditions to proceed.');
+    return;
+  }
   const btn = document.getElementById('confirmUpgradeBtn');
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Processing UPI…';
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Verifying…';
   try {
     const r = await fetch('/api/billing/upgrade', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         plan_id: STATE.modalPlanId,
-        payment_method: document.getElementById('payMethod').value,
+        payment_method: STATE.payMethod,
         upi_id: document.getElementById('upiInput').value,
+        autopay: document.getElementById('autopayCheck').checked,
+        terms_accepted: true,
       }),
     });
     const d = await r.json();
@@ -1312,28 +1513,24 @@ async function confirmUpgrade() {
     STATE.tenant = d.tenant;
     renderBillingUI();
     closeUpgradeModal();
-    showToast(`Upgraded to ${d.tenant.plan_name}! Receipt: ${d.receipt_id}`);
+    showToast(`${d.tenant.plan_name} active! ${d.receipt_id ? 'Receipt: ' + d.receipt_id : ''}`);
   } catch (e) {
     showToast(e.message);
   } finally {
-    btn.disabled = false; btn.textContent = 'Pay & Activate Instantly';
+    btn.disabled = false; btn.textContent = 'Activate Plan';
   }
 }
 
-/* ==================== SCAN, SUGGEST & VERIFICATION GATE ==================== */
-function quickScan(url) {
-  document.getElementById('repoUrl').value = url;
-  runScan();
-}
+/* ==================== SCANNER, SUGGEST & VERIFY GATE ==================== */
+function quickScan(url) { document.getElementById('repoUrl').value = url; runScan(); }
 
 async function runScan() {
   const repoUrl = document.getElementById('repoUrl').value.trim();
   const btn = document.getElementById('btnScan');
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Scanning…';
-  setStatus('SCANNING AST…', false);
+  setStatus('SCANNING…', false);
   document.getElementById('verifyPanel').classList.add('hidden');
   document.getElementById('prResultBox').classList.add('hidden');
-
   try {
     const r = await fetch('/api/scan', {
       method: 'POST',
@@ -1341,25 +1538,20 @@ async function runScan() {
       body: JSON.stringify({ repo_url: repoUrl || null }),
     });
     const data = await r.json();
-    if (r.status === 402) {
-      setStatus('QUOTA REACHED', false);
-      openUpgradeModal('pro', data.detail);
-      return;
-    }
+    if (r.status === 402) { setStatus('QUOTA REACHED', false); openUpgradeModal('pro', data.detail); return; }
     if (!r.ok) throw new Error(data.detail || 'Scan failed');
-
     STATE.scanId = data.scan_id;
     STATE.report = data.report;
     renderScan(data);
     loadBilling();
     setStatus(`SCANNED · ${data.telemetry?.telemetry_status || 'logged'}`, true);
-    showToast(`Scan complete: ${data.report.summary.total ?? data.report.findings.length} findings in ${data.report.files_scanned} files`);
+    showToast(`Found ${data.report.summary.total ?? data.report.findings.length} issues in ${data.report.files_scanned} files`);
   } catch (e) {
     setStatus('ERROR', false);
     showToast(e.message);
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '<i data-lucide="scan-search" style="width:15px;height:15px;"></i> Scan Repository';
+    btn.innerHTML = '<i data-lucide="scan-search" style="width:15px;height:15px;"></i> Scan Repo';
     refreshIcons();
   }
 }
@@ -1379,10 +1571,8 @@ function renderScan(data) {
   document.getElementById('kpiMed').textContent = `${counts.medium || 0} MED`;
   document.getElementById('kpiBqStatus').textContent = `Telemetry: ${data.telemetry?.telemetry_status || 'local'}`;
 
-  // Animate Risk Ring
-  const circ = 163.36;
   const ring = document.getElementById('riskRing');
-  ring.style.strokeDashoffset = circ * (1 - (s.risk_score || 0) / 100);
+  ring.style.strokeDashoffset = 163.36 * (1 - (s.risk_score || 0) / 100);
   ring.style.stroke = (s.risk_score || 0) >= 60 ? '#DC2626' : (s.risk_score || 0) > 0 ? '#B45309' : '#15803D';
 
   const body = document.getElementById('findingsBody');
@@ -1391,14 +1581,12 @@ function renderScan(data) {
   document.getElementById('btnFixPR').disabled = true;
 
   if (!findings.length) {
-    body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--green);padding:24px;font-weight:600;">Zero DPDP violations detected across all scanned files. Ready to merge.</td></tr>';
+    body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--green);padding:24px;font-weight:600;">Zero DPDP violations detected. Ready to merge.</td></tr>';
     return;
   }
-
   body.innerHTML = findings.map((f, i) => {
     const sev = String(f.severity || '').toUpperCase();
-    return `
-    <tr class="${i === 0 ? 'selected' : ''}" onclick="selectFinding(${i})">
+    return `<tr class="${i === 0 ? 'selected' : ''}" onclick="selectFinding(${i})">
       <td class="mono" style="font-size:12px;">${esc(f.file)}:${f.line}</td>
       <td class="mono" style="font-size:12px;">${esc(f.rule_id)}</td>
       <td>${esc(f.dpdp_section)}</td>
@@ -1406,7 +1594,6 @@ function renderScan(data) {
       <td><span class="tag ${sev === 'CRITICAL' ? 'tag-crit' : sev === 'HIGH' ? 'tag-high' : ''}">${esc(sev)}</span></td>
     </tr>`;
   }).join('');
-
   selectFinding(0);
 }
 
@@ -1415,7 +1602,6 @@ async function selectFinding(idx) {
   document.querySelectorAll('#findingsBody tr').forEach((tr, i) => tr.classList.toggle('selected', i === idx));
   const f = STATE.report.findings[idx];
   if (!f) return;
-
   document.getElementById('selectedMeta').textContent = `${f.rule_id} · ${f.dpdp_section} · ${f.cwe || 'AppSec'} — ${f.title || f.evidence || ''}`;
   document.getElementById('penaltyTag').textContent = f.penalty_ref || 'DPDP Act 2023';
   document.getElementById('srcFileLabel').textContent = f.file;
@@ -1426,9 +1612,8 @@ async function selectFinding(idx) {
     ? ctx.map(c => `<div class="code-line ${c.highlight ? 'hit' : ''}"><span class="ln-num">${c.line}</span><span>${esc(c.text)}</span></div>`).join('')
     : `<div class="code-line hit"><span class="ln-num">${f.line}</span><span>${esc(f.snippet)}</span></div>`;
 
-  // Fetch pre-change suggestion
   document.getElementById('fixModeTag').textContent = 'LOADING…';
-  document.getElementById('fixCodeBody').innerHTML = '<div style="padding:18px;color:var(--muted);">Generating codebase-matched fix with Gemini 3.8 Flash…</div>';
+  document.getElementById('fixCodeBody').innerHTML = '<div style="padding:18px;color:var(--muted);">Generating fix preview…</div>';
   try {
     const r = await fetch('/api/suggest', {
       method: 'POST',
@@ -1443,19 +1628,14 @@ async function selectFinding(idx) {
     document.getElementById('fixCodeBody').innerHTML =
       fixLines.map((ln, k) => `<div class="code-line fix"><span class="ln-num">+${k + 1}</span><span>${esc(ln)}</span></div>`).join('') +
       helperLines.map(ln => `<div class="code-line"><span class="ln-num"> </span><span style="color:var(--ink-2);">${esc(ln)}</span></div>`).join('');
-    document.getElementById('guidelineBox').innerHTML =
-      `<strong>DPDP Compliance Guideline (${esc(f.dpdp_section)}):</strong> ${esc(sug.explanation || f.obligation || '')}` +
-      (f.remediation_pattern ? `<div style="margin-top:6px;color:var(--muted);"><strong>Pattern:</strong> ${esc(f.remediation_pattern)}</div>` : '');
-  } catch (e) {
-    document.getElementById('fixModeTag').textContent = 'ERROR';
-  }
+    document.getElementById('guidelineBox').innerHTML = `<strong>${esc(f.dpdp_section)}:</strong> ${esc(sug.explanation || f.obligation || '')}`;
+  } catch (e) { document.getElementById('fixModeTag').textContent = 'ERROR'; }
 }
 
 async function runVerifyGate() {
   if (!STATE.scanId) return;
   const btn = document.getElementById('btnVerify');
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Verifying Patches…';
-  setStatus('RUNNING SECREASON GATE…', false);
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Verifying…';
   try {
     const r = await fetch('/api/patch', {
       method: 'POST',
@@ -1464,36 +1644,28 @@ async function runVerifyGate() {
     });
     const d = await r.json();
     if (!r.ok) throw new Error(d.detail || 'Verification failed');
-
     const v = d.verification || {};
     const panel = document.getElementById('verifyPanel');
     panel.classList.remove('hidden');
-    document.getElementById('verifySummary').textContent =
-      `Risk Score: ${v.risk_before}/100 → ${v.risk_after}/100 · Resolved: ${(v.resolved || []).length} findings`;
+    document.getElementById('verifySummary').textContent = `Risk Score: ${v.risk_before}/100 → ${v.risk_after}/100 · Resolved: ${(v.resolved || []).length} findings`;
     const checks = v.checks || {};
     const compilesOk = checks.python_compiles ?? checks.syntax_compiles ?? false;
     document.getElementById('verifyPills').innerHTML = `
       <span class="tag ${v.verified ? 'tag-ok' : 'tag-crit'}">${v.verified ? 'GATE PASSED' : 'GATE BLOCKED'}</span>
       <span class="tag">${v.risk_before} → ${v.risk_after} RISK</span>
       <span class="tag ${compilesOk ? 'tag-ok' : 'tag-crit'}">SYNTAX ${compilesOk ? 'PASS' : 'FAIL'}</span>
-      <span class="tag ${checks.no_new_findings ? 'tag-ok' : 'tag-crit'}">0 NEW VULNS</span>
-    `;
-
-    // Colorized unified diff
-    const diffHtml = (d.unified_diff || 'No file diff generated.').split('\n').map(ln => {
+      <span class="tag ${checks.no_new_findings ? 'tag-ok' : 'tag-crit'}">0 NEW VULNS</span>`;
+    document.getElementById('diffPre').innerHTML = (d.unified_diff || 'No diff.').split('\n').map(ln => {
       if (ln.startsWith('+++') || ln.startsWith('---') || ln.startsWith('@@')) return `<span class="d-hdr">${esc(ln)}</span>`;
       if (ln.startsWith('+')) return `<span class="d-add">${esc(ln)}</span>`;
       if (ln.startsWith('-')) return `<span class="d-del">${esc(ln)}</span>`;
       return esc(ln);
     }).join('\n');
-    document.getElementById('diffPre').innerHTML = diffHtml;
-
     document.getElementById('btnFixPR').disabled = !v.verified;
     setStatus(v.verified ? 'VERIFIED · PR UNLOCKED' : 'GATE BLOCKED', !!v.verified);
     panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  } catch (e) {
-    showToast(e.message);
-  } finally {
+  } catch (e) { showToast(e.message); }
+  finally {
     btn.disabled = false;
     btn.innerHTML = '<i data-lucide="check-circle-2" style="width:14px;height:14px;"></i> Run Verification Gate';
     refreshIcons();
@@ -1517,28 +1689,21 @@ async function openFixPR() {
     if (!r.ok) throw new Error(d.detail || 'PR creation failed');
     const box = document.getElementById('prResultBox');
     box.classList.remove('hidden');
-    if (d.pr_url) {
-      box.innerHTML = `<strong>GitHub Pull Request Created!</strong> Branch <code>${esc(d.branch)}</code> · <a href="${esc(d.pr_url)}" target="_blank" style="color:inherit;font-weight:700;">Open PR on GitHub ↗</a>`;
-    } else {
-      box.innerHTML = `<strong>Verified Patch Bundle Ready!</strong> Branch <code>${esc(d.branch)}</code> · Sign in with GitHub and select your own repo to auto-open a live Pull Request.`;
-    }
+    box.innerHTML = d.pr_url
+      ? `<strong>GitHub PR Created!</strong> Branch <code>${esc(d.branch)}</code> · <a href="${esc(d.pr_url)}" target="_blank" style="color:inherit;font-weight:700;">Open PR ↗</a>`
+      : `<strong>Verified Patch Bundle Ready!</strong> Branch <code>${esc(d.branch)}</code> generated cleanly.`;
     loadBilling();
-    showToast('Verified Fix PR prepared');
-  } catch (e) {
-    showToast(e.message);
-  } finally {
+    showToast('Verified Fix PR ready');
+  } catch (e) { showToast(e.message); }
+  finally {
     btn.disabled = false;
-    btn.innerHTML = '<i data-lucide="git-pull-request" style="width:14px;height:14px;"></i> Open Verified PR';
+    btn.innerHTML = '<i data-lucide="git-pull-request" style="width:14px;height:14px;"></i> Create Verified PR';
     refreshIcons();
   }
 }
 
-/* ==================== ASK AUDITOR + VOICE ==================== */
-function quickAsk(q) {
-  document.getElementById('askInput').value = q;
-  askAuditor();
-}
-
+/* ==================== COPILOT, WEBHOOK, NOTICE, REDACT ==================== */
+function quickAsk(q) { document.getElementById('askInput').value = q; askAuditor(); }
 async function askAuditor() {
   const inp = document.getElementById('askInput');
   const q = inp.value.trim();
@@ -1546,51 +1711,31 @@ async function askAuditor() {
   inp.value = '';
   const log = document.getElementById('chatLog');
   log.innerHTML += `<div class="msg u">${esc(q)}</div>`;
-  const thinking = document.createElement('div');
-  thinking.className = 'msg a';
-  thinking.textContent = 'Analyzing active DPDP scan…';
-  log.appendChild(thinking);
-  log.scrollTop = log.scrollHeight;
+  const m = document.createElement('div'); m.className = 'msg a'; m.textContent = 'Analyzing scan…';
+  log.appendChild(m); log.scrollTop = log.scrollHeight;
   try {
-    const r = await fetch('/api/ask', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question: q, scan_id: STATE.scanId }),
-    });
+    const r = await fetch('/api/ask', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question: q, scan_id: STATE.scanId }) });
     const d = await r.json();
-    thinking.textContent = d.answer || 'No response.';
-  } catch (e) {
-    thinking.textContent = 'Unable to reach Gemini auditor right now.';
-  }
+    m.textContent = d.answer || 'No response.';
+  } catch (e) { m.textContent = 'Auditor temporarily unavailable.'; }
   log.scrollTop = log.scrollHeight;
 }
-
 function toggleVoice() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { showToast('Voice input requires Chrome / Edge'); return; }
-  const rec = new SR();
-  rec.lang = 'en-IN';
-  const btn = document.getElementById('micBtn');
-  btn.textContent = 'Listening…';
-  rec.onresult = e => {
-    document.getElementById('askInput').value = e.results[0][0].transcript;
-    askAuditor();
-  };
-  rec.onend = () => { btn.innerHTML = '<i data-lucide="mic" style="width:13px;height:13px;"></i> Voice'; refreshIcons(); };
+  if (!SR) { showToast('Voice requires Chrome or Edge'); return; }
+  const rec = new SR(); rec.lang = 'en-IN';
+  document.getElementById('micBtn').textContent = 'Listening…';
+  rec.onresult = e => { document.getElementById('askInput').value = e.results[0][0].transcript; askAuditor(); };
+  rec.onend = () => { document.getElementById('micBtn').innerHTML = '<i data-lucide="mic" style="width:13px;height:13px;"></i> Voice'; refreshIcons(); };
   rec.start();
 }
 
-/* ==================== WEBHOOK SIMULATOR ==================== */
 async function simulateWebhook() {
   const btn = document.getElementById('btnSimWebhook');
   const prNum = Number(document.getElementById('simPrNum').value) || 42;
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Running PR Gate…';
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Running…';
   try {
-    const r = await fetch('/api/webhook/github', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ number: prNum, pull_request: { head: { ref: 'feat/kyc-checkout' } } }),
-    });
+    const r = await fetch('/api/webhook/github', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ number: prNum, pull_request: { head: { ref: 'feat/kyc-checkout' } } }) });
     const d = await r.json();
     if (!r.ok) throw new Error(d.detail || 'Webhook failed');
     document.getElementById('webhookResult').innerHTML = `
@@ -1598,35 +1743,22 @@ async function simulateWebhook() {
         <strong class="mono">${esc(d.check_name)} · PR #${d.pr_number}</strong>
         <span class="tag ${d.conclusion === 'success' ? 'tag-ok' : 'tag-crit'}">${esc(d.conclusion).toUpperCase()}</span>
       </div>
-      <div style="font-size:13px;margin-top:6px;">
-        <strong>Risk Score:</strong> <code>${d.risk_before}/100</code> → <code>${d.risk_after}/100</code>
-      </div>
-      <pre class="diff-pre mono" style="margin-top:8px;">${esc(d.comment_markdown)}</pre>
-    `;
+      <div style="font-size:13px;"><strong>Risk Score:</strong> <code>${d.risk_before}/100</code> → <code>${d.risk_after}/100</code></div>
+      <pre class="diff-pre mono">${esc(d.comment_markdown)}</pre>`;
     loadBilling();
-    showToast(`PR #${prNum} webhook executed: ${d.conclusion.toUpperCase()}`);
-  } catch (e) {
-    showToast(e.message);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<i data-lucide="play" style="width:14px;height:14px;"></i> Simulate Incoming PR #42 Webhook';
-    refreshIcons();
-  }
+    showToast(`PR #${prNum} verified (${d.conclusion})`);
+  } catch (e) { showToast(e.message); }
+  finally { btn.disabled = false; btn.innerHTML = '<i data-lucide="play" style="width:14px;height:14px;"></i> Simulate Incoming PR #42'; refreshIcons(); }
 }
 
-/* ==================== 7-LANGUAGE DPDP NOTICE & BIGQUERY VAULT ==================== */
 async function generateNotice(lang) {
   STATE.activeLang = lang;
   document.querySelectorAll('.lang-pill').forEach(p => p.classList.toggle('active', p.dataset.lang === lang));
   const company = document.getElementById('noticeCompany').value.trim() || 'PaisaFlow FinTech Pvt. Ltd.';
   try {
-    const r = await fetch('/api/dpdp/notice', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scan_id: STATE.scanId, language: lang, company_name: company }),
-    });
+    const r = await fetch('/api/dpdp/notice', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ scan_id: STATE.scanId, language: lang, company_name: company }) });
     const d = await r.json();
-    document.getElementById('noticeLangLabel').textContent = `${d.language_name} · ${d.dpdp_ref}`;
+    document.getElementById('noticeLangLabel').textContent = d.language_name;
     document.getElementById('noticePiiTag').textContent = (d.detected_pii || []).join(', ');
     document.getElementById('noticeText').textContent = d.notice_text;
     document.getElementById('noticeJsx').textContent = d.jsx_snippet;
@@ -1636,49 +1768,36 @@ async function generateNotice(lang) {
 async function loadVaultData() {
   try {
     const [bRes, tRes] = await Promise.all([fetch('/api/metrics/benchmark'), fetch('/api/telemetry')]);
-    const b = await bRes.json();
-    const t = await tRes.json();
+    const b = await bRes.json(); const t = await tRes.json();
     document.getElementById('benchCards').innerHTML = [
-      ['AST Recall', b.detection_recall],
-      ['False Positives', b.false_positive_rate],
-      ['Token Cost', b.avg_token_cost_inr],
-      ['Total Scans Logged', `${b.total_scans_logged} (BigQuery)`],
-    ].map(([k, v]) => `<div class="kpi-card"><div><div class="kicker">${esc(k)}</div><div style="font-size:15px;font-weight:700;margin-top:4px;">${esc(v)}</div></div></div>`).join('');
-
+      ['AST Recall', b.detection_recall], ['False Positives', b.false_positive_rate],
+      ['Token Cost', b.avg_token_cost_inr], ['Logged Scans', `${b.total_scans_logged} (BigQuery)`],
+    ].map(([k, v]) => `<div class="kpi-card"><div><div class="kicker">${esc(k)}</div><div style="font-size:14.5px;font-weight:700;margin-top:4px;">${esc(v)}</div></div></div>`).join('');
     const events = (t.events || []).slice(0, 15);
     document.getElementById('telemetryBody').innerHTML = events.length
-      ? events.map(e => `
-        <tr>
-          <td class="mono" style="font-size:11.5px;">${esc((e.timestamp || e.scanned_at || '').replace('T', ' ').slice(0, 19))}</td>
-          <td class="mono" style="font-size:12px;">${esc(e.target || e.repo_id)}</td>
+      ? events.map(e => `<tr>
+          <td class="mono" style="font-size:11.5px;">${esc((e.timestamp || '').replace('T', ' ').slice(0, 19))}</td>
+          <td class="mono" style="font-size:12px;">${esc(e.target)}</td>
           <td>${e.files_scanned ?? '—'}</td>
           <td><strong>${e.risk_score}/100</strong></td>
-          <td><span class="tag ${(e.critical ?? e.critical_count ?? 0) > 0 ? 'tag-crit' : 'tag-ok'}">${e.critical ?? e.critical_count ?? 0}</span></td>
+          <td><span class="tag ${(e.critical ?? 0) > 0 ? 'tag-crit' : 'tag-ok'}">${e.critical ?? 0}</span></td>
           <td style="font-size:12px;">${esc(Array.isArray(e.dpdp_sections) ? e.dpdp_sections.join(', ') : (e.dpdp_sections || ''))}</td>
         </tr>`).join('')
-      : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px;">Run a scan to log your first BigQuery audit row.</td></tr>';
+      : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px;">Run a scan to log your first BigQuery row.</td></tr>';
   } catch (e) {}
 }
 
-/* ==================== IN-VPC GEMMA REDACTION ==================== */
 async function runRedact() {
   const text = document.getElementById('redactInput').value;
   try {
-    const r = await fetch('/api/redact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text }),
-    });
+    const r = await fetch('/api/redact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
     const d = await r.json();
     const entMap = d.entities_redacted || {};
-    const totalRedacted = Object.values(entMap).reduce((a, b) => a + Number(b || 0), 0);
-    const entDetail = Object.entries(entMap).map(([k, v]) => `${k}:${v}`).join(' · ');
+    const total = Object.values(entMap).reduce((a, b) => a + Number(b || 0), 0);
     document.getElementById('redactLatency').textContent = `${d.latency_ms} ms · LOCAL VPC`;
-    document.getElementById('redactCountTag').textContent = `${totalRedacted} PII entities masked${entDetail ? ' (' + entDetail + ')' : ''}`;
+    document.getElementById('redactCountTag').textContent = `${total} entities masked`;
     document.getElementById('redactOutput').textContent = d.redacted_text;
-  } catch (e) {
-    showToast('Redaction failed');
-  }
+  } catch (e) { showToast('Redaction failed'); }
 }
 
 window.addEventListener('DOMContentLoaded', initApp);
