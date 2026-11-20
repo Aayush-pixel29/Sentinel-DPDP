@@ -3,559 +3,1685 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sentinel-DPDP · Shift-Left Compliance &amp; PR Security</title>
+  <title>Sentinel-DPDP · Pre-Merge AppSec &amp; India DPDP Act Compliance</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest" defer></script>
   <style>
     :root {
-      --bg: #FFFFFF; --surface: #FAFAFA; --surface-2: #F4F4F5; --ink: #0A0A0A;
-      --ink-2: #3F3F46; --muted: #71717A; --border: #E4E4E7; --border-strong: #18181B;
-      --red: #DC2626; --red-bg: #FEF2F2; --red-line: #FEE2E2;
-      --green: #15803D; --green-bg: #F0FDF4; --amber: #B45309; --amber-bg: #FFFBEB;
+      --bg: #FFFFFF;
+      --surface: #FAFAFA;
+      --surface-2: #F4F4F5;
+      --ink: #09090B;
+      --ink-2: #3F3F46;
+      --muted: #71717A;
+      --border: #E4E4E7;
+      --border-strong: #18181B;
+      --red: #DC2626;
+      --red-bg: #FEF2F2;
+      --red-line: #FEE2E2;
+      --green: #15803D;
+      --green-bg: #F0FDF4;
+      --green-line: #DCFCE7;
+      --amber: #B45309;
+      --amber-bg: #FFFBEB;
+      --radius: 10px;
+      --shadow-sm: 0 1px 2px rgba(9,9,11,.04);
+      --shadow-md: 0 8px 24px rgba(9,9,11,.07);
+      --shadow-lg: 0 24px 64px rgba(9,9,11,.14);
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body {
-      background: var(--bg); color: var(--ink); font-family: "Inter", -apple-system, sans-serif;
-      min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
     }
-    code, pre, .mono { font-family: "JetBrains Mono", monospace; }
+    code, pre, .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
 
-    /* Header */
-    .topbar {
-      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-      padding: 16px 28px; border-bottom: 1px solid var(--border); background: var(--bg);
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .brand { display: flex; align-items: baseline; gap: 10px; }
-    .brand-name { font-size: 20px; font-weight: 800; letter-spacing: -0.04em; color: var(--ink); }
-    .brand-tag {
-      font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-      padding: 3px 8px; border: 1px solid var(--ink); border-radius: 4px; color: var(--ink);
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .45; transform: scale(.85); }
     }
-    .controls { display: flex; gap: 8px; flex: 1; max-width: 720px; }
-    input, textarea {
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .animate-in { animation: fadeUp .24s cubic-bezier(.16,1,.3,1) both; }
+    .hidden { display: none !important; }
+
+    /* Buttons & Inputs */
+    button, .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
       background: var(--bg); color: var(--ink); border: 1px solid var(--border);
-      border-radius: 6px; padding: 9px 12px; font-size: 13px; outline: none; font-family: inherit;
+      border-radius: 8px; padding: 9px 15px; font-size: 13px; font-weight: 600;
+      cursor: pointer; text-decoration: none; font-family: inherit;
+      transition: background .15s ease, border-color .15s ease, transform .1s ease, box-shadow .15s ease;
     }
-    input:focus, textarea:focus { border-color: var(--ink); box-shadow: 0 0 0 2px rgba(10,10,10,.08); }
-    button {
-      background: var(--bg); color: var(--ink); border: 1px solid var(--border);
-      border-radius: 6px; padding: 9px 15px; font-size: 13px; font-weight: 600; cursor: pointer;
-      transition: all .12s ease;
+    button:hover:not(:disabled), .btn:hover { border-color: var(--ink); background: var(--surface-2); }
+    button:active:not(:disabled), .btn:active { transform: translateY(1px); }
+    button.primary, .btn.primary {
+      background: var(--ink); color: #FFFFFF; border-color: var(--ink);
     }
-    button:hover:not(:disabled) { border-color: var(--ink); background: var(--surface-2); }
-    button.primary { background: var(--ink); color: #FFFFFF; border-color: var(--ink); }
-    button.primary:hover:not(:disabled) { background: #27272A; }
+    button.primary:hover:not(:disabled), .btn.primary:hover { background: #27272A; border-color: #27272A; }
     button.ok { background: var(--green); color: #FFFFFF; border-color: var(--green); }
-    button:disabled { opacity: .4; cursor: not-allowed; }
+    button.ok:hover:not(:disabled) { background: #166534; border-color: #166534; }
+    button.ghost { background: transparent; border-color: transparent; color: var(--ink-2); }
+    button.ghost:hover:not(:disabled) { background: var(--surface-2); color: var(--ink); border-color: transparent; }
+    button.sm { padding: 6px 11px; font-size: 12px; border-radius: 6px; }
+    button.lg, .btn.lg { padding: 12px 20px; font-size: 14px; border-radius: 9px; }
+    button:disabled { opacity: .42; cursor: not-allowed; }
 
-    /* Tabs */
-    .tabs {
-      display: flex; gap: 4px; padding: 0 28px; border-bottom: 1px solid var(--border);
-      background: var(--surface); flex-wrap: wrap;
+    input, textarea, select {
+      background: var(--bg); color: var(--ink); border: 1px solid var(--border);
+      border-radius: 8px; padding: 9px 12px; font-size: 13px; outline: none; font-family: inherit;
+      transition: border-color .15s ease, box-shadow .15s ease;
     }
-    .tab {
-      padding: 12px 16px; border: none; border-bottom: 2px solid transparent; border-radius: 0;
-      background: transparent; color: var(--muted); font-size: 13px; font-weight: 600;
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--ink); box-shadow: 0 0 0 3px rgba(9,9,11,.07);
     }
-    .tab.active { color: var(--ink); border-bottom-color: var(--ink); background: transparent; }
-    .view { display: none; flex: 1; }
-    .view.active { display: block; }
 
-    /* Layout */
-    .layout { display: grid; grid-template-columns: 270px 1fr 330px; gap: 20px; padding: 20px 28px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 24px 28px; }
-    @media (max-width: 1150px) { .layout { grid-template-columns: 1fr; } }
-
-    .panel {
-      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-      padding: 18px; display: flex; flex-direction: column; gap: 14px;
+    .tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 600;
+      padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--surface-2); color: var(--ink-2); white-space: nowrap;
     }
+    .tag-dark { background: var(--ink); color: #FFF; border-color: var(--ink); }
+    .tag-crit { background: var(--red-bg); color: var(--red); border-color: #FECACA; }
+    .tag-high { background: var(--amber-bg); color: var(--amber); border-color: #FDE68A; }
+    .tag-ok { background: var(--green-bg); color: var(--green); border-color: #BBF7D0; }
     .kicker {
       font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 600;
       letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
     }
-    .risk-box {
-      padding: 18px; background: var(--surface); border: 1px solid var(--border);
-      border-radius: 8px; text-align: center;
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+      display: inline-block; animation: pulseDot 2s infinite;
     }
-    .risk-num { font-size: 46px; font-weight: 800; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; line-height: 1; }
-    .sev-row {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 9px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;
+    .spinner {
+      width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent;
+      border-radius: 50%; display: inline-block; animation: spin .65s linear infinite;
     }
-    .tag { font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px; }
-    .tag-crit { background: var(--red-bg); color: var(--red); border: 1px solid #FECACA; }
-    .tag-high { background: var(--amber-bg); color: var(--amber); border: 1px solid #FDE68A; }
-    .tag-med { background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--border); }
-    .tag-ok { background: var(--green-bg); color: var(--green); border: 1px solid #BBF7D0; }
+
+    /* ==================== LANDING / LOGIN PAGE ==================== */
+    #landingView {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(9,9,11,.04), transparent 55%),
+        linear-gradient(to right, rgba(9,9,11,.035) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(9,9,11,.035) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px, 40px 40px;
+    }
+    .land-nav {
+      position: sticky; top: 0; z-index: 30;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 36px; background: rgba(255,255,255,.88); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .land-brand { display: flex; align-items: center; gap: 10px; }
+    .brand-mark {
+      width: 28px; height: 28px; border-radius: 7px; background: var(--ink); color: #FFF;
+      display: grid; place-items: center; font-weight: 800; font-size: 14px; letter-spacing: -0.04em;
+    }
+    .brand-name { font-size: 16px; font-weight: 800; letter-spacing: -0.04em; }
+    .land-links { display: flex; align-items: center; gap: 24px; font-size: 13px; font-weight: 500; color: var(--ink-2); }
+    .land-links a { color: inherit; text-decoration: none; }
+    .land-links a:hover { color: var(--ink); }
+    .land-container { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+
+    .hero {
+      display: grid; grid-template-columns: 1.05fr .95fr; gap: 44px; align-items: center;
+      padding: 68px 0 56px;
+    }
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; padding: 40px 0; }
+      .land-links { display: none; }
+    }
+    .hero h1 {
+      font-size: clamp(34px, 4.4vw, 54px); font-weight: 800; letter-spacing: -0.045em;
+      line-height: 1.06; margin: 16px 0 18px;
+    }
+    .hero p.lead { font-size: 16px; color: var(--ink-2); max-width: 540px; line-height: 1.6; }
+    .hero-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 22px; font-size: 12px; color: var(--muted); }
+    .hero-meta span { display: inline-flex; align-items: center; gap: 6px; }
+
+    /* Hero PR Diff Card */
+    .pr-showcase {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 14px;
+      box-shadow: var(--shadow-lg); overflow: hidden;
+    }
+    .pr-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; background: var(--surface); border-bottom: 1px solid var(--border);
+      font-size: 12px; font-family: "JetBrains Mono", monospace;
+    }
+    .pr-code { padding: 14px 16px; font-family: "JetBrains Mono", monospace; font-size: 12px; line-height: 1.65; }
+    .pr-del { background: var(--red-line); color: var(--red); padding: 2px 8px; border-radius: 4px; margin: 3px 0; }
+    .pr-add { background: var(--green-line); color: var(--green); padding: 2px 8px; border-radius: 4px; margin: 3px 0; }
+    .pr-foot {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+      padding: 12px 16px; background: var(--surface); border-top: 1px solid var(--border); font-size: 12px;
+    }
+
+    /* Proof Strip & Sections */
+    .proof-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 64px;
+    }
+    @media (max-width: 900px) { .proof-grid { grid-template-columns: repeat(2, 1fr); } }
+    .proof-card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px; box-shadow: var(--shadow-sm);
+    }
+    .proof-val { font-size: 26px; font-weight: 800; letter-spacing: -0.04em; margin: 6px 0 4px; font-variant-numeric: tabular-nums; }
+    .section { padding: 56px 0; border-top: 1px solid var(--border); }
+    .section-head { max-width: 660px; margin-bottom: 30px; }
+    .section-head h2 { font-size: 28px; font-weight: 800; letter-spacing: -0.035em; margin: 8px 0; }
+    .section-head p { font-size: 14px; color: var(--ink-2); }
+    .grid-3-land { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-2-land { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .grid-4-land { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    @media (max-width: 980px) {
+      .grid-3-land, .grid-2-land, .grid-4-land { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow-sm);
+    }
+    .card.featured { border-color: var(--ink); box-shadow: var(--shadow-md); }
+
+    /* ==================== APP WORKSPACE SHELL ==================== */
+    #appShell {
+      display: grid; grid-template-columns: 252px 1fr; min-height: 100vh; background: var(--surface);
+    }
+    @media (max-width: 960px) { #appShell { grid-template-columns: 1fr; } }
+
+    .sidebar {
+      background: var(--bg); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; padding: 16px 14px; gap: 16px;
+      position: sticky; top: 0; height: 100vh; overflow-y: auto;
+    }
+    @media (max-width: 960px) { .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); } }
+    .side-brand {
+      display: flex; align-items: center; justify-content: space-between; padding: 4px 6px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-list { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px; width: 100%; justify-content: flex-start;
+      padding: 9px 11px; border-radius: 8px; border: 1px solid transparent;
+      background: transparent; color: var(--ink-2); font-size: 13px; font-weight: 500;
+    }
+    .nav-item:hover { background: var(--surface-2); color: var(--ink); border-color: transparent; }
+    .nav-item.active {
+      background: var(--ink); color: #FFFFFF; font-weight: 600; border-color: var(--ink);
+    }
+    .nav-item i { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* Quota Card in Sidebar */
+    .quota-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 9px;
+      padding: 13px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .progress-track {
+      height: 6px; background: var(--border); border-radius: 999px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: var(--ink); border-radius: 999px; transition: width .35s ease;
+    }
+    .progress-fill.warn { background: var(--amber); }
+    .progress-fill.crit { background: var(--red); }
+
+    .account-box {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding-top: 12px; border-top: 1px solid var(--border); font-size: 12px;
+    }
+    .avatar { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border); object-fit: cover; }
+
+    /* Main Workspace Area */
+    .workspace { display: flex; flex-direction: column; min-width: 0; }
+    .ws-top {
+      display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+      padding: 14px 26px; background: var(--bg); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 20;
+    }
+    .ws-body { padding: 22px 26px 40px; max-width: 1440px; width: 100%; }
+    .screen { display: none; flex-direction: column; gap: 18px; }
+    .screen.active { display: flex; animation: fadeUp .2s ease both; }
+
+    /* Workspace Panels & Grids */
+    .panel {
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px; display: flex; flex-direction: column; gap: 14px; box-shadow: var(--shadow-sm);
+    }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    @media (max-width: 1100px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+    .kpi-card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 15px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .kpi-val { font-size: 28px; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+
+    .scan-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .chip {
+      padding: 4px 10px; font-size: 12px; font-weight: 500; border-radius: 999px;
+      border: 1px solid var(--border); background: var(--surface); color: var(--ink-2);
+    }
+    .chip:hover { border-color: var(--ink); color: var(--ink); background: var(--bg); }
+
+    .inspector-grid { display: grid; grid-template-columns: 1fr 340px; gap: 18px; align-items: start; }
+    @media (max-width: 1220px) { .inspector-grid { grid-template-columns: 1fr; } }
 
     /* Table */
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th {
       text-align: left; font-family: "JetBrains Mono", monospace; font-size: 11px;
-      color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--border);
-      text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--muted); padding: 9px 12px; background: var(--surface);
+      border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.05em;
     }
-    td { padding: 10px; border-bottom: 1px solid var(--border); cursor: pointer; }
-    tr:hover td { background: var(--surface); }
-    tr.selected td { background: var(--surface-2); font-weight: 600; }
+    td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    tr:last-child td { border-bottom: none; }
+    tbody tr { cursor: pointer; transition: background .1s ease; }
+    tbody tr:hover td { background: var(--surface); }
+    tbody tr.selected td { background: var(--surface-2); font-weight: 600; }
 
-    /* Exact Code Context + Suggestion Split */
+    /* Exact Line Code Viewer + Pre-Change Suggestion Split */
     .code-split { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    @media (max-width: 900px) { .code-split { grid-template-columns: 1fr; } }
+    @media (max-width: 960px) { .code-split { grid-template-columns: 1fr; } }
     .code-card {
-      border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
-      display: flex; flex-direction: column;
+      border: 1px solid var(--border); border-radius: 9px; overflow: hidden;
+      display: flex; flex-direction: column; background: var(--bg);
     }
     .code-head {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 8px 12px; background: var(--surface); border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+      padding: 9px 12px; background: var(--surface); border-bottom: 1px solid var(--border);
       font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 600;
     }
     .code-body {
-      background: #FFFFFF; font-family: "JetBrains Mono", monospace; font-size: 12px;
-      line-height: 1.65; overflow-x: auto; max-height: 280px;
+      font-family: "JetBrains Mono", monospace; font-size: 12px; line-height: 1.65;
+      overflow-x: auto; max-height: 290px; background: #FFFFFF;
     }
     .code-line { display: flex; padding: 1px 12px; white-space: pre; }
     .code-line.hit { background: var(--red-line); color: var(--red); font-weight: 600; }
-    .ln { width: 38px; flex-shrink: 0; color: var(--muted); user-select: none; }
-    .guide-box {
-      padding: 12px 14px; background: var(--surface); border-left: 3px solid var(--ink);
-      border-radius: 4px; font-size: 13px; color: var(--ink-2); line-height: 1.5;
+    .code-line.fix { background: var(--green-line); color: var(--green); font-weight: 600; }
+    .ln-num { width: 40px; flex-shrink: 0; color: var(--muted); user-select: none; text-align: right; padding-right: 12px; }
+    .code-line.hit .ln-num { color: var(--red); }
+
+    .guideline-box {
+      padding: 12px 14px; background: var(--surface); border-top: 1px solid var(--border);
+      font-size: 12.5px; color: var(--ink-2); line-height: 1.55;
     }
-    pre.diff {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
-      padding: 12px; font-size: 12px; overflow-x: auto; max-height: 220px; white-space: pre-wrap;
+    .diff-pre {
+      background: #09090B; color: #F4F4F5; padding: 14px; border-radius: 8px;
+      font-size: 12px; line-height: 1.6; overflow-x: auto; max-height: 300px;
     }
-    .diff-add { color: var(--green); font-weight: 600; }
-    .diff-del { color: var(--red); font-weight: 600; }
-    .check-item { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
-    .check-item.pass { color: var(--green); font-weight: 600; }
-    .log-box {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
-      padding: 10px 12px; font-size: 12px; max-height: 180px; overflow-y: auto; white-space: pre-wrap;
+    .d-add { color: #86EFAC; }
+    .d-del { color: #FCA5A5; }
+    .d-hdr { color: #93C5FD; font-weight: 600; }
+
+    /* Chat */
+    .chat-log {
+      display: flex; flex-direction: column; gap: 8px; max-height: 330px; overflow-y: auto;
+      padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
     }
-    .footer {
-      padding: 12px 28px; border-top: 1px solid var(--border); background: var(--surface);
-      font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; margin-top: auto;
+    .msg { padding: 9px 12px; border-radius: 8px; font-size: 12.5px; line-height: 1.5; white-space: pre-wrap; }
+    .msg.u { background: var(--ink); color: #FFF; align-self: flex-end; max-width: 88%; }
+    .msg.a { background: #FFF; border: 1px solid var(--border); align-self: flex-start; max-width: 96%; }
+
+    /* Language Pills */
+    .lang-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .lang-pill {
+      padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 600;
+      border: 1px solid var(--border); background: var(--bg); color: var(--ink-2);
+    }
+    .lang-pill.active { background: var(--ink); color: #FFF; border-color: var(--ink); }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(9,9,11,.55); backdrop-filter: blur(4px);
+      display: grid; place-items: center; z-index: 100; padding: 20px;
+    }
+    .modal {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 14px;
+      max-width: 460px; width: 100%; padding: 24px; box-shadow: var(--shadow-lg);
+      display: flex; flex-direction: column; gap: 16px; animation: fadeUp .2s ease both;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 22px; right: 22px; z-index: 120;
+      background: var(--ink); color: #FFF; padding: 11px 16px; border-radius: 9px;
+      font-size: 13px; font-weight: 500; box-shadow: var(--shadow-lg);
+      display: flex; align-items: center; gap: 8px; animation: fadeUp .2s ease both;
+    }
+
+    /* Print Passport */
+    @media print {
+      .sidebar, .ws-top, .no-print { display: none !important; }
+      #appShell { display: block; background: #FFF; }
+      .panel { box-shadow: none; break-inside: avoid; }
     }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="brand-name">SENTINEL-DPDP</span>
-      <span class="brand-tag mono">Pre-Merge Security &amp; DPDP Gate</span>
-    </div>
-    <div class="controls">
-      <select id="repoPicker" style="display:none;max-width:210px;background:var(--bg);color:var(--ink);border:1px solid var(--border);border-radius:6px;padding:9px 10px;font-size:13px" onchange="pickRepo(this.value)">
-        <option value="">Select your GitHub repo...</option>
-      </select>
-      <input id="repoUrl" style="flex:1" placeholder="Paste any GitHub repo URL (or leave blank for PaisaFlow demo)" />
-      <button id="scanBtn" class="primary" onclick="runScan()">Run Scan</button>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span id="statusBadge" class="tag tag-med">READY</span>
-      <div id="authArea">
-        <a href="/auth/github/login" style="text-decoration:none"><button class="primary">Sign in with GitHub</button></a>
-      </div>
-    </div>
-  </header>
 
-  <nav class="tabs">
-    <button class="tab active" onclick="showTab('control', this)">1. Code Inspector &amp; PR Gate</button>
-    <button class="tab" onclick="showTab('onboard', this)">2. GitHub App &amp; Plans</button>
-    <button class="tab" onclick="showTab('auditor', this)">3. Benchmarks &amp; BigQuery</button>
-    <button class="tab" onclick="showTab('sidecar', this)">4. In-VPC Gemma Sidecar</button>
+<!-- ==================== 1. LANDING & LOGIN PAGE ==================== -->
+<div id="landingView">
+  <nav class="land-nav">
+    <div class="land-brand">
+      <div class="brand-mark">S</div>
+      <span class="brand-name">Sentinel-DPDP</span>
+      <span class="tag">INDIA DPDP ACT 2023</span>
+    </div>
+    <div class="land-links">
+      <a href="#proof">Real Repo Proof</a>
+      <a href="#architecture">How It Works</a>
+      <a href="#deployments">Startups vs Banks</a>
+      <a href="#pricing">Indian Pricing</a>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="ghost" onclick="enterWorkspace(true)">Live Demo</button>
+      <a class="btn primary" id="landGithubBtn" href="/auth/github/login">
+        <i data-lucide="github" style="width:15px;height:15px;"></i> Continue with GitHub
+      </a>
+    </div>
   </nav>
 
-  <!-- TAB 1: CODE INSPECTOR & PR GATE -->
-  <div id="view-control" class="view active">
-    <main class="layout">
-      <!-- Left Rail -->
-      <section class="panel">
-        <div class="kicker">Repository Risk Score</div>
-        <div class="risk-box">
-          <div id="riskNum" class="risk-num" style="color:var(--muted)">--<span style="font-size:16px;font-weight:500">/100</span></div>
-          <div id="riskLabel" style="font-size:12px;color:var(--muted);margin-top:6px">Run a scan to inspect code</div>
+  <div class="land-container">
+    <section class="hero">
+      <div class="animate-in">
+        <span class="tag tag-ok"><span class="live-dot"></span> LIVE ON CLOUD RUN · BIGQUERY TELEMETRY · GEMINI 3.8 FLASH</span>
+        <h1>Stop AI-generated PII leaks before they merge.</h1>
+        <p class="lead">
+          AI coding tools ship 5× faster while introducing runtime privacy and security flaws in 40%–90% of code.
+          Sentinel-DPDP audits every GitHub Pull Request for <strong>India's DPDP Act 2023 (up to ₹250 Cr fines)</strong>,
+          proves the exact line via AST taint analysis, and opens a <strong>compiler-verified auto-fix PR</strong>.
+        </p>
+        <div class="hero-cta">
+          <a class="btn primary lg" id="heroGithubBtn" href="/auth/github/login">
+            <i data-lucide="github" style="width:16px;height:16px;"></i> Sign in with GitHub
+          </a>
+          <button class="lg" onclick="enterWorkspace(true)">
+            <i data-lucide="play" style="width:15px;height:15px;"></i> Launch Interactive Demo
+          </button>
         </div>
-        <div class="sev-row"><span>Critical</span><span id="cntCrit" class="tag tag-crit">0</span></div>
-        <div class="sev-row"><span>High</span><span id="cntHigh" class="tag tag-high">0</span></div>
-        <div class="sev-row"><span>Medium</span><span id="cntMed" class="tag tag-med">0</span></div>
-        <div class="kicker" style="margin-top:6px">DPDP Sections Impacted</div>
-        <div id="secChips" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+        <div class="hero-meta">
+          <span><i data-lucide="check" style="width:14px;height:14px;"></i> Free Tier: 1 Repo · 20 PRs/mo</span>
+          <span><i data-lucide="check" style="width:14px;height:14px;"></i> ₹0.28 / PR via SKILL.md</span>
+          <span><i data-lucide="check" style="width:14px;height:14px;"></i> 0.1ms In-VPC Bank Sidecar</span>
+        </div>
+      </div>
+
+      <div class="pr-showcase animate-in">
+        <div class="pr-head">
+          <span><strong>sentinel-dpdp/verify</strong> · PR #42 · backend/main.py:29</span>
+          <span class="tag tag-ok">VERIFIED · 80 → 0</span>
+        </div>
+        <div class="pr-code">
+          <div style="color:var(--muted);">28 &nbsp; def verify_kyc(req: KYCRequest):</div>
+          <div class="pr-del">- 29 &nbsp; logger.info(f"KYC user={req.aadhaar} pan={req.pan}") &nbsp;# CWE-532 · DPDP Sec 8(5)</div>
+          <div class="pr-add">+ 29 &nbsp; logger.info(f"KYC user={mask_pii(req.aadhaar)} pan={mask_pii(req.pan)}")</div>
+          <div style="color:var(--muted);">30 &nbsp; &nbsp; &nbsp; return {"status": "verified"}</div>
+        </div>
+        <div class="pr-foot">
+          <span><strong>SecReason Gate:</strong> AST Re-scan 0 · Syntax PASS · 0 New Vulns</span>
+          <span class="tag">Penalty Prevented: ₹250 Cr</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Real Benchmark Proof Strip -->
+    <section id="proof" class="proof-grid">
+      <div class="proof-card">
+        <div class="kicker">tiangolo / fastapi-template (30K★)</div>
+        <div class="proof-val">1 / 207</div>
+        <div style="font-size:12.5px;color:var(--ink-2);">Surgical real email log leak caught at <code>utils.py:57</code> · <strong>0 false positives</strong> across 206 files.</div>
+      </div>
+      <div class="proof-card">
+        <div class="kicker">OWASP / crAPI (Real AppSec)</div>
+        <div class="proof-val">24 Leaks</div>
+        <div style="font-size:12.5px;color:var(--ink-2);">355 files scanned in seconds · 13 Critical + 11 Medium Python &amp; TypeScript findings.</div>
+      </div>
+      <div class="proof-card">
+        <div class="kicker">Progressive SKILL.md Cost</div>
+        <div class="proof-val">₹0.28 / PR</div>
+        <div style="font-size:12.5px;color:var(--ink-2);">On-demand rule loading cuts LLM tokens ~75% · <strong>96% gross margin</strong> at ₹1,999/mo.</div>
+      </div>
+      <div class="proof-card">
+        <div class="kicker">In-VPC Gemma Privacy Sidecar</div>
+        <div class="proof-val">0.1 ms</div>
+        <div style="font-size:12.5px;color:var(--ink-2);">Masks Aadhaar (Verhoeff), PAN, +91 Phone &amp; UPI locally before any cloud inference.</div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="architecture" class="section">
+      <div class="section-head">
+        <div class="kicker">Zero-Hallucination SecReason Architecture</div>
+        <h2>Deterministic Proof. Agentic Repair. Compiler Gate.</h2>
+        <p>Unlike noisy LLM wrappers that hallucinate line numbers, Sentinel-DPDP separates proof from repair using peer-reviewed SecReason verification.</p>
+      </div>
+      <div class="grid-3-land">
+        <div class="card">
+          <span class="tag tag-dark" style="width:fit-content;">01 · AST TAINT ENGINE</span>
+          <h3 style="font-size:16px;">Exact Runtime Flow Proof</h3>
+          <p style="font-size:13px;color:var(--ink-2);"><code>scan_pii_ast.py</code> tracks live runtime variables (<code>req.aadhaar</code>, <code>user.email</code>, <code>pan</code>) flowing into logs, outbound LLM APIs, SQL schemas without erasure TTL, and pre-checked consent UIs.</p>
+        </div>
+        <div class="card">
+          <span class="tag tag-dark" style="width:fit-content;">02 · SKILL.MD + GEMINI 3.8 FLASH</span>
+          <h3 style="font-size:16px;">Context-Matched Code Repair</h3>
+          <p style="font-size:13px;color:var(--ink-2);">Loads only the matched DPDP Act 2023 section on demand, wraps source inside <code>&lt;code_slice&gt;</code> anti-prompt-injection boundaries, and previews exact Python, TypeScript, or SQL fixes.</p>
+        </div>
+        <div class="card">
+          <span class="tag tag-dark" style="width:fit-content;">03 · VERIFY_PATCH.PY GATE</span>
+          <h3 style="font-size:16px;">No Unverified Code Ever Merges</h3>
+          <p style="font-size:13px;color:var(--ink-2);">Re-scans the patched tree, proves zero regressions, compiles syntax, logs audit proof to <strong>BigQuery</strong>, and opens a 1-click GitHub Fix PR + 7-language DPDP Notice.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cloud SaaS vs Bank VPC -->
+    <section id="deployments" class="section">
+      <div class="section-head">
+        <div class="kicker">Two Deployment Modes · Built for India</div>
+        <h2>1-Click GitHub App for Startups. Air-Gapped VPC for Banks.</h2>
+        <p>Startups install in 60 seconds like CodeRabbit. Regulated FinTechs &amp; Banks keep 100% of source code and PII inside their own AWS/GCP VPC.</p>
+      </div>
+      <div class="grid-2-land">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span class="kicker">Mode 1 · Cloud SaaS (90% of Startups)</span>
+            <span class="tag tag-ok">Live Now</span>
+          </div>
+          <h3 style="font-size:18px;">GitHub App &amp; PR Gate</h3>
+          <p style="font-size:13px;color:var(--ink-2);">Install on chosen repos → signed webhook triggers scan on every PR → posts inline fix + status check → Razorpay/UPI webhooks meter the 20-PR Free / Unlimited Pro limits automatically.</p>
+        </div>
+        <div class="card featured">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span class="kicker">Mode 2 · Regulated Banks &amp; FinTechs</span>
+            <span class="tag tag-dark">Zero Egress</span>
+          </div>
+          <h3 style="font-size:18px;">Private VPC Docker + RS256 License JWT</h3>
+          <p style="font-size:13px;color:var(--ink-2);">Customer deploys our Dockerized scanner + 0.1ms Gemma sidecar inside their own VPC. Authorized by a cryptographically signed RS256 License JWT with metadata-only heartbeat (zero source code leaves).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Indian Pricing -->
+    <section id="pricing" class="section">
+      <div class="section-head">
+        <div class="kicker">Indian Pricing · UPI / Razorpay Autopay</div>
+        <h2>₹1,999/month instead of ₹15 Lakh/year legacy audits.</h2>
+        <p>Start free on 1 repository. Upgrade instantly when your team scales or pitches enterprise banking clients.</p>
+      </div>
+      <div class="grid-4-land">
+        <div class="card">
+          <span class="kicker">Free Tier</span>
+          <div class="proof-val">₹0 <span style="font-size:13px;font-weight:500;color:var(--muted);">/mo</span></div>
+          <p style="font-size:12.5px;color:var(--ink-2);">1 Repo · 20 PR scans/month · AST Scanner + SecReason Gate + 7-Lang Notice.</p>
+          <button style="margin-top:auto;" onclick="enterWorkspace(true)">Start Free</button>
+        </div>
+        <div class="card featured">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span class="kicker">Startup Pro</span>
+            <span class="tag tag-dark">Popular</span>
+          </div>
+          <div class="proof-val">₹1,999 <span style="font-size:13px;font-weight:500;color:var(--muted);">/mo</span></div>
+          <p style="font-size:12.5px;color:var(--ink-2);">1 Repo · Unlimited PRs · Auto-Fix PRs · BigQuery Vendor Readiness Passport.</p>
+          <button class="primary" style="margin-top:auto;" onclick="enterWorkspace(false,'billing')">Choose Pro</button>
+        </div>
+        <div class="card">
+          <span class="kicker">Agency Growth</span>
+          <div class="proof-val">₹7,999 <span style="font-size:13px;font-weight:500;color:var(--muted);">/mo</span></div>
+          <p style="font-size:12.5px;color:var(--ink-2);">Up to 15 Client Repos · Multi-org GitHub App · White-label Compliance PDF.</p>
+          <button style="margin-top:auto;" onclick="enterWorkspace(false,'billing')">Choose Agency</button>
+        </div>
+        <div class="card">
+          <span class="kicker">Enterprise VPC</span>
+          <div class="proof-val">₹49,999 <span style="font-size:13px;font-weight:500;color:var(--muted);">/mo</span></div>
+          <p style="font-size:12.5px;color:var(--ink-2);">Unlimited Repos · Air-Gapped VPC Docker + Gemma Sidecar + RS256 License JWT.</p>
+          <button style="margin-top:auto;" onclick="enterWorkspace(false,'vpc')">Inspect VPC Mode</button>
+        </div>
+      </div>
+    </section>
+
+    <footer style="padding:28px 0 44px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--muted);">
+      <span><strong>Sentinel-DPDP</strong> · Built for Google DeepMind × Google Cloud Startup Buildathon India 2026</span>
+      <span>Roadmap: GitHub App → VS Code / Cursor / Antigravity IDE Extensions → Global GDPR / PDPA / HIPAA Packs</span>
+    </footer>
+  </div>
+</div>
+
+<!-- ==================== 2. PERSISTENT SAAS WORKSPACE ==================== -->
+<div id="appShell" class="hidden">
+  <!-- Left Sidebar -->
+  <aside class="sidebar">
+    <div class="side-brand">
+      <div class="land-brand">
+        <div class="brand-mark">S</div>
+        <div>
+          <div class="brand-name" style="line-height:1.1;">Sentinel-DPDP</div>
+          <div style="font-size:10.5px;color:var(--muted);font-family:'JetBrains Mono',monospace;">CONTROL PLANE v2.0</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="nav-list">
+      <button class="nav-item active" data-screen="inspector" onclick="switchScreen('inspector')">
+        <i data-lucide="shield-alert"></i> Code Inspector &amp; PR Gate
+      </button>
+      <button class="nav-item" data-screen="github" onclick="switchScreen('github')">
+        <i data-lucide="git-pull-request"></i> GitHub App &amp; Webhooks
+      </button>
+      <button class="nav-item" data-screen="vault" onclick="switchScreen('vault')">
+        <i data-lucide="languages"></i> DPDP Vault &amp; Notices
+      </button>
+      <button class="nav-item" data-screen="vpc" onclick="switchScreen('vpc')">
+        <i data-lucide="lock"></i> Enterprise VPC &amp; Gemma
+      </button>
+      <button class="nav-item" data-screen="billing" onclick="switchScreen('billing')">
+        <i data-lucide="credit-card"></i> Billing &amp; Quotas
+      </button>
+    </nav>
+
+    <!-- Live Sidebar Quota Meter -->
+    <div class="quota-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="kicker" id="sidePlanName">Free Tier</span>
+        <span class="mono" style="font-size:11px;font-weight:600;" id="sideQuotaText">0 / 20 PRs</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="sideQuotaBar" style="width:0%;"></div>
+      </div>
+      <div style="font-size:11.5px;color:var(--muted);" id="sideQuotaSub">1 repo · UPI/Razorpay metering</div>
+      <button class="primary sm" style="width:100%;" onclick="openUpgradeModal('pro')">
+        <i data-lucide="zap" style="width:13px;height:13px;"></i> Upgrade Plan
+      </button>
+    </div>
+
+    <!-- Account Footer -->
+    <div class="account-box">
+      <div id="sideAccountInfo" style="display:flex;align-items:center;gap:8px;min-width:0;">
+        <a class="btn sm" href="/auth/github/login" id="sideLoginBtn">
+          <i data-lucide="github" style="width:13px;height:13px;"></i> Sign in GitHub
+        </a>
+      </div>
+      <button class="ghost sm" title="Back to Landing Overview" onclick="showLanding()">Overview</button>
+    </div>
+  </aside>
+
+  <!-- Right Workspace -->
+  <div class="workspace">
+    <header class="ws-top">
+      <div>
+        <div style="font-size:16px;font-weight:700;letter-spacing:-0.02em;" id="wsTitle">Code Inspector &amp; PR Gate</div>
+        <div style="font-size:12px;color:var(--muted);" id="wsSub">Deterministic AST taint proof + Gemini 3.8 Flash repair + verify_patch.py gate</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="tag tag-ok" id="statusBadge"><span class="live-dot"></span> READY</span>
+        <span class="tag">SKILL.md · 7 DPDP Rules</span>
+        <button class="sm" onclick="window.print()">
+          <i data-lucide="printer" style="width:13px;height:13px;"></i> Export PDF
+        </button>
+      </div>
+    </header>
+
+    <main class="ws-body">
+      <!-- ==================== SCREEN 1: CODE INSPECTOR & PR GATE ==================== -->
+      <section id="screen-inspector" class="screen active">
+        <!-- Scanner Controls -->
+        <div class="panel no-print">
+          <div class="scan-bar">
+            <select id="repoPicker" class="hidden" style="min-width:220px;" onchange="if(this.value) document.getElementById('repoUrl').value=this.value">
+              <option value="">Select your GitHub repo…</option>
+            </select>
+            <input id="repoUrl" style="flex:1;min-width:240px;" placeholder="Paste any GitHub repo URL (e.g. https://github.com/tiangolo/full-stack-fastapi-template)" />
+            <button class="primary" id="btnScan" onclick="runScan()">
+              <i data-lucide="scan-search" style="width:15px;height:15px;"></i> Scan Repository
+            </button>
+          </div>
+          <div class="chip-row">
+            <span class="kicker" style="margin-right:4px;">Quick Test:</span>
+            <button class="chip" onclick="quickScan('')">PaisaFlow FinTech Demo</button>
+            <button class="chip" onclick="quickScan('https://github.com/tiangolo/full-stack-fastapi-template')">tiangolo/fastapi (30K★)</button>
+            <button class="chip" onclick="quickScan('https://github.com/OWASP/crAPI')">OWASP/crAPI (355 files)</button>
+            <span style="margin-left:auto;font-size:12px;color:var(--muted);" id="scanTargetLabel">Target: not scanned yet</span>
+          </div>
+        </div>
+
+        <!-- KPI Summary Row -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div>
+              <div class="kicker">DPDP Risk Score</div>
+              <div class="kpi-val" id="kpiRisk">—</div>
+              <div style="font-size:11.5px;color:var(--muted);" id="kpiRiskSub">Run a scan to compute</div>
+            </div>
+            <svg width="58" height="58" viewBox="0 0 64 64">
+              <circle cx="32" cy="32" r="26" fill="none" stroke="#E4E4E7" stroke-width="6" />
+              <circle id="riskRing" cx="32" cy="32" r="26" fill="none" stroke="#09090B" stroke-width="6"
+                stroke-dasharray="163.36" stroke-dashoffset="163.36" stroke-linecap="round"
+                transform="rotate(-90 32 32)" style="transition:stroke-dashoffset .5s ease, stroke .3s ease;" />
+            </svg>
+          </div>
+          <div class="kpi-card">
+            <div>
+              <div class="kicker">Files Audited</div>
+              <div class="kpi-val" id="kpiFiles">0</div>
+              <div style="font-size:11.5px;color:var(--muted);" id="kpiFindings">0 findings</div>
+            </div>
+            <i data-lucide="file-code-2" style="width:24px;height:24px;color:var(--muted);"></i>
+          </div>
+          <div class="kpi-card">
+            <div>
+              <div class="kicker">Severity Breakdown</div>
+              <div style="display:flex;gap:6px;margin-top:8px;">
+                <span class="tag tag-crit" id="kpiCrit">0 CRIT</span>
+                <span class="tag tag-high" id="kpiHigh">0 HIGH</span>
+                <span class="tag" id="kpiMed">0 MED</span>
+              </div>
+              <div style="font-size:11.5px;color:var(--muted);margin-top:6px;">Deterministic AST proof</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div>
+              <div class="kicker">Unit Cost / BigQuery</div>
+              <div class="kpi-val">₹0.28</div>
+              <div style="font-size:11.5px;color:var(--muted);" id="kpiBqStatus">BigQuery: awaiting scan</div>
+            </div>
+            <i data-lucide="database" style="width:24px;height:24px;color:var(--muted);"></i>
+          </div>
+        </div>
+
+        <!-- Main Inspector + Auditor Copilot Split -->
+        <div class="inspector-grid">
+          <div style="display:flex;flex-direction:column;gap:18px;min-width:0;">
+            <!-- Findings Table -->
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <div class="kicker">Step 1 · Detected Personal-Data &amp; AppSec Leaks</div>
+                  <div style="font-size:13px;color:var(--muted);">Click any row to inspect the exact vulnerable line and preview the pre-change AI fix.</div>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <button class="primary" id="btnVerify" disabled onclick="runVerifyGate()">
+                    <i data-lucide="check-circle-2" style="width:14px;height:14px;"></i> Run Verification Gate
+                  </button>
+                  <button class="ok" id="btnFixPR" disabled onclick="openFixPR()">
+                    <i data-lucide="git-pull-request" style="width:14px;height:14px;"></i> Open Verified PR
+                  </button>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>File &amp; Line</th><th>Rule</th><th>DPDP Act Section</th><th>PII Flow</th><th>Severity</th></tr>
+                  </thead>
+                  <tbody id="findingsBody">
+                    <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:26px;">Click <strong>Scan Repository</strong> or choose a quick-test repo above.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Side-by-Side Exact Line Inspector & Pre-Change AI Suggested Fix -->
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <div class="kicker">Step 2 · Exact Source Line &amp; Pre-Change AI Suggested Fix</div>
+                  <div style="font-size:13px;color:var(--muted);" id="selectedMeta">Select a finding to inspect surrounding lines and DPDP legal obligations.</div>
+                </div>
+                <span class="tag" id="penaltyTag">DPDP Act 2023</span>
+              </div>
+              <div class="code-split">
+                <div class="code-card">
+                  <div class="code-head">
+                    <span id="srcFileLabel">DETECTED LEAK (EXACT LINE)</span>
+                    <span class="tag tag-crit" id="srcLineTag">LINE —</span>
+                  </div>
+                  <div class="code-body" id="srcCodeBody">
+                    <div style="padding:18px;color:var(--muted);">Exact source context with highlighted leak line will render here.</div>
+                  </div>
+                </div>
+                <div class="code-card">
+                  <div class="code-head">
+                    <span>PRE-CHANGE SUGGESTED FIX (GEMINI 3.8 FLASH)</span>
+                    <span class="tag tag-ok" id="fixModeTag">READY</span>
+                  </div>
+                  <div class="code-body" id="fixCodeBody">
+                    <div style="padding:18px;color:var(--muted);">Codebase-matched Python / TypeScript / SQL remediation preview loads automatically.</div>
+                  </div>
+                  <div class="guideline-box" id="guidelineBox">
+                    <strong>DPDP Compliance Guideline:</strong> Progressive disclosure loads the exact Act section &amp; remediation pattern on demand.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3: SecReason Verification Gate Output -->
+            <div class="panel hidden" id="verifyPanel">
+              <div class="panel-head">
+                <div>
+                  <div class="kicker">Step 3 · SecReason Verification Gate (verify_patch.py)</div>
+                  <div style="font-size:13px;color:var(--muted);" id="verifySummary">Zero-hallucination compiler &amp; AST re-scan results.</div>
+                </div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;" id="verifyPills"></div>
+              </div>
+              <pre class="diff-pre mono" id="diffPre"></pre>
+              <div id="prResultBox" class="hidden" style="padding:12px 14px;border-radius:8px;background:var(--green-bg);border:1px solid #BBF7D0;font-size:13px;color:var(--green);"></div>
+            </div>
+          </div>
+
+          <!-- Right Column: Ask the Auditor Copilot -->
+          <div class="panel" style="position:sticky;top:76px;">
+            <div class="panel-head">
+              <div>
+                <div class="kicker">Gemini Compliance Copilot</div>
+                <div style="font-size:14px;font-weight:700;">Ask the DPDP Auditor</div>
+              </div>
+              <button class="sm" id="micBtn" onclick="toggleVoice()" title="Voice Input">
+                <i data-lucide="mic" style="width:13px;height:13px;"></i> Voice
+              </button>
+            </div>
+            <div class="chat-log" id="chatLog">
+              <div class="msg a">Hi! I have full context of your active AST scan and the India DPDP Act 2023 rules. Ask why a leak matters, its ₹250 Cr penalty exposure, or how to fix it in your stack.</div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <input id="askInput" style="flex:1;" placeholder="Ask about Sec 8(5), penalties, or fixes…" onkeydown="if(event.key==='Enter') askAuditor()" />
+              <button class="primary sm" onclick="askAuditor()">Ask</button>
+            </div>
+            <div class="chip-row">
+              <button class="chip" onclick="quickAsk('Which finding has the highest DPDP penalty risk?')">Highest penalty?</button>
+              <button class="chip" onclick="quickAsk('How does verify_patch.py stop LLM hallucinations?')">Why zero hallucinations?</button>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <!-- Center: Table + Exact Code Context + Suggested Fix Preview -->
-      <section class="panel">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-          <div>
-            <div class="kicker">Detected Leaks &amp; AppSec Findings</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px">Click any row to inspect exact line numbers and codebase-matched suggested code before modifying anything.</div>
+      <!-- ==================== SCREEN 2: GITHUB APP & WEBHOOKS ==================== -->
+      <section id="screen-github" class="screen">
+        <div class="grid-2-land">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <div class="kicker">CodeRabbit-Style Pre-Merge PR Gate</div>
+                <h3 style="font-size:17px;">1-Click GitHub App &amp; Webhook</h3>
+              </div>
+              <span class="tag tag-ok">POST /api/webhook/github</span>
+            </div>
+            <p style="font-size:13px;color:var(--ink-2);">
+              Startups authorize Sentinel-DPDP on selected repositories via GitHub App installation. Every Pull Request sends a signed webhook (`X-Hub-Signature-256`) to your Cloud Run control plane, checks tenant plan quotas, runs AST + Gemini + `verify_patch.py`, and posts an inline review.
+            </p>
+            <div>
+              <div class="kicker" style="margin-bottom:6px;">Live Webhook Endpoint</div>
+              <div style="display:flex;gap:8px;">
+                <input id="webhookUrlInput" readonly style="flex:1;font-family:'JetBrains Mono',monospace;font-size:12px;" />
+                <button class="sm" onclick="copyText(document.getElementById('webhookUrlInput').value,'Webhook URL copied')">Copy</button>
+              </div>
+            </div>
+            <div>
+              <div class="kicker" style="margin-bottom:6px;">Drop-In GitHub Action (.github/workflows/sentinel-dpdp.yml)</div>
+              <pre class="diff-pre mono" id="yamlSnippet" style="max-height:220px;">name: Sentinel-DPDP Pre-Merge Gate
+on: [pull_request]
+jobs:
+  dpdp-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Deterministic AST Taint &amp; SecReason Gate
+        run: python .agent/skills/dpdp-compliance-auditor/scripts/scan_pii_ast.py . --fail-on critical</pre>
+              <button class="sm" style="margin-top:8px;" onclick="copyText(document.getElementById('yamlSnippet').innerText,'GitHub Action YAML copied')">
+                <i data-lucide="copy" style="width:13px;height:13px;"></i> Copy Workflow YAML
+              </button>
+            </div>
           </div>
-          <div style="display:flex;gap:8px">
-            <button onclick="simulateWebhook()">Simulate PR Webhook</button>
-            <button id="patchBtn" class="primary" disabled onclick="runPatch()">Apply &amp; Verify All Fixes</button>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <div class="kicker">Live Interactive Webhook Test</div>
+                <h3 style="font-size:17px;">Simulate GitHub Pull Request Check</h3>
+              </div>
+              <span class="tag">sentinel-dpdp/verify</span>
+            </div>
+            <p style="font-size:13px;color:var(--ink-2);">
+              Trigger a real end-to-end <code>POST /api/webhook/github</code> call right now. Watch Sentinel-DPDP scan, generate fixes, run the verification gate, and render the exact GitHub PR comment.
+            </p>
+            <div style="display:flex;gap:8px;">
+              <input id="simPrNum" value="42" style="width:90px;" />
+              <button class="primary" id="btnSimWebhook" onclick="simulateWebhook()">
+                <i data-lucide="play" style="width:14px;height:14px;"></i> Simulate Incoming PR #42 Webhook
+              </button>
+            </div>
+            <div id="webhookResult" class="card" style="background:var(--surface);min-height:170px;">
+              <div class="kicker">GitHub PR Status Check Preview</div>
+              <div style="font-size:13px;color:var(--muted);">Click Simulate to run the live webhook pipeline on <code>demo_vulnerable_app</code>.</div>
+            </div>
           </div>
         </div>
 
-        <div style="overflow-x:auto">
-          <table>
-            <thead><tr><th>File : Line</th><th>Entity</th><th>Sink</th><th>DPDP Rule</th><th>Severity</th></tr></thead>
-            <tbody id="findingsBody"><tr><td colspan="5" style="color:var(--muted)">No scan yet. Click <b>Run Scan</b>.</td></tr></tbody>
-          </table>
-        </div>
-
-        <div id="guideBox" class="guide-box">
-          <b>Guideline &amp; Legal Impact:</b> Select a finding to view exact DPDP Act obligations, CWE classification, and why this pattern is unsafe before production.
-        </div>
-
-        <!-- Side-by-Side: Exact Vulnerable File Lines vs. Suggested Fix Preview -->
-        <div class="code-split">
-          <div class="code-card">
-            <div class="code-head">
-              <span id="srcFileHead">SOURCE CODE (EXACT LINE)</span>
-              <span class="tag tag-crit">BEFORE</span>
+        <!-- Future Roadmap Strip -->
+        <div class="panel">
+          <div class="kicker">Product Expansion Roadmap · Global Compliance OS</div>
+          <div class="grid-3-land">
+            <div class="card" style="background:var(--surface);">
+              <span class="tag tag-ok" style="width:fit-content;">PHASE 1 · LIVE NOW</span>
+              <strong>Web Control Plane + GitHub App</strong>
+              <span style="font-size:12.5px;color:var(--ink-2);">Real GitHub OAuth, PR pre-merge gate, verified fix PRs, UPI billing, and BigQuery audit trail.</span>
             </div>
-            <div id="codeContextBox" class="code-body">
-              <div class="code-line" style="color:var(--muted);padding:12px">Exact source lines with line numbers will appear here.</div>
+            <div class="card" style="background:var(--surface);">
+              <span class="tag tag-dark" style="width:fit-content;">PHASE 2 · NEXT</span>
+              <strong>IDE Extensions (VS Code · Cursor · Antigravity)</strong>
+              <span style="font-size:12.5px;color:var(--ink-2);">Real-time inline red squiggles on PII leaks *as the AI assistant types*, powered by the exact same `SKILL.md` engine.</span>
             </div>
-          </div>
-
-          <div class="code-card">
-            <div class="code-head">
-              <span id="sugHead">SUGGESTED FIX (PREVIEW ONLY)</span>
-              <button id="sugBtn" style="padding:3px 9px;font-size:11px" disabled onclick="previewSuggestion()">Load AI Suggestion</button>
-            </div>
-            <div id="suggestBox" class="code-body" style="padding:12px;white-space:pre-wrap;color:var(--ink-2)">
-              Click any finding to preview the codebase-matched suggested fix and guidelines before modifying your repository.
+            <div class="card" style="background:var(--surface);">
+              <span class="tag" style="width:fit-content;">PHASE 3 · GLOBAL SCALE</span>
+              <strong>Plug-in Rule Packs (GDPR · PDPA · HIPAA · RBI)</strong>
+              <span style="font-size:12.5px;color:var(--ink-2);">Drop in jurisdiction JSON rule packs without rewriting the core AST or SecReason verification loop.</span>
             </div>
           </div>
         </div>
-
-        <div class="kicker">Verified Unified Diff (verify_patch.py)</div>
-        <pre id="diffBox" class="diff mono">Run "Apply &amp; Verify All Fixes" to generate a sandbox-verified unified diff...</pre>
       </section>
 
-      <!-- Right Rail: Verification Gate + PR + Auditor -->
-      <section class="panel">
-        <div class="kicker">Verification Gate (SecReason)</div>
-        <div id="chkResolved" class="check-item">○ Findings resolved</div>
-        <div id="chkNoNew" class="check-item">○ Zero new leaks introduced</div>
-        <div id="chkCompile" class="check-item">○ Code compiles cleanly</div>
-        <input id="ghRepo" placeholder="GitHub repo (owner/name) optional" />
-        <input id="ghToken" type="password" placeholder="GitHub PAT (private repos / live PR)" />
-        <button id="prBtn" class="ok" disabled onclick="openPR()">Open Verified Pull Request</button>
-        <div id="prOut" class="log-box mono">Verify fixes to unlock PR creation.</div>
+      <!-- ==================== SCREEN 3: DPDP VAULT, 7-LANG NOTICE & BIGQUERY ==================== -->
+      <section id="screen-vault" class="screen">
+        <!-- 7-Language DPDP Sec 5 Notice Generator -->
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="kicker">India-First Differentiator · DPDP Act Sec 5 &amp; Rule 3 (Schedule VIII)</div>
+              <h3 style="font-size:17px;">Multilingual Consent Notice &amp; Compliant JSX Generator</h3>
+            </div>
+            <span class="tag tag-dark">Auto-synced with AST Scan</span>
+          </div>
+          <p style="font-size:13px;color:var(--ink-2);">
+            DPDP Rules 2025 mandate itemized consent notices in English or any Eighth Schedule Indian language—and forbid pre-checked boxes (`Sec 6(1)`). Generate compliant notices directly from the PII entities detected in your codebase.
+          </p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <input id="noticeCompany" value="PaisaFlow FinTech Pvt. Ltd." style="min-width:250px;" placeholder="Your Company Legal Name" />
+            <div class="lang-row" id="langPills">
+              <button class="lang-pill active" data-lang="en" onclick="generateNotice('en')">English</button>
+              <button class="lang-pill" data-lang="hi" onclick="generateNotice('hi')">हिन्दी</button>
+              <button class="lang-pill" data-lang="mr" onclick="generateNotice('mr')">मराठी</button>
+              <button class="lang-pill" data-lang="ta" onclick="generateNotice('ta')">தமிழ்</button>
+              <button class="lang-pill" data-lang="te" onclick="generateNotice('te')">తెలుగు</button>
+              <button class="lang-pill" data-lang="gu" onclick="generateNotice('gu')">ગુજરાતી</button>
+              <button class="lang-pill" data-lang="kn" onclick="generateNotice('kn')">ಕನ್ನಡ</button>
+            </div>
+          </div>
+          <div class="code-split">
+            <div class="card" style="background:var(--surface);">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="kicker" id="noticeLangLabel">English · Sec 5 Notice</span>
+                <span class="tag" id="noticePiiTag">AADHAAR, PAN, PHONE, EMAIL</span>
+              </div>
+              <p id="noticeText" style="font-size:13.5px;line-height:1.65;color:var(--ink);"></p>
+              <button class="sm" style="width:fit-content;" onclick="copyText(document.getElementById('noticeText').innerText,'Notice text copied')">Copy Legal Notice</button>
+            </div>
+            <div class="code-card">
+              <div class="code-head">
+                <span>DPDP SEC 6(1) COMPLIANT REACT JSX (NO DEFAULTCHECKED)</span>
+                <button class="sm" onclick="copyText(document.getElementById('noticeJsx').innerText,'JSX snippet copied')">Copy JSX</button>
+              </div>
+              <pre class="diff-pre mono" id="noticeJsx" style="border-radius:0;margin:0;flex:1;"></pre>
+            </div>
+          </div>
+        </div>
 
-        <div class="kicker" style="margin-top:6px">Ask the Auditor (Gemini Live)</div>
-        <div id="askOut" class="log-box">Ask about any finding, CWE, or DPDP penalty...</div>
-        <div style="display:flex;gap:6px">
-          <input id="askIn" style="flex:1" placeholder="Why is this unsafe before prod?" />
-          <button onclick="askAuditor()">Ask</button>
-          <button onclick="voiceAsk()" title="Voice input">Mic</button>
+        <!-- Benchmark & Live BigQuery Audit Trail -->
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="kicker">BigQuery Vendor Readiness Passport · Live Telemetry</div>
+              <h3 style="font-size:17px;">Continuous Audit Proof for Enterprise &amp; Bank Procurement</h3>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="sm" onclick="loadVaultData()">Refresh BigQuery</button>
+              <button class="primary sm" onclick="window.print()">Print Readiness Passport PDF</button>
+            </div>
+          </div>
+          <div class="kpi-grid" id="benchCards"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Timestamp (UTC)</th><th>Repository</th><th>Files</th><th>Risk</th><th>Critical</th><th>DPDP Sections</th></tr>
+              </thead>
+              <tbody id="telemetryBody">
+                <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">Loading BigQuery telemetry…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SCREEN 4: ENTERPRISE VPC & GEMMA SIDECAR ==================== -->
+      <section id="screen-vpc" class="screen">
+        <div class="grid-2-land">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <div class="kicker">In-VPC Privacy Sidecar · Zero Data Egress</div>
+                <h3 style="font-size:17px;">Local Gemma PII Redaction Tester (0.1ms)</h3>
+              </div>
+              <span class="tag tag-ok" id="redactLatency">READY</span>
+            </div>
+            <p style="font-size:13px;color:var(--ink-2);">
+              Indian banks and regulated FinTechs run this sidecar inside their private VPC. Aadhaar (Verhoeff), PAN, +91 phone, UPI VPA, and emails are stripped locally before any prompt touches a cloud LLM.
+            </p>
+            <textarea id="redactInput" rows="4">Customer Rahul (Aadhaar 2345 6789 0123, PAN ABCPE1234F, Phone +91 9876543210, UPI rahul@okhdfcbank, Email rahul@paisaflow.in) requested KYC review.</textarea>
+            <div style="display:flex;gap:8px;">
+              <button class="primary" onclick="runRedact()">
+                <i data-lucide="shield-check" style="width:14px;height:14px;"></i> Redact PII in VPC
+              </button>
+              <span class="tag" id="redactCountTag">0 entities masked</span>
+            </div>
+            <pre class="diff-pre mono" id="redactOutput">Click "Redact PII in VPC" to test live masking latency.</pre>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <div class="kicker">Zero-Piracy Enterprise Licensing</div>
+                <h3 style="font-size:17px;">Air-Gapped Docker Runner &amp; RS256 License JWT</h3>
+              </div>
+              <span class="tag tag-dark">MODE 2 · BANKS</span>
+            </div>
+            <p style="font-size:13px;color:var(--ink-2);">
+              When a bank buys Enterprise VPC, our control plane issues a cryptographically signed <strong>RS256 License JWT</strong>. Their private container validates the signature offline and pings a metadata-only heartbeat (`org_id`, `scan_count` — zero code, zero PII).
+            </p>
+            <div>
+              <div class="kicker" style="margin-bottom:6px;">Your Active Signed RS256 License Key</div>
+              <textarea id="jwtBox" readonly rows="3" class="mono" style="width:100%;font-size:11.5px;background:var(--surface);"></textarea>
+            </div>
+            <div>
+              <div class="kicker" style="margin-bottom:6px;">Decoded JWT Claims (Tamper-Proof)</div>
+              <pre class="diff-pre mono" id="jwtClaimsBox" style="max-height:130px;"></pre>
+            </div>
+            <div>
+              <div class="kicker" style="margin-bottom:6px;">Private VPC Docker Launch Command</div>
+              <pre class="diff-pre mono" id="dockerCmd" style="max-height:110px;">docker run -d --name sentinel-dpdp-vpc \
+  -e SENTINEL_LICENSE_JWT="$SENTINEL_JWT" \
+  -e VPC_GEMMA_SIDECAR="http://localhost:8090/redact" \
+  -p 8080:8080 gcr.io/sentinel-dpdp/enterprise:latest</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SCREEN 5: BILLING & QUOTAS ==================== -->
+      <section id="screen-billing" class="screen">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="kicker">Multi-Tenant Metering &amp; Razorpay / UPI Subscriptions</div>
+              <h3 style="font-size:18px;" id="billHeader">Current Workspace Plan</h3>
+            </div>
+            <span class="tag tag-ok" id="billReceiptTag">No active paid receipt</span>
+          </div>
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div><div class="kicker">Active Plan</div><div class="kpi-val" style="font-size:22px;" id="billPlan">—</div></div>
+            </div>
+            <div class="kpi-card">
+              <div><div class="kicker">PR Scans Used</div><div class="kpi-val" style="font-size:22px;" id="billScans">0 / 20</div></div>
+            </div>
+            <div class="kpi-card">
+              <div><div class="kicker">Max Protected Repos</div><div class="kpi-val" style="font-size:22px;" id="billRepos">1</div></div>
+            </div>
+            <div class="kpi-card">
+              <div><div class="kicker">Verified Fix PRs Opened</div><div class="kpi-val" style="font-size:22px;" id="billPRs">0</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-4-land">
+          <div class="card">
+            <span class="kicker">Free Tier</span>
+            <div class="proof-val">₹0 <span style="font-size:13px;color:var(--muted);">/mo</span></div>
+            <div style="font-size:12.5px;color:var(--ink-2);">1 Repo · 20 PRs/mo · Full AST Taint + SecReason Gate + 7-Language Notice.</div>
+            <button style="margin-top:auto;" onclick="openUpgradeModal('free')">Switch to Free</button>
+          </div>
+          <div class="card featured">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span class="kicker">Startup Pro</span>
+              <span class="tag tag-dark">96% Margin</span>
+            </div>
+            <div class="proof-val">₹1,999 <span style="font-size:13px;color:var(--muted);">/mo</span></div>
+            <div style="font-size:12.5px;color:var(--ink-2);">1 Repo · 10,000 PRs/mo · Verified Auto-Fix PRs · BigQuery Audit Passport.</div>
+            <button class="primary" style="margin-top:auto;" onclick="openUpgradeModal('pro')">Upgrade via UPI</button>
+          </div>
+          <div class="card">
+            <span class="kicker">Agency Growth</span>
+            <div class="proof-val">₹7,999 <span style="font-size:13px;color:var(--muted);">/mo</span></div>
+            <div style="font-size:12.5px;color:var(--ink-2);">15 Client Repos · 50,000 PRs/mo · Multi-org GitHub App &amp; Client PDFs.</div>
+            <button style="margin-top:auto;" onclick="openUpgradeModal('agency')">Upgrade via UPI</button>
+          </div>
+          <div class="card">
+            <span class="kicker">Enterprise VPC</span>
+            <div class="proof-val">₹49,999 <span style="font-size:13px;color:var(--muted);">/mo</span></div>
+            <div style="font-size:12.5px;color:var(--ink-2);">Unlimited Repos · Private Bank VPC Docker + 0.1ms Gemma Sidecar + RS256 JWT.</div>
+            <button style="margin-top:auto;" onclick="openUpgradeModal('enterprise')">Activate Enterprise JWT</button>
+          </div>
         </div>
       </section>
     </main>
   </div>
+</div>
 
-  <!-- TAB 2: ONBOARDING & GITHUB APP -->
-  <div id="view-onboard" class="view">
-    <div class="grid-3">
-      <div class="panel">
-        <div class="kicker">Step 1 · Real GitHub OAuth</div>
-        <p style="font-size:13px;color:var(--ink-2)">Connect your GitHub account via OAuth to load your public &amp; private repositories and open verified auto-fix Pull Requests with 1 click.</p>
-        <a href="/auth/github/login" style="text-decoration:none"><button class="primary" style="width:100%">Continue with GitHub OAuth</button></a>
-        <div id="ghAuthState" class="mono" style="font-size:12px;color:var(--green)">Ready to sign in</div>
+<!-- ==================== UPI / RAZORPAY UPGRADE MODAL ==================== -->
+<div id="upgradeModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeUpgradeModal()">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div class="kicker">Razorpay · UPI Autopay Checkout</div>
+        <h3 style="font-size:18px;margin-top:2px;" id="modalPlanTitle">Upgrade to Startup Pro</h3>
       </div>
-      <div class="panel" style="border-color:var(--ink)">
-        <div class="kicker">Step 2 · Startup Pro</div>
-        <div style="font-size:32px;font-weight:800;letter-spacing:-0.03em">₹1,999<span style="font-size:13px;font-weight:500;color:var(--muted)"> /mo per repo</span></div>
-        <p style="font-size:13px;color:var(--ink-2)">Unlimited PR gates, Gemini verified auto-fix diffs, BigQuery telemetry, and Vendor Readiness PDFs. (Free: 1 repo · Agency: ₹7,999/mo.)</p>
-        <button class="ok" onclick="document.getElementById('planState').textContent='Startup Pro Active (UPI Autopay)'">Activate Startup Pro</button>
-        <div id="planState" class="mono" style="font-size:12px;color:var(--ink)">Free Tier active</div>
-      </div>
-      <div class="panel">
-        <div class="kicker">Step 3 · Live Webhook URL</div>
-        <p style="font-size:13px;color:var(--ink-2)">Add to GitHub Repo → Settings → Webhooks (<code>application/json</code>, Pull requests):</p>
-        <input id="webhookUrlBox" class="mono" readonly style="font-size:12px" />
-        <button onclick="navigator.clipboard?.writeText(document.getElementById('webhookUrlBox').value); document.getElementById('hookState').textContent='Copied to clipboard'">Copy Webhook URL</button>
-        <div id="hookState" class="mono" style="font-size:12px;color:var(--green)">Live endpoint ready</div>
-      </div>
+      <button class="ghost sm" onclick="closeUpgradeModal()">✕</button>
+    </div>
+    <div id="modalQuotaAlert" class="hidden" style="padding:10px 12px;border-radius:8px;background:var(--amber-bg);border:1px solid #FDE68A;font-size:12.5px;color:var(--amber);"></div>
+    <div style="padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:13px;color:var(--ink-2);" id="modalPlanDesc">10,000 PR scans/mo · Instant quota unlock</span>
+      <strong class="mono" style="font-size:16px;" id="modalPlanPrice">₹1,999/mo</strong>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <label class="kicker">Payment Method</label>
+      <select id="payMethod">
+        <option value="upi">UPI Autopay (GPay / PhonePe / Paytm)</option>
+        <option value="razorpay_card">Corporate Card / NetBanking (Razorpay)</option>
+        <option value="invoice">Enterprise PO / Bank Transfer (NEFT/RTGS)</option>
+      </select>
+      <label class="kicker" style="margin-top:4px;">UPI ID / Billing Handle</label>
+      <input id="upiInput" value="founder@okhdfcbank" placeholder="yourname@okhdfcbank" />
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px;">
+      <button onclick="closeUpgradeModal()">Cancel</button>
+      <button class="primary" id="confirmUpgradeBtn" onclick="confirmUpgrade()">Pay &amp; Activate Instantly</button>
     </div>
   </div>
+</div>
 
-  <!-- TAB 3: BENCHMARKS & BIGQUERY -->
-  <div id="view-auditor" class="view">
-    <div class="grid-3">
-      <div class="panel">
-        <div class="kicker">SecReason Accuracy Benchmarks</div>
-        <div id="benchOut" class="log-box mono">Loading...</div>
-        <button onclick="loadBench()">Refresh</button>
-      </div>
-      <div class="panel">
-        <div class="kicker">BigQuery Compliance Telemetry</div>
-        <div id="bqOut" class="log-box mono">Loading...</div>
-        <button onclick="loadTelemetry()">Refresh</button>
-      </div>
-      <div class="panel">
-        <div class="kicker">Vendor Readiness Evidence</div>
-        <p style="font-size:13px;color:var(--ink-2)">Export timestamped DPDP Sec 8(5) audit proof for enterprise and banking procurement teams.</p>
-        <button class="primary" onclick="window.print()">Print / Export PDF</button>
-      </div>
-    </div>
-  </div>
+<!-- Toast Container -->
+<div id="toast" class="toast hidden"></div>
 
-  <!-- TAB 4: IN-VPC GEMMA SIDECAR -->
-  <div id="view-sidecar" class="view">
-    <div class="grid-3">
-      <div class="panel">
-        <div class="kicker">In-VPC Gemma Redaction Sidecar (&lt;15ms)</div>
-        <p style="font-size:13px;color:var(--ink-2)">Strips raw Aadhaar, PAN, phone, email, and UPI IDs inside the customer VPC before any payload touches an external LLM.</p>
-        <textarea id="redactIn" rows="3">Customer Aadhaar 2345 6789 0123 PAN ABCPE1234F phone +919876543210 UPI user@okicici</textarea>
-        <button class="primary" onclick="runRedact()">Test Redaction</button>
-        <div id="redactOut" class="log-box mono">Redacted output appears here...</div>
-      </div>
-    </div>
-  </div>
+<script>
+const STATE = {
+  scanId: null,
+  report: null,
+  selectedIdx: 0,
+  auth: { authenticated: false, login: null, avatar_url: null, oauth_configured: false },
+  tenant: null,
+  plans: {},
+  modalPlanId: 'pro',
+  activeLang: 'en',
+};
 
-  <footer class="footer">
-    <span>Sentinel-DPDP · Neuro-Symbolic Pre-Merge Security &amp; India DPDP Act 2023 Compliance</span>
-    <span id="engineInfo" class="mono">checking backend...</span>
-  </footer>
+const SCREEN_META = {
+  inspector: ['Code Inspector & PR Gate', 'Deterministic AST taint proof + Gemini 3.8 Flash repair + verify_patch.py gate'],
+  github: ['GitHub App & Webhooks', 'CodeRabbit-style automated PR review checks, YAML workflow & webhook simulator'],
+  vault: ['DPDP Vault & 7-Language Notices', 'Schedule VIII multilingual Sec 5 notices + live BigQuery Vendor Readiness Passport'],
+  vpc: ['Enterprise VPC & Gemma Sidecar', '0.1ms local PII redaction + zero-egress Docker runner + RS256 License JWT'],
+  billing: ['Billing & Quotas', 'Multi-tenant plan metering, UPI/Razorpay instant upgrade & usage ledger'],
+};
 
-  <script>
-    let currentScanId = null, currentFindings = [], selectedIdx = 0;
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 
-    function showTab(name, el) {
-      document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
-      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-      document.getElementById("view-" + name).classList.add("active");
-      el.classList.add("active");
-      if (name === "auditor") { loadBench(); loadTelemetry(); }
-    }
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => el.classList.add('hidden'), 3200);
+}
 
-    async function init() {
-      const wb = document.getElementById("webhookUrlBox");
-      if (wb) wb.value = window.location.origin + "/api/webhook/github";
-      const [r, me] = await Promise.all([
-        fetch("/api/health").then(x => x.json()),
-        fetch("/api/auth/me").then(x => x.json()),
-      ]);
-      document.getElementById("engineInfo").textContent =
-        `Gemini=${r.gemini_configured ? "LIVE" : "FALLBACK"} · GitHub OAuth=${r.github_oauth_configured ? "LIVE" : "SETUP"} · Project=${r.gcp_project || "local"}`;
-      if (me.authenticated) {
-        document.getElementById("authArea").innerHTML =
-          `<div style="display:flex;align-items:center;gap:8px">` +
-          (me.avatar_url ? `<img src="${esc(me.avatar_url)}" width="26" height="26" style="border-radius:50%;border:1px solid var(--border)" />` : "") +
-          `<span class="mono" style="font-size:12px;font-weight:600">@${esc(me.login)}</span>` +
-          `<button style="padding:5px 10px;font-size:12px" onclick="logoutGitHub()">Logout</button></div>`;
-        document.getElementById("ghAuthState").textContent = `Signed in as @${me.login} (OAuth active)`;
-        loadUserRepos();
-      }
-    }
-    init();
+function copyText(text, msg) {
+  navigator.clipboard?.writeText(text);
+  showToast(msg || 'Copied to clipboard');
+}
 
-    async function loadUserRepos() {
-      const res = await fetch("/api/github/repos");
-      if (!res.ok) return;
-      const repos = await res.json();
-      const sel = document.getElementById("repoPicker");
-      sel.style.display = "block";
-      sel.innerHTML = `<option value="">My GitHub Repos (${repos.length})...</option>` +
-        repos.map(r => `<option value="${esc(r.html_url)}|${esc(r.full_name)}">${esc(r.full_name)}${r.private ? " (private)" : ""}</option>`).join("");
-    }
+function setStatus(label, ok = true) {
+  const b = document.getElementById('statusBadge');
+  b.className = ok ? 'tag tag-ok' : 'tag tag-high';
+  b.innerHTML = `<span class="live-dot"></span> ${esc(label)}`;
+}
 
-    function pickRepo(val) {
-      if (!val) return;
-      const [url, fullName] = val.split("|");
-      document.getElementById("repoUrl").value = url;
-      document.getElementById("ghRepo").value = fullName;
-    }
+function refreshIcons() {
+  if (window.lucide) window.lucide.createIcons();
+}
 
-    async function logoutGitHub() {
-      await fetch("/api/auth/logout", { method: "POST" });
-      window.location.reload();
-    }
+function enterWorkspace(autoScan = false, screen = 'inspector') {
+  document.getElementById('landingView').classList.add('hidden');
+  document.getElementById('appShell').classList.remove('hidden');
+  switchScreen(screen);
+  refreshIcons();
+  if (autoScan && !STATE.scanId) runScan();
+}
 
-    async function runScan() {
-      const btn = document.getElementById("scanBtn");
-      btn.disabled = true;
-      document.getElementById("statusBadge").textContent = "SCANNING...";
-      const repo_url = document.getElementById("repoUrl").value.trim() || null;
-      const github_token = document.getElementById("ghToken").value.trim() || null;
-      try {
-        const res = await fetch("/api/scan", {
-          method: "POST", headers: {"Content-Type":"application/json"},
-          body: JSON.stringify({ target: "demo_vulnerable_app", repo_url, github_token })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || "Scan failed");
-        currentScanId = data.scan_id;
-        currentFindings = data.report.findings;
-        renderReport(data.report);
-        document.getElementById("patchBtn").disabled = currentFindings.length === 0;
-        document.getElementById("sugBtn").disabled = currentFindings.length === 0;
-        document.getElementById("statusBadge").textContent = `SCANNED · ${data.telemetry.telemetry_status}`;
-      } catch (e) {
-        alert(e.message);
-        document.getElementById("statusBadge").textContent = "ERROR";
-      } finally { btn.disabled = false; }
-    }
+function showLanding() {
+  document.getElementById('appShell').classList.add('hidden');
+  document.getElementById('landingView').classList.remove('hidden');
+  refreshIcons();
+}
 
-    function renderReport(rep) {
-      const s = rep.summary;
-      const rn = document.getElementById("riskNum");
-      rn.innerHTML = `${s.risk_score}<span style="font-size:16px;font-weight:500">/100</span>`;
-      rn.style.color = s.risk_score >= 60 ? "var(--red)" : s.risk_score > 0 ? "var(--amber)" : "var(--green)";
-      document.getElementById("riskLabel").textContent =
-        s.risk_score >= 60 ? "Critical Pre-Merge Risk" : s.risk_score > 0 ? "Review Required" : "Clean · Ready to Merge";
-      document.getElementById("cntCrit").textContent = s.counts.critical || 0;
-      document.getElementById("cntHigh").textContent = s.counts.high || 0;
-      document.getElementById("cntMed").textContent = s.counts.medium || 0;
-      document.getElementById("secChips").innerHTML = (s.dpdp_sections || []).map(sec => `<span class="tag tag-med">${sec}</span>`).join("");
+function switchScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.screen === name));
+  const [title, sub] = SCREEN_META[name] || ['Workspace', ''];
+  document.getElementById('wsTitle').textContent = title;
+  document.getElementById('wsSub').textContent = sub;
+  if (name === 'vault') { loadVaultData(); generateNotice(STATE.activeLang); }
+  if (name === 'billing' || name === 'vpc') loadBilling();
+  refreshIcons();
+}
 
-      const tbody = document.getElementById("findingsBody");
-      if (!rep.findings.length) {
-        tbody.innerHTML = `<tr><td colspan="5" style="color:var(--green);font-weight:600">0 leaks detected across ${rep.files_scanned} files.</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = rep.findings.map((f, idx) => `
-        <tr id="row-${idx}" onclick="selectFinding(${idx})">
-          <td class="mono">${esc(f.file)}:${f.line}</td>
-          <td class="mono">${esc(f.pii_entity)}</td>
-          <td class="mono">${esc(f.sink_type)}</td>
-          <td class="mono">${esc(f.dpdp_section)}</td>
-          <td><span class="tag ${f.severity === 'critical' ? 'tag-crit' : f.severity === 'high' ? 'tag-high' : 'tag-med'}">${f.severity.toUpperCase()}</span></td>
-        </tr>`).join("");
-      selectFinding(0);
-    }
+/* ==================== AUTH & REPO PICKER ==================== */
+async function initApp() {
+  document.getElementById('webhookUrlInput').value = `${window.location.origin}/api/webhook/github`;
+  await Promise.all([loadAuth(), loadBilling()]);
+  if (STATE.auth.authenticated) {
+    enterWorkspace(false, 'inspector');
+  }
+  refreshIcons();
+}
 
-    function selectFinding(idx) {
-      selectedIdx = idx;
-      document.querySelectorAll("#findingsBody tr").forEach(tr => tr.classList.remove("selected"));
-      const row = document.getElementById("row-" + idx);
-      if (row) row.classList.add("selected");
-
-      const f = currentFindings[idx];
-      document.getElementById("guideBox").innerHTML =
-        `<b>${esc(f.rule_id)} · DPDP ${esc(f.dpdp_section)} (${esc(f.cwe || "AppSec")})</b> — ${esc(f.penalty_ref || "")}<br/>${esc(f.obligation || f.title)}`;
-
-      document.getElementById("srcFileHead").textContent = `${f.file} : line ${f.line}`;
-      const ctx = f.code_context || [];
-      document.getElementById("codeContextBox").innerHTML = ctx.length
-        ? ctx.map(c => `<div class="code-line ${c.highlight ? 'hit' : ''}"><span class="ln">${c.line}</span><span>${esc(c.text)}</span></div>`).join("")
-        : `<div class="code-line hit"><span class="ln">${f.line}</span><span>${esc(f.snippet)}</span></div>`;
-
-      previewSuggestion();
-    }
-
-    async function previewSuggestion() {
-      if (!currentScanId || !currentFindings.length) return;
-      const box = document.getElementById("suggestBox");
-      box.textContent = "Generating codebase-matched fix preview with Gemini...";
-      try {
-        const d = await fetch("/api/suggest", {
-          method: "POST", headers: {"Content-Type":"application/json"},
-          body: JSON.stringify({ scan_id: currentScanId, finding_index: selectedIdx })
-        }).then(r => r.json());
-        const s = d.suggestion;
-        document.getElementById("sugHead").textContent = `SUGGESTED FIX (${s.engine || "AI"})`;
-        box.innerHTML =
-          `<div style="font-family:Inter,sans-serif;font-size:12px;margin-bottom:8px;color:var(--ink)"><b>Why:</b> ${esc(s.dpdp_explanation || "")}<br/><b>Guideline:</b> ${esc(s.remediation_summary || "")}</div>` +
-          (s.helper_code ? `<div style="color:var(--muted);font-size:11px;margin-bottom:4px">// Helper to add:</div><div style="background:var(--green-bg);color:var(--green);padding:6px 8px;border-radius:4px;margin-bottom:8px">${esc(s.helper_code)}</div>` : "") +
-          `<div style="color:var(--muted);font-size:11px;margin-bottom:4px">// Replace line ${d.finding.line} with:</div>` +
-          `<div style="background:var(--green-bg);color:var(--green);padding:8px;border-radius:4px;font-weight:600">${esc(s.patched_snippet || "")}</div>`;
-      } catch (e) {
-        box.textContent = "Could not load suggestion: " + e.message;
-      }
-    }
-
-    async function runPatch() {
-      const btn = document.getElementById("patchBtn");
-      btn.disabled = true;
-      document.getElementById("statusBadge").textContent = "VERIFYING FIXES...";
-      try {
-        const res = await fetch("/api/remediate", {
-          method: "POST", headers: {"Content-Type":"application/json"},
-          body: JSON.stringify({ scan_id: currentScanId })
-        });
-        const data = await res.json();
-        const v = data.verification;
-        setCheck("chkResolved", v.checks.findings_resolved, "Findings resolved");
-        setCheck("chkNoNew", v.checks.no_new_findings, "Zero new leaks introduced");
-        setCheck("chkCompile", v.checks.python_compiles, "Code compiles cleanly");
-        document.getElementById("diffBox").innerHTML = (data.unified_diff || "No diff").split("\n").map(l =>
-          l.startsWith("+") ? `<span class="diff-add">${esc(l)}</span>` : l.startsWith("-") ? `<span class="diff-del">${esc(l)}</span>` : esc(l)
-        ).join("\n");
-        if (v.verified) {
-          document.getElementById("riskNum").innerHTML = `${v.risk_after}<span style="font-size:16px;font-weight:500">/100</span>`;
-          document.getElementById("riskNum").style.color = "var(--green)";
-          document.getElementById("riskLabel").textContent = `Verified! Dropped ${v.risk_before} → ${v.risk_after}`;
-          document.getElementById("prBtn").disabled = false;
-        }
-        document.getElementById("statusBadge").textContent = v.verified ? "VERIFIED" : "REVIEW DIFF";
-      } finally { btn.disabled = false; }
-    }
-
-    async function simulateWebhook() {
-      const d = await fetch("/api/webhook/github", {
-        method: "POST", headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ number: 42, pull_request: { head: { ref: "feat/kyc-endpoint" } } })
-      }).then(r => r.json());
-      document.getElementById("prOut").textContent = `Webhook: ${d.check_name} -> ${d.conclusion.toUpperCase()}\n${d.comment_markdown}`;
-    }
-
-    function setCheck(id, ok, label) {
-      const el = document.getElementById(id);
-      el.className = "check-item " + (ok ? "pass" : "");
-      el.textContent = (ok ? "✓ " : "✗ ") + label;
-    }
-
-    async function openPR() {
-      const repo = document.getElementById("ghRepo").value.trim() || null;
-      const github_token = document.getElementById("ghToken").value.trim() || null;
-      const res = await fetch("/api/fix-pr", {
-        method: "POST", headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ scan_id: currentScanId, repo, github_token })
+async function loadAuth() {
+  try {
+    const r = await fetch('/api/auth/me');
+    STATE.auth = await r.json();
+    const box = document.getElementById('sideAccountInfo');
+    if (STATE.auth.authenticated) {
+      box.innerHTML = `
+        <img class="avatar" src="${esc(STATE.auth.avatar_url)}" alt="" />
+        <div style="min-width:0;">
+          <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">@${esc(STATE.auth.login)}</div>
+          <button class="ghost" style="padding:0;font-size:11px;color:var(--muted);" onclick="logout()">Sign out</button>
+        </div>`;
+      loadUserRepos();
+    } else if (!STATE.auth.oauth_configured) {
+      ['landGithubBtn', 'heroGithubBtn', 'sideLoginBtn'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.removeAttribute('href'); el.onclick = () => enterWorkspace(true); }
       });
-      const data = await res.json();
-      document.getElementById("prOut").textContent = data.pr_url ? `PR Created: ${data.pr_url}` : `Branch: ${data.branch}\n${data.pr_title}\n\n${data.unified_diff}`;
     }
+  } catch (e) {}
+}
 
-    async function runRedact() {
-      const text = document.getElementById("redactIn").value;
-      const d = await fetch("/api/redact", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({text})}).then(r=>r.json());
-      document.getElementById("redactOut").textContent = `${d.redacted_text}\n(${d.latency_ms}ms · ${JSON.stringify(d.entities_redacted)})`;
+async function loadUserRepos() {
+  try {
+    const r = await fetch('/api/github/repos');
+    if (!r.ok) return;
+    const repos = await r.json();
+    const picker = document.getElementById('repoPicker');
+    picker.innerHTML = '<option value="">Select your GitHub repo…</option>' +
+      repos.map(x => `<option value="${esc(x.html_url)}">${esc(x.full_name)} ${x.private ? '(Private)' : ''}</option>`).join('');
+    picker.classList.remove('hidden');
+  } catch (e) {}
+}
+
+async function logout() {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  window.location.reload();
+}
+
+/* ==================== BILLING & QUOTAS ==================== */
+async function loadBilling() {
+  try {
+    const r = await fetch('/api/billing/usage');
+    const data = await r.json();
+    STATE.tenant = data.tenant;
+    STATE.plans = data.plans;
+    renderBillingUI();
+  } catch (e) {}
+}
+
+function renderBillingUI() {
+  const t = STATE.tenant;
+  if (!t) return;
+  const pct = Math.min(100, Math.round((t.scans_used / Math.max(1, t.monthly_pr_limit)) * 100));
+  document.getElementById('sidePlanName').textContent = t.plan_name;
+  document.getElementById('sideQuotaText').textContent = `${t.scans_used} / ${t.monthly_pr_limit > 9000 ? '∞' : t.monthly_pr_limit} PRs`;
+  const bar = document.getElementById('sideQuotaBar');
+  bar.style.width = `${Math.max(4, pct)}%`;
+  bar.className = 'progress-fill' + (pct >= 90 ? ' crit' : pct >= 70 ? ' warn' : '');
+  document.getElementById('sideQuotaSub').textContent = `${t.max_repos} repo${t.max_repos > 1 ? 's' : ''} · org: ${t.org}`;
+
+  // Billing screen
+  document.getElementById('billHeader').textContent = `Workspace: @${t.org} · ${t.plan_name}`;
+  document.getElementById('billPlan').textContent = t.plan_name;
+  document.getElementById('billScans').textContent = `${t.scans_used} / ${t.monthly_pr_limit > 9000 ? 'Unlimited' : t.monthly_pr_limit}`;
+  document.getElementById('billRepos').textContent = t.max_repos >= 999 ? 'Unlimited' : t.max_repos;
+  document.getElementById('billPRs').textContent = t.prs_opened || 0;
+  document.getElementById('billReceiptTag').textContent = t.receipt_id ? `Paid · ${t.receipt_id}` : 'Free Tier Active';
+
+  // VPC JWT Box
+  document.getElementById('jwtBox').value = t.vpc_license_jwt || '';
+  try {
+    const part = (t.vpc_license_jwt || '').split('.')[1] || '';
+    const pad = part + '='.repeat((4 - part.length % 4) % 4);
+    const decoded = JSON.parse(atob(pad.replace(/-/g, '+').replace(/_/g, '/')));
+    document.getElementById('jwtClaimsBox').textContent = JSON.stringify(decoded, null, 2);
+  } catch (e) {
+    document.getElementById('jwtClaimsBox').textContent = JSON.stringify({ org: t.org, plan: t.plan_id, max_repos: t.max_repos }, null, 2);
+  }
+}
+
+function openUpgradeModal(planId = 'pro', quotaMsg = '') {
+  STATE.modalPlanId = planId;
+  const p = STATE.plans[planId] || { name: 'Startup Pro', price_inr: 1999, monthly_pr_limit: 10000, max_repos: 1 };
+  document.getElementById('modalPlanTitle').textContent = `Activate ${p.name}`;
+  document.getElementById('modalPlanPrice').textContent = `₹${Number(p.price_inr).toLocaleString('en-IN')}/mo`;
+  document.getElementById('modalPlanDesc').textContent = `${p.max_repos >= 999 ? 'Unlimited' : p.max_repos} repo(s) · ${p.monthly_pr_limit > 9000 ? 'Unlimited' : p.monthly_pr_limit} PR scans/mo`;
+  const alertEl = document.getElementById('modalQuotaAlert');
+  if (quotaMsg) { alertEl.textContent = quotaMsg; alertEl.classList.remove('hidden'); }
+  else alertEl.classList.add('hidden');
+  document.getElementById('upgradeModal').classList.remove('hidden');
+}
+
+function closeUpgradeModal() {
+  document.getElementById('upgradeModal').classList.add('hidden');
+}
+
+async function confirmUpgrade() {
+  const btn = document.getElementById('confirmUpgradeBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Processing UPI…';
+  try {
+    const r = await fetch('/api/billing/upgrade', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        plan_id: STATE.modalPlanId,
+        payment_method: document.getElementById('payMethod').value,
+        upi_id: document.getElementById('upiInput').value,
+      }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'Upgrade failed');
+    STATE.tenant = d.tenant;
+    renderBillingUI();
+    closeUpgradeModal();
+    showToast(`Upgraded to ${d.tenant.plan_name}! Receipt: ${d.receipt_id}`);
+  } catch (e) {
+    showToast(e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Pay & Activate Instantly';
+  }
+}
+
+/* ==================== SCAN, SUGGEST & VERIFICATION GATE ==================== */
+function quickScan(url) {
+  document.getElementById('repoUrl').value = url;
+  runScan();
+}
+
+async function runScan() {
+  const repoUrl = document.getElementById('repoUrl').value.trim();
+  const btn = document.getElementById('btnScan');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Scanning…';
+  setStatus('SCANNING AST…', false);
+  document.getElementById('verifyPanel').classList.add('hidden');
+  document.getElementById('prResultBox').classList.add('hidden');
+
+  try {
+    const r = await fetch('/api/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ repo_url: repoUrl || null }),
+    });
+    const data = await r.json();
+    if (r.status === 402) {
+      setStatus('QUOTA REACHED', false);
+      openUpgradeModal('pro', data.detail);
+      return;
     }
+    if (!r.ok) throw new Error(data.detail || 'Scan failed');
 
-    async function askAuditor() {
-      const q = document.getElementById("askIn").value.trim();
-      if (!q) return;
-      document.getElementById("askOut").textContent = "Thinking...";
-      const d = await fetch("/api/ask", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({question:q, scan_id:currentScanId})}).then(r=>r.json());
-      document.getElementById("askOut").textContent = d.answer;
+    STATE.scanId = data.scan_id;
+    STATE.report = data.report;
+    renderScan(data);
+    loadBilling();
+    setStatus(`SCANNED · ${data.telemetry?.telemetry_status || 'logged'}`, true);
+    showToast(`Scan complete: ${data.report.summary.total ?? data.report.findings.length} findings in ${data.report.files_scanned} files`);
+  } catch (e) {
+    setStatus('ERROR', false);
+    showToast(e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i data-lucide="scan-search" style="width:15px;height:15px;"></i> Scan Repository';
+    refreshIcons();
+  }
+}
+
+function renderScan(data) {
+  const rep = data.report;
+  const s = rep.summary || {};
+  const counts = s.counts || {};
+  const totalCount = s.total ?? (rep.findings || []).length;
+  document.getElementById('scanTargetLabel').textContent = `Target: ${data.label}`;
+  document.getElementById('kpiRisk').textContent = `${s.risk_score ?? 0}/100`;
+  document.getElementById('kpiRiskSub').textContent = (s.risk_score ?? 0) > 0 ? 'Pre-merge gate: BLOCKED' : 'Pre-merge gate: CLEAN';
+  document.getElementById('kpiFiles').textContent = rep.files_scanned ?? 0;
+  document.getElementById('kpiFindings').textContent = `${totalCount} findings`;
+  document.getElementById('kpiCrit').textContent = `${counts.critical || 0} CRIT`;
+  document.getElementById('kpiHigh').textContent = `${counts.high || 0} HIGH`;
+  document.getElementById('kpiMed').textContent = `${counts.medium || 0} MED`;
+  document.getElementById('kpiBqStatus').textContent = `Telemetry: ${data.telemetry?.telemetry_status || 'local'}`;
+
+  // Animate Risk Ring
+  const circ = 163.36;
+  const ring = document.getElementById('riskRing');
+  ring.style.strokeDashoffset = circ * (1 - (s.risk_score || 0) / 100);
+  ring.style.stroke = (s.risk_score || 0) >= 60 ? '#DC2626' : (s.risk_score || 0) > 0 ? '#B45309' : '#15803D';
+
+  const body = document.getElementById('findingsBody');
+  const findings = rep.findings || [];
+  document.getElementById('btnVerify').disabled = findings.length === 0;
+  document.getElementById('btnFixPR').disabled = true;
+
+  if (!findings.length) {
+    body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--green);padding:24px;font-weight:600;">Zero DPDP violations detected across all scanned files. Ready to merge.</td></tr>';
+    return;
+  }
+
+  body.innerHTML = findings.map((f, i) => {
+    const sev = String(f.severity || '').toUpperCase();
+    return `
+    <tr class="${i === 0 ? 'selected' : ''}" onclick="selectFinding(${i})">
+      <td class="mono" style="font-size:12px;">${esc(f.file)}:${f.line}</td>
+      <td class="mono" style="font-size:12px;">${esc(f.rule_id)}</td>
+      <td>${esc(f.dpdp_section)}</td>
+      <td class="mono" style="font-size:11.5px;">${esc(f.pii_entity)}</td>
+      <td><span class="tag ${sev === 'CRITICAL' ? 'tag-crit' : sev === 'HIGH' ? 'tag-high' : ''}">${esc(sev)}</span></td>
+    </tr>`;
+  }).join('');
+
+  selectFinding(0);
+}
+
+async function selectFinding(idx) {
+  STATE.selectedIdx = idx;
+  document.querySelectorAll('#findingsBody tr').forEach((tr, i) => tr.classList.toggle('selected', i === idx));
+  const f = STATE.report.findings[idx];
+  if (!f) return;
+
+  document.getElementById('selectedMeta').textContent = `${f.rule_id} · ${f.dpdp_section} · ${f.cwe || 'AppSec'} — ${f.title || f.evidence || ''}`;
+  document.getElementById('penaltyTag').textContent = f.penalty_ref || 'DPDP Act 2023';
+  document.getElementById('srcFileLabel').textContent = f.file;
+  document.getElementById('srcLineTag').textContent = `LINE ${f.line}`;
+
+  const ctx = f.code_context || [];
+  document.getElementById('srcCodeBody').innerHTML = ctx.length
+    ? ctx.map(c => `<div class="code-line ${c.highlight ? 'hit' : ''}"><span class="ln-num">${c.line}</span><span>${esc(c.text)}</span></div>`).join('')
+    : `<div class="code-line hit"><span class="ln-num">${f.line}</span><span>${esc(f.snippet)}</span></div>`;
+
+  // Fetch pre-change suggestion
+  document.getElementById('fixModeTag').textContent = 'LOADING…';
+  document.getElementById('fixCodeBody').innerHTML = '<div style="padding:18px;color:var(--muted);">Generating codebase-matched fix with Gemini 3.8 Flash…</div>';
+  try {
+    const r = await fetch('/api/suggest', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scan_id: STATE.scanId, finding_index: idx }),
+    });
+    const d = await r.json();
+    const sug = d.suggestion || {};
+    document.getElementById('fixModeTag').textContent = (sug.mode || 'verified').toUpperCase();
+    const fixLines = (sug.patched_snippet || '').split('\n');
+    const helperLines = sug.helper_code ? ('\n' + sug.helper_code).split('\n') : [];
+    document.getElementById('fixCodeBody').innerHTML =
+      fixLines.map((ln, k) => `<div class="code-line fix"><span class="ln-num">+${k + 1}</span><span>${esc(ln)}</span></div>`).join('') +
+      helperLines.map(ln => `<div class="code-line"><span class="ln-num"> </span><span style="color:var(--ink-2);">${esc(ln)}</span></div>`).join('');
+    document.getElementById('guidelineBox').innerHTML =
+      `<strong>DPDP Compliance Guideline (${esc(f.dpdp_section)}):</strong> ${esc(sug.explanation || f.obligation || '')}` +
+      (f.remediation_pattern ? `<div style="margin-top:6px;color:var(--muted);"><strong>Pattern:</strong> ${esc(f.remediation_pattern)}</div>` : '');
+  } catch (e) {
+    document.getElementById('fixModeTag').textContent = 'ERROR';
+  }
+}
+
+async function runVerifyGate() {
+  if (!STATE.scanId) return;
+  const btn = document.getElementById('btnVerify');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Verifying Patches…';
+  setStatus('RUNNING SECREASON GATE…', false);
+  try {
+    const r = await fetch('/api/patch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scan_id: STATE.scanId, max_findings: 5 }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'Verification failed');
+
+    const v = d.verification || {};
+    const panel = document.getElementById('verifyPanel');
+    panel.classList.remove('hidden');
+    document.getElementById('verifySummary').textContent =
+      `Risk Score: ${v.risk_before}/100 → ${v.risk_after}/100 · Resolved: ${(v.resolved || []).length} findings`;
+    const checks = v.checks || {};
+    const compilesOk = checks.python_compiles ?? checks.syntax_compiles ?? false;
+    document.getElementById('verifyPills').innerHTML = `
+      <span class="tag ${v.verified ? 'tag-ok' : 'tag-crit'}">${v.verified ? 'GATE PASSED' : 'GATE BLOCKED'}</span>
+      <span class="tag">${v.risk_before} → ${v.risk_after} RISK</span>
+      <span class="tag ${compilesOk ? 'tag-ok' : 'tag-crit'}">SYNTAX ${compilesOk ? 'PASS' : 'FAIL'}</span>
+      <span class="tag ${checks.no_new_findings ? 'tag-ok' : 'tag-crit'}">0 NEW VULNS</span>
+    `;
+
+    // Colorized unified diff
+    const diffHtml = (d.unified_diff || 'No file diff generated.').split('\n').map(ln => {
+      if (ln.startsWith('+++') || ln.startsWith('---') || ln.startsWith('@@')) return `<span class="d-hdr">${esc(ln)}</span>`;
+      if (ln.startsWith('+')) return `<span class="d-add">${esc(ln)}</span>`;
+      if (ln.startsWith('-')) return `<span class="d-del">${esc(ln)}</span>`;
+      return esc(ln);
+    }).join('\n');
+    document.getElementById('diffPre').innerHTML = diffHtml;
+
+    document.getElementById('btnFixPR').disabled = !v.verified;
+    setStatus(v.verified ? 'VERIFIED · PR UNLOCKED' : 'GATE BLOCKED', !!v.verified);
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } catch (e) {
+    showToast(e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i data-lucide="check-circle-2" style="width:14px;height:14px;"></i> Run Verification Gate';
+    refreshIcons();
+  }
+}
+
+async function openFixPR() {
+  if (!STATE.scanId) return;
+  const repoInput = document.getElementById('repoUrl').value.trim();
+  const match = repoInput.match(/github\.com\/([\w.-]+\/[\w.-]+)/);
+  const repo = match ? match[1].replace(/\.git$/, '') : null;
+  const btn = document.getElementById('btnFixPR');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Creating PR…';
+  try {
+    const r = await fetch('/api/fix-pr', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scan_id: STATE.scanId, repo }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'PR creation failed');
+    const box = document.getElementById('prResultBox');
+    box.classList.remove('hidden');
+    if (d.pr_url) {
+      box.innerHTML = `<strong>GitHub Pull Request Created!</strong> Branch <code>${esc(d.branch)}</code> · <a href="${esc(d.pr_url)}" target="_blank" style="color:inherit;font-weight:700;">Open PR on GitHub ↗</a>`;
+    } else {
+      box.innerHTML = `<strong>Verified Patch Bundle Ready!</strong> Branch <code>${esc(d.branch)}</code> · Sign in with GitHub and select your own repo to auto-open a live Pull Request.`;
     }
+    loadBilling();
+    showToast('Verified Fix PR prepared');
+  } catch (e) {
+    showToast(e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i data-lucide="git-pull-request" style="width:14px;height:14px;"></i> Open Verified PR';
+    refreshIcons();
+  }
+}
 
-    async function loadBench() {
-      const d = await fetch("/api/metrics/benchmark").then(r => r.json());
-      document.getElementById("benchOut").textContent = JSON.stringify(d, null, 2);
-    }
+/* ==================== ASK AUDITOR + VOICE ==================== */
+function quickAsk(q) {
+  document.getElementById('askInput').value = q;
+  askAuditor();
+}
 
-    async function loadTelemetry() {
-      const d = await fetch("/api/telemetry").then(r => r.json());
-      document.getElementById("bqOut").textContent = JSON.stringify(d, null, 2);
-    }
+async function askAuditor() {
+  const inp = document.getElementById('askInput');
+  const q = inp.value.trim();
+  if (!q) return;
+  inp.value = '';
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div class="msg u">${esc(q)}</div>`;
+  const thinking = document.createElement('div');
+  thinking.className = 'msg a';
+  thinking.textContent = 'Analyzing active DPDP scan…';
+  log.appendChild(thinking);
+  log.scrollTop = log.scrollHeight;
+  try {
+    const r = await fetch('/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: q, scan_id: STATE.scanId }),
+    });
+    const d = await r.json();
+    thinking.textContent = d.answer || 'No response.';
+  } catch (e) {
+    thinking.textContent = 'Unable to reach Gemini auditor right now.';
+  }
+  log.scrollTop = log.scrollHeight;
+}
 
-    function voiceAsk() {
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SR) return alert("Web Speech API not supported in this browser.");
-      const rec = new SR(); rec.lang = "en-IN";
-      rec.onresult = (e) => { document.getElementById("askIn").value = e.results[0][0].transcript; askAuditor(); };
-      rec.start();
-    }
+function toggleVoice() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { showToast('Voice input requires Chrome / Edge'); return; }
+  const rec = new SR();
+  rec.lang = 'en-IN';
+  const btn = document.getElementById('micBtn');
+  btn.textContent = 'Listening…';
+  rec.onresult = e => {
+    document.getElementById('askInput').value = e.results[0][0].transcript;
+    askAuditor();
+  };
+  rec.onend = () => { btn.innerHTML = '<i data-lucide="mic" style="width:13px;height:13px;"></i> Voice'; refreshIcons(); };
+  rec.start();
+}
 
-    function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-  </script>
+/* ==================== WEBHOOK SIMULATOR ==================== */
+async function simulateWebhook() {
+  const btn = document.getElementById('btnSimWebhook');
+  const prNum = Number(document.getElementById('simPrNum').value) || 42;
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Running PR Gate…';
+  try {
+    const r = await fetch('/api/webhook/github', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ number: prNum, pull_request: { head: { ref: 'feat/kyc-checkout' } } }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'Webhook failed');
+    document.getElementById('webhookResult').innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <strong class="mono">${esc(d.check_name)} · PR #${d.pr_number}</strong>
+        <span class="tag ${d.conclusion === 'success' ? 'tag-ok' : 'tag-crit'}">${esc(d.conclusion).toUpperCase()}</span>
+      </div>
+      <div style="font-size:13px;margin-top:6px;">
+        <strong>Risk Score:</strong> <code>${d.risk_before}/100</code> → <code>${d.risk_after}/100</code>
+      </div>
+      <pre class="diff-pre mono" style="margin-top:8px;">${esc(d.comment_markdown)}</pre>
+    `;
+    loadBilling();
+    showToast(`PR #${prNum} webhook executed: ${d.conclusion.toUpperCase()}`);
+  } catch (e) {
+    showToast(e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i data-lucide="play" style="width:14px;height:14px;"></i> Simulate Incoming PR #42 Webhook';
+    refreshIcons();
+  }
+}
+
+/* ==================== 7-LANGUAGE DPDP NOTICE & BIGQUERY VAULT ==================== */
+async function generateNotice(lang) {
+  STATE.activeLang = lang;
+  document.querySelectorAll('.lang-pill').forEach(p => p.classList.toggle('active', p.dataset.lang === lang));
+  const company = document.getElementById('noticeCompany').value.trim() || 'PaisaFlow FinTech Pvt. Ltd.';
+  try {
+    const r = await fetch('/api/dpdp/notice', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scan_id: STATE.scanId, language: lang, company_name: company }),
+    });
+    const d = await r.json();
+    document.getElementById('noticeLangLabel').textContent = `${d.language_name} · ${d.dpdp_ref}`;
+    document.getElementById('noticePiiTag').textContent = (d.detected_pii || []).join(', ');
+    document.getElementById('noticeText').textContent = d.notice_text;
+    document.getElementById('noticeJsx').textContent = d.jsx_snippet;
+  } catch (e) {}
+}
+
+async function loadVaultData() {
+  try {
+    const [bRes, tRes] = await Promise.all([fetch('/api/metrics/benchmark'), fetch('/api/telemetry')]);
+    const b = await bRes.json();
+    const t = await tRes.json();
+    document.getElementById('benchCards').innerHTML = [
+      ['AST Recall', b.detection_recall],
+      ['False Positives', b.false_positive_rate],
+      ['Token Cost', b.avg_token_cost_inr],
+      ['Total Scans Logged', `${b.total_scans_logged} (BigQuery)`],
+    ].map(([k, v]) => `<div class="kpi-card"><div><div class="kicker">${esc(k)}</div><div style="font-size:15px;font-weight:700;margin-top:4px;">${esc(v)}</div></div></div>`).join('');
+
+    const events = (t.events || []).slice(0, 15);
+    document.getElementById('telemetryBody').innerHTML = events.length
+      ? events.map(e => `
+        <tr>
+          <td class="mono" style="font-size:11.5px;">${esc((e.timestamp || e.scanned_at || '').replace('T', ' ').slice(0, 19))}</td>
+          <td class="mono" style="font-size:12px;">${esc(e.target || e.repo_id)}</td>
+          <td>${e.files_scanned ?? '—'}</td>
+          <td><strong>${e.risk_score}/100</strong></td>
+          <td><span class="tag ${(e.critical ?? e.critical_count ?? 0) > 0 ? 'tag-crit' : 'tag-ok'}">${e.critical ?? e.critical_count ?? 0}</span></td>
+          <td style="font-size:12px;">${esc(Array.isArray(e.dpdp_sections) ? e.dpdp_sections.join(', ') : (e.dpdp_sections || ''))}</td>
+        </tr>`).join('')
+      : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px;">Run a scan to log your first BigQuery audit row.</td></tr>';
+  } catch (e) {}
+}
+
+/* ==================== IN-VPC GEMMA REDACTION ==================== */
+async function runRedact() {
+  const text = document.getElementById('redactInput').value;
+  try {
+    const r = await fetch('/api/redact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    const d = await r.json();
+    const entMap = d.entities_redacted || {};
+    const totalRedacted = Object.values(entMap).reduce((a, b) => a + Number(b || 0), 0);
+    const entDetail = Object.entries(entMap).map(([k, v]) => `${k}:${v}`).join(' · ');
+    document.getElementById('redactLatency').textContent = `${d.latency_ms} ms · LOCAL VPC`;
+    document.getElementById('redactCountTag').textContent = `${totalRedacted} PII entities masked${entDetail ? ' (' + entDetail + ')' : ''}`;
+    document.getElementById('redactOutput').textContent = d.redacted_text;
+  } catch (e) {
+    showToast('Redaction failed');
+  }
+}
+
+window.addEventListener('DOMContentLoaded', initApp);
+</script>
 </body>
 </html>

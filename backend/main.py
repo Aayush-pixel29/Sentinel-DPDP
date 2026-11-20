@@ -3,6 +3,7 @@ Sentinel-DPDP FastAPI Control Plane & Agentic Execution Backend.
 """
 from __future__ import annotations
 
+import base64
 import difflib
 import json
 import os
@@ -42,10 +43,57 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# In-memory scan store & GitHub OAuth sessions
+# In-memory scan store, GitHub OAuth sessions & SaaS tenant metering
 SCANS: dict[str, dict[str, Any]] = {}
 OAUTH_STATES: set[str] = set()
 SESSIONS: dict[str, dict[str, Any]] = {}
+
+PLANS: dict[str, dict[str, Any]] = {
+    "free": {"name": "Free Tier", "price_inr": 0, "max_repos": 1, "monthly_pr_limit": 20},
+    "pro": {"name": "Startup Pro", "price_inr": 1999, "max_repos": 1, "monthly_pr_limit": 10000},
+    "agency": {"name": "Agency Growth", "price_inr": 7999, "max_repos": 15, "monthly_pr_limit": 50000},
+    "enterprise": {"name": "Enterprise VPC", "price_inr": 49999, "max_repos": 999, "monthly_pr_limit": 999999},
+}
+TENANTS: dict[str, dict[str, Any]] = {}
+
+
+def _get_tenant_key(sentinel_session: str | None) -> str:
+    if sentinel_session and sentinel_session in SESSIONS:
+        return SESSIONS[sentinel_session].get("login", "demo")
+    return "demo"
+
+
+def _get_tenant(sentinel_session: str | None) -> dict[str, Any]:
+    key = _get_tenant_key(sentinel_session)
+    if key not in TENANTS:
+        TENANTS[key] = {
+            "org": key,
+            "plan_id": "free",
+            "scans_used": 0,
+            "prs_opened": 0,
+            "receipt_id": None,
+        }
+    t = TENANTS[key]
+    p = PLANS[t["plan_id"]]
+    claims = json.dumps(
+        {
+            "org": key,
+            "plan": t["plan_id"],
+            "max_repos": p["max_repos"],
+            "monthly_pr_limit": p["monthly_pr_limit"],
+            "mode": "vpc-airgap" if t["plan_id"] == "enterprise" else "cloud-saas",
+        },
+        separators=(",", ":"),
+    ).encode("utf-8")
+    payload_b64 = base64.urlsafe_b64encode(claims).decode("ascii").rstrip("=")
+    return {
+        **t,
+        "plan_name": p["name"],
+        "price_inr": p["price_inr"],
+        "max_repos": p["max_repos"],
+        "monthly_pr_limit": p["monthly_pr_limit"],
+        "vpc_license_jwt": f"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.{payload_b64}.sentinel_rs256_verified_{key}",
+    }
 
 
 def _get_session_token(sentinel_session: str | None) -> str | None:
@@ -81,6 +129,18 @@ class RedactRequest(BaseModel):
 class AskRequest(BaseModel):
     question: str
     scan_id: str | None = None
+
+
+class UpgradeRequest(BaseModel):
+    plan_id: str
+    payment_method: str = "upi"
+    upi_id: str | None = None
+
+
+class NoticeRequest(BaseModel):
+    scan_id: str | None = None
+    language: str = "hi"
+    company_name: str = "Acme FinTech Pvt. Ltd."
 
 
 def _normalize_github_url(url: str) -> tuple[str, str | None]:
@@ -244,6 +304,12 @@ def _code_context(file_path: Path, target_line: int, radius: int = 7) -> list[di
 
 @app.post("/api/scan")
 def api_scan(req: ScanRequest, sentinel_session: str | None = Cookie(default=None)):
+    tenant = _get_tenant(sentinel_session)
+    if tenant["scans_used"] >= tenant["monthly_pr_limit"]:
+        raise HTTPException(
+            402,
+            f"Monthly {tenant['plan_name']} limit ({tenant['monthly_pr_limit']} scans) reached. Upgrade to Startup Pro (₹1,999/mo) for unlimited PR gates.",
+        )
     scan_id = uuid.uuid4().hex[:10]
     work_dir: Path | None = None
     if req.repo_url:
@@ -278,6 +344,8 @@ def api_scan(req: ScanRequest, sentinel_session: str | None = Cookie(default=Non
         f["code_context"] = _code_context(target_dir / f["file"], f["line"])
 
     telemetry = log_scan_telemetry(report, label)
+    tkey = _get_tenant_key(sentinel_session)
+    TENANTS[tkey]["scans_used"] += 1
     SCANS[scan_id] = {
         "scan_id": scan_id,
         "label": label,
@@ -426,8 +494,14 @@ async def api_fix_pr(req: FixPRRequest, sentinel_session: str | None = Cookie(de
             )
             if pr_r.status_code >= 400:
                 raise HTTPException(400, f"GitHub PR creation failed: {pr_r.text}")
+            tkey = _get_tenant_key(sentinel_session)
+            _get_tenant(sentinel_session)
+            TENANTS[tkey]["prs_opened"] += 1
             return {"mode": "github-pr-created", "pr_url": pr_r.json()["html_url"], "branch": branch_name, "pr_title": pr_title}
 
+    tkey = _get_tenant_key(sentinel_session)
+    _get_tenant(sentinel_session)
+    TENANTS[tkey]["prs_opened"] += 1
     return {
         "mode": "verified-patch-bundle",
         "branch": branch_name,
@@ -489,6 +563,86 @@ def api_metrics_benchmark():
         "avg_token_cost_inr": "₹0.28 / PR",
         "gross_margin_startup_pro": "96% (₹1,999/mo vs ₹65 GCP cost)",
         "total_scans_logged": t["total_scans"],
+    }
+
+
+@app.get("/api/billing/usage")
+def api_billing_usage(sentinel_session: str | None = Cookie(default=None)):
+    return {"tenant": _get_tenant(sentinel_session), "plans": PLANS}
+
+
+@app.post("/api/billing/upgrade")
+def api_billing_upgrade(req: UpgradeRequest, sentinel_session: str | None = Cookie(default=None)):
+    if req.plan_id not in PLANS:
+        raise HTTPException(400, "Invalid plan_id.")
+    t = _get_tenant(sentinel_session)
+    tkey = t["org"]
+    TENANTS[tkey]["plan_id"] = req.plan_id
+    TENANTS[tkey]["receipt_id"] = f"rcpt_dpdp_{uuid.uuid4().hex[:8]}"
+    return {
+        "ok": True,
+        "payment_method": req.payment_method,
+        "receipt_id": TENANTS[tkey]["receipt_id"],
+        "tenant": _get_tenant(sentinel_session),
+    }
+
+
+_NOTICE_TEMPLATES: dict[str, tuple[str, str]] = {
+    "en": (
+        "English",
+        "{company} collects your {pii} solely to provide KYC verification and customer support under India's DPDP Act 2023 (Section 5 & Rule 3). You may withdraw consent or request erasure at any time via privacy@company.in. Data is automatically purged after purpose completion.",
+    ),
+    "hi": (
+        "हिन्दी (Hindi)",
+        "{company} भारत के DPDP अधिनियम 2023 (धारा 5 एवं नियम 3) के अंतर्गत केवल KYC सत्यापन और ग्राहक सहायता हेतु आपका {pii} एकत्र करता है। आप किसी भी समय सहमति वापस ले सकते हैं या डेटा हटाने का अनुरोध कर सकते हैं।",
+    ),
+    "mr": (
+        "मराठी (Marathi)",
+        "{company} भारताच्या DPDP कायदा 2023 (कलम 5 व नियम 3) अंतर्गत केवळ KYC पडताळणी व ग्राहक सेवेसाठी तुमचा {pii} गोळा करते. तुम्ही कधीही संमती मागे घेऊ शकता किंवा डेटा हटवण्याची विनंती करू शकता.",
+    ),
+    "ta": (
+        "தமிழ் (Tamil)",
+        "{company} இந்திய DPDP சட்டம் 2023 (பிரிவு 5 மற்றும் விதி 3) இன் கீழ் KYC சரிபார்ப்பு மற்றும் வாடிக்கையாளர் சேவைக்காக மட்டுமே உங்கள் {pii} தகவலைச் சேகரிக்கிறது. எப்போது வேண்டுமானாலும் ஒப்புதலைத் திரும்பப் பெறலாம்.",
+    ),
+    "te": (
+        "తెలుగు (Telugu)",
+        "{company} భారత DPDP చట్టం 2023 (సెక్షన్ 5 & రూల్ 3) ప్రకారం KYC ధృవీకరణ మరియు కస్టమర్ మద్దతు కోసం మాత్రమే మీ {pii} సేకరిస్తుంది. మీరు ఎప్పుడైనా సమ్మతిని ఉపసంహరించుకోవచ్చు.",
+    ),
+    "gu": (
+        "ગુજરાતી (Gujarati)",
+        "{company} ભારતના DPDP અધિનિયમ 2023 (કલમ 5 અને નિયમ 3) હેઠળ ફક્ત KYC ચકાસણી અને ગ્રાહક સહાય માટે તમારું {pii} એકત્રિત કરે છે. તમે ગમે ત્યારે સંમતિ પાછી ખેંચી શકો છો.",
+    ),
+    "kn": (
+        "ಕನ್ನಡ (Kannada)",
+        "{company} ಭಾರತದ DPDP ಕಾಯಿದೆ 2023 (ವಿಭಾಗ 5 ಮತ್ತು ನಿಯಮ 3) ಅಡಿಯಲ್ಲಿ KYC ಪರಿಶೀಲನೆ ಮತ್ತು ಗ್ರಾಹಕ ಸೇವೆಗಾಗಿ ಮಾತ್ರ ನಿಮ್ಮ {pii} ಸಂಗ್ರಹಿಸುತ್ತದೆ. ನೀವು ಯಾವಾಗ ಬೇಕಾದರೂ ಒಪ್ಪಿಗೆಯನ್ನು ಹಿಂಪಡೆಯಬಹುದು.",
+    ),
+}
+
+
+@app.post("/api/dpdp/notice")
+def api_dpdp_notice(req: NoticeRequest):
+    pii_set: set[str] = set()
+    if req.scan_id and req.scan_id in SCANS:
+        for f in SCANS[req.scan_id]["report"].get("findings", []):
+            for ent in str(f.get("pii_entity", "")).split(","):
+                if ent and ent != "any":
+                    pii_set.add(ent.upper())
+    pii_str = ", ".join(sorted(pii_set)) if pii_set else "Aadhaar, PAN, Phone, Email"
+    lang_name, tpl = _NOTICE_TEMPLATES.get(req.language, _NOTICE_TEMPLATES["en"])
+    notice_text = tpl.format(company=req.company_name, pii=pii_str)
+    jsx_snippet = (
+        "<label className=\"dpdp-consent\">\n"
+        "  <input type=\"checkbox\" name=\"dpdp_consent\" required /> {/* Sec 6(1): Never defaultChecked */}\n"
+        f"  <span>{notice_text}</span>\n"
+        "</label>"
+    )
+    return {
+        "language": req.language,
+        "language_name": lang_name,
+        "detected_pii": sorted(pii_set) or ["AADHAAR", "PAN", "PHONE", "EMAIL"],
+        "notice_text": notice_text,
+        "jsx_snippet": jsx_snippet,
+        "dpdp_ref": "DPDP Act 2023 Sec 5 & Sec 6(1) + DPDP Rules 2025 Rule 3 (Schedule VIII Languages)",
     }
 
 
