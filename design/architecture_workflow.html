@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sentinel-DPDP · System Architecture &amp; Workflow</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0B0D10;
+      --surface: #14171C;
+      --surface-2: #1E232B;
+      --border: #262D38;
+      --accent: #00F0FF;
+      --ok: #00E676;
+      --crit: #FF3B5C;
+      --high: #FF8800;
+      --text: #F0F4F8;
+      --muted: #94A3B8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding: 28px;
+      line-height: 1.5;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .title { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .badge {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(0, 240, 255, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+    }
+    .actions { display: flex; gap: 10px; }
+    button {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+    }
+    button.primary {
+      background: var(--accent);
+      color: #0B0D10;
+      border-color: var(--accent);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .card h3 {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      color: var(--accent);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .card p { font-size: 13px; color: var(--muted); }
+    .diagram-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      overflow-x: auto;
+      margin-bottom: 24px;
+    }
+    .diagram-box h2 {
+      font-size: 15px;
+      margin-bottom: 14px;
+      font-family: "JetBrains Mono", monospace;
+      color: var(--text);
+    }
+    .mermaid { display: flex; justify-content: center; }
+    @media print {
+      .actions { display: none; }
+      body { background: #0B0D10; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <div class="title">Sentinel-DPDP <span class="badge">NEURO-SYMBOLIC WORKFLOW</span></div>
+      <div style="color: var(--muted); font-size: 13px; margin-top: 4px;">
+        GitHub OAuth → Deterministic AST/Semgrep → SKILL.md + Gemini → Verified Auto-Fix PR → Cloud Run + BigQuery
+      </div>
+    </div>
+    <div class="actions">
+      <button class="primary" onclick="downloadSvg()">Download Diagram (.svg)</button>
+      <button onclick="window.print()">Print / Save PDF</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>1. Startup Connect</h3>
+      <p>CTO signs in with GitHub OAuth, selects repo (or PR webhook), and triggers a DPDP scan.</p>
+    </div>
+    <div class="card">
+      <h3>2. Deterministic Scan</h3>
+      <p><code>scan_pii_ast.py</code> + Semgrep + Gitleaks pinpoint exact <code>file:line</code> PII sinks with zero hallucinations.</p>
+    </div>
+    <div class="card">
+      <h3>3. Think &amp; Reason</h3>
+      <p>Progressive Disclosure <code>SKILL.md</code> loads only matched DPDP rules; Gemini generates minimal patch diffs.</p>
+    </div>
+    <div class="card">
+      <h3>4. Verify &amp; Execute</h3>
+      <p><code>verify_patch.py</code> confirms 0 regressions + clean compile before opening a GitHub PR &amp; logging to BigQuery.</p>
+    </div>
+  </div>
+
+  <div class="diagram-box">
+    <h2>End-to-End Agentic Execution Pipeline</h2>
+    <div class="mermaid" id="flow">
+flowchart LR
+    U(["Startup CTO / Dev"]) -->|"1. GitHub OAuth Login"| AUTH["GitHub App &amp; Repo Selector"]
+    AUTH -->|"2. Select Repo / PR Webhook"| SCAN["Step 1: Deterministic Scan<br/>scan_pii_ast.py + Semgrep + Gitleaks"]
+    SCAN -->|"Exact file:line JSON sinks"| SKILL["Step 2: Progressive Disclosure<br/>SKILL.md + dpdp_2026_rules.json"]
+    SKILL -->|"Matched rule IDs only"| GEM["Step 3: Gemini Reasoning<br/>responseSchema: DPDP Sec 5/6/8(5)/8(7) + Diff"]
+    GEM -->|"Candidate Fix"| GATE{"Step 4: verify_patch.py<br/>Clean rescan + Compiles?"}
+    GATE -->|"Fail"| GEM
+    GATE -->|"Pass"| PR["1-Click Auto-Fix GitHub PR"]
+    PR --> BQ[("BigQuery Telemetry")]
+    PR --> SQL[("Cloud SQL Audit Vault")]
+    U <-->|"Voice Q&A"| LIVE["Gemini Live Auditor"]
+    GEM -.->|"In-VPC <15ms Redaction"| GEMMA["Gemma Sidecar"]
+
+    style U fill:#1E232B,stroke:#00F0FF,color:#F0F4F8
+    style SCAN fill:#1E232B,stroke:#FF3B5C,color:#F0F4F8
+    style SKILL fill:#1E232B,stroke:#FF8800,color:#F0F4F8
+    style GEM fill:#1E232B,stroke:#00F0FF,color:#F0F4F8
+    style GATE fill:#1E232B,stroke:#00E676,color:#F0F4F8
+    style PR fill:#0E3020,stroke:#00E676,color:#F0F4F8
+    style BQ fill:#14171C,stroke:#00F0FF,color:#F0F4F8
+    style SQL fill:#14171C,stroke:#00F0FF,color:#F0F4F8
+    style LIVE fill:#1E232B,stroke:#00F0FF,color:#F0F4F8
+    style GEMMA fill:#1E232B,stroke:#00E676,color:#F0F4F8
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: "dark" });
+    function downloadSvg() {
+      const svg = document.querySelector("#flow svg");
+      if (!svg) return alert("Diagram still rendering, try again in 1 second.");
+      const blob = new Blob([new XMLSerializer().serializeToString(svg)], { type: "image/svg+xml" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "sentinel-dpdp-workflow.svg";
+      a.click();
+    }
+  </script>
+</body>
+</html>

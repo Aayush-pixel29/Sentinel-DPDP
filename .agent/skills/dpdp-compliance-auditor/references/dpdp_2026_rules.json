@@ -1,0 +1,102 @@
+{
+  "pack": "india-dpdp",
+  "version": "2026.1",
+  "sources": [
+    "Digital Personal Data Protection Act, 2023 (No. 22 of 2023)",
+    "Digital Personal Data Protection Rules, 2025"
+  ],
+  "disclaimer": "Engineering mapping for developer guidance; not legal advice.",
+  "rules": [
+    {
+      "rule_id": "DPDP-LOG-001",
+      "title": "Personal data written to logs in clear text",
+      "sink_type": "log",
+      "pii_entities": ["aadhaar", "pan", "phone", "email", "upi", "card", "health"],
+      "dpdp_section": "Sec 8(5)",
+      "obligation": "Data Fiduciary must protect personal data in its possession by taking reasonable security safeguards to prevent a personal data breach.",
+      "rules_ref": "Rule 6 (reasonable security safeguards: masking, encryption, access control, logging hygiene)",
+      "penalty_ref": "Schedule item 1 — up to ₹250 crore",
+      "severity": "critical",
+      "cwe": "CWE-532",
+      "remediation_pattern": "mask_before_log"
+    },
+    {
+      "rule_id": "DPDP-LLM-002",
+      "title": "Unredacted personal data sent to a third-party LLM / external API",
+      "sink_type": "llm_prompt",
+      "pii_entities": ["aadhaar", "pan", "phone", "email", "upi", "card", "health"],
+      "dpdp_section": "Sec 8(2), Sec 8(5)",
+      "obligation": "Processing by a Data Processor only under a valid contract; reasonable safeguards must prevent disclosure beyond the stated purpose.",
+      "rules_ref": "Rule 6",
+      "penalty_ref": "Schedule item 1 — up to ₹250 crore",
+      "severity": "critical",
+      "cwe": "CWE-200",
+      "remediation_pattern": "redact_before_llm"
+    },
+    {
+      "rule_id": "DPDP-RET-003",
+      "title": "Personal data table without retention / erasure logic",
+      "sink_type": "db_schema",
+      "pii_entities": ["aadhaar", "pan", "phone", "email", "upi", "dob", "address"],
+      "dpdp_section": "Sec 8(7)",
+      "obligation": "Erase personal data once the purpose is no longer served or consent is withdrawn, unless retention is required by law.",
+      "rules_ref": "Rule 8 (erasure timelines, 48-hour prior intimation)",
+      "penalty_ref": "Schedule item 6 — up to ₹50 crore",
+      "severity": "high",
+      "cwe": "CWE-212",
+      "remediation_pattern": "add_retention_column"
+    },
+    {
+      "rule_id": "DPDP-CON-004",
+      "title": "Pre-checked / bundled consent (dark pattern)",
+      "sink_type": "consent_ui",
+      "pii_entities": ["any"],
+      "dpdp_section": "Sec 6(1)",
+      "obligation": "Consent must be free, specific, informed, unconditional and unambiguous with a clear affirmative action.",
+      "rules_ref": "Rule 3 (notice), Rule 4 (consent managers)",
+      "penalty_ref": "Schedule item 6 — up to ₹50 crore",
+      "severity": "high",
+      "cwe": "CWE-359",
+      "remediation_pattern": "unchecked_consent"
+    },
+    {
+      "rule_id": "DPDP-NOT-005",
+      "title": "Personal data collected without notice / purpose statement",
+      "sink_type": "consent_ui",
+      "pii_entities": ["any"],
+      "dpdp_section": "Sec 5",
+      "obligation": "Every request for consent must be accompanied by a notice describing the personal data and the purpose of processing.",
+      "rules_ref": "Rule 3",
+      "penalty_ref": "Schedule item 6 — up to ₹50 crore",
+      "severity": "medium",
+      "cwe": "CWE-359",
+      "remediation_pattern": "unchecked_consent"
+    },
+    {
+      "rule_id": "DPDP-SEC-006",
+      "title": "Hard-coded personal data or secret in source",
+      "sink_type": "source_literal",
+      "pii_entities": ["aadhaar", "pan", "phone", "email", "upi", "card", "secret"],
+      "dpdp_section": "Sec 8(5)",
+      "obligation": "Reasonable security safeguards; personal data and credentials must not be embedded in source code.",
+      "rules_ref": "Rule 6",
+      "penalty_ref": "Schedule item 1 — up to ₹250 crore",
+      "severity": "medium",
+      "cwe": "CWE-798",
+      "remediation_pattern": "move_to_secret_manager"
+    },
+    {
+      "rule_id": "DPDP-CHD-007",
+      "title": "Child data processed without verifiable parental consent",
+      "sink_type": "db_schema",
+      "pii_entities": ["dob", "age"],
+      "dpdp_section": "Sec 9",
+      "obligation": "Obtain verifiable consent of the parent before processing personal data of a child; no tracking or targeted advertising.",
+      "rules_ref": "Rule 10",
+      "penalty_ref": "Schedule item 3 — up to ₹200 crore",
+      "severity": "high",
+      "cwe": "CWE-359",
+      "remediation_pattern": "add_parental_consent"
+    }
+  ]
+}

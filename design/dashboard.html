@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"primary-fixed-dim":"#00dbe9","on-background":"#e1e2e9","on-tertiary-fixed-variant":"#920028","on-secondary-container":"#006156","surface-dim":"#101418","on-primary":"#00363a","background":"#101418","surface-container-lowest":"#0b0e13","inverse-surface":"#e1e2e9","surface-variant":"#32353a","on-secondary":"#003730","surface":"#101418","secondary-fixed":"#41fce2","on-secondary-fixed":"#00201b","outline":"#849495","error":"#ffb4ab","on-secondary-fixed-variant":"#005047","inverse-primary":"#006970","on-tertiary-container":"#bf0037","on-error-container":"#ffdad6","error-container":"#93000a","secondary-fixed-dim":"#00dfc6","surface-bright":"#36393f","tertiary-fixed":"#ffdada","primary-fixed":"#7df4ff","outline-variant":"#3b494b","surface-container":"#1d2025","on-tertiary-fixed":"#40000c","surface-container-highest":"#32353a","on-surface-variant":"#b9cacb","on-primary-fixed":"#002022","tertiary":"#fff3f2","on-error":"#690005","tertiary-fixed-dim":"#ffb3b6","secondary":"#6fffe8","surface-container-high":"#272a2f","inverse-on-surface":"#2e3036","on-primary-fixed-variant":"#004f54","on-tertiary":"#68001a","primary-container":"#00f0ff","primary":"#dbfcff","tertiary-container":"#ffcdce","on-primary-container":"#006970","surface-container-low":"#191c21","secondary-container":"#00e5cc","on-surface":"#e1e2e9","surface-tint":"#00dbe9"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{margin:"1rem","space-xs":"0.25rem",gutter:"1rem","space-xl":"2rem","space-sm":"0.5rem","space-lg":"1.5rem","space-md":"1rem","gutter-desktop":"1.5rem","margin-desktop":"2rem"},fontFamily:{"body-md":["Inter"],"label-sm":["JetBrains Mono"],"body-lg":["Inter"],"headline-sm":["Inter"],"headline-xl":["Inter"],"headline-xl-mobile":["Inter"],"code-lg":["JetBrains Mono"],"headline-md":["Inter"],"body-sm":["Inter"],"code-sm":["JetBrains Mono"],"label-md":["JetBrains Mono"],"code-md":["JetBrains Mono"],"headline-lg":["Inter"]},fontSize:{"body-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"label-sm":["10px",{lineHeight:"14px",letterSpacing:"0.06em",fontWeight:"600"}],"body-lg":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"400"}],"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"600"}],"headline-xl":["36px",{lineHeight:"44px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-xl-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.01em",fontWeight:"700"}],"code-lg":["14px",{lineHeight:"22px",letterSpacing:"0em",fontWeight:"500"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"0em",fontWeight:"600"}],"body-sm":["12px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"400"}],"code-sm":["11px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"400"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.04em",fontWeight:"600"}],"code-md":["13px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"headline-lg":["24px",{lineHeight:"32px",letterSpacing:"-0.01em",fontWeight:"600"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface antialiased min-h-screen"><header class="fixed top-0 left-0 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl border-b border-outline-variant/40 z-50"><div class="h-16 w-full px-margin-desktop flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><img alt="Sentinel-DPDP Shield Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrBbD0rR4g2sdiKSPe4m4pHwsJqW7PN-mv5smLuv2l4OHEYjMbctCSHHA65mjPLlOymcze4ef_Iiram1ToMd4mmzZybzYYbwQayQ78sFbn9Pq-xa7EFNOk_8MkoaHINSwblW932a0UeJhbdF3m6fEZYko15lR4mzPIPPnL-3BJAClpRCTr12m3NGvycpZPTcxyTe_INakG88250N_paW8_gg1RIHhtKb-ul8tGoqFClIDfDT2sutQwbL"/><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">Sentinel-DPDP</span><span class="font-label-sm text-label-sm uppercase px-space-xs py-0.5 rounded bg-surface-container text-secondary border border-secondary/30">PROD</span></div><span class="font-code-sm text-code-sm text-on-surface-variant leading-none">DevSecOps Â· India DPDP 2023 Compliance</span></div></div><div class="hidden xl:flex items-center gap-space-xs bg-surface-container-low px-space-sm py-1.5 rounded-lg border border-outline-variant/50"><span class="material-symbols-outlined text-base text-on-surface-variant">fork_right</span><span class="font-code-md text-code-md text-on-surface">github.com/acme/fintech-api</span><span class="font-label-sm text-label-sm text-on-secondary-fixed bg-secondary-fixed px-1.5 py-0.5 rounded">main</span><span class="material-symbols-outlined text-sm text-on-surface-variant ml-1">expand_more</span></div></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container border border-outline-variant/40"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary-fixed opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-secondary-fixed"></span></span><span class="font-code-sm text-code-sm text-on-surface-variant">Last scan 2 min ago Â· <strong class="text-error font-semibold">14 findings</strong></span></div><div class="hidden lg:flex items-center bg-surface-container-low rounded-lg p-0.5 border border-outline-variant/50"><span class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-high text-primary">Production</span><span class="px-2 py-0.5 rounded font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer">Staging</span><span class="px-2 py-0.5 rounded font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer">CI</span></div><button class="flex items-center gap-space-xs bg-primary-container text-on-primary-fixed hover:bg-secondary-container transition-colors px-space-md py-1.5 rounded font-headline-sm text-headline-sm font-semibold tracking-tight shadow-sm"><span class="material-symbols-outlined text-lg leading-none">play_arrow</span><span>Run Scan</span></button><div class="flex items-center gap-space-xs"><a class="p-1.5 text-on-surface-variant hover:text-on-surface rounded-lg hover:bg-surface-container transition-colors" href="#" title="Documentation"><span class="material-symbols-outlined text-xl">menu_book</span></a><button class="relative p-1.5 text-on-surface-variant hover:text-on-surface rounded-lg hover:bg-surface-container transition-colors" title="Notifications"><span class="material-symbols-outlined text-xl">notifications</span><span class="absolute top-1 right-1 h-2 w-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span></button></div><div class="h-8 w-px bg-outline-variant/40 mx-space-xs"></div><div class="flex items-center gap-space-sm pl-space-xs"><div class="hidden 2xl:flex flex-col text-right"><span class="font-body-md text-body-md font-semibold text-on-surface leading-tight">Vikram S. (CTO)</span><span class="font-code-sm text-code-sm text-on-surface-variant leading-tight">Acme Fintech India</span></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover border border-outline-variant/80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9loDCb0KTw9Hx8N35wYwd6WHWDxdUn1EWEIRa2kJe71GvNzNIZo9cO9U3jZSckqjstSD2Bm9G6SSJlqKIzUfLIZ9WmDUh-XKrRKdElDVraRCzwUzMDRa2kkszGACN9viO3OsCQo3yJxhmQ8iFtYmj7dBHupO5mifDcrl6BN6OBpyH1GOhJFw3xp2H4Qvd8JvZOMctVT3ZU7mY2EWpQlKc-VNK0b3JqgJpmVFZ05C7mSWpmpad2Zdii91nTtM_fFTpq-_m-y8pouU"/></div></div></div></header><aside class="fixed left-0 top-16 bottom-0 w-64 bg-surface-container-lowest border-r border-outline-variant/40 z-40 flex flex-col justify-between py-space-md"><div class="px-space-sm flex flex-col gap-space-lg"><div class="px-space-sm"><span class="font-label-sm text-label-sm uppercase text-on-surface-variant tracking-wider">Operational Telemetry</span></div><nav class="flex flex-col gap-1" data-active-classes="bg-surface-container-high text-primary font-bold border-l-2 border-primary-container"><a aria-current="page" class="flex items-center gap-space-sm px-space-sm py-2 rounded transition-colors bg-surface-container-high text-primary font-bold border-l-2 border-primary-container" data-path="overview" href="#"><span class="material-symbols-outlined text-lg">dashboard</span><span>Overview</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-md text-body-md" data-path="leak-inspector" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-lg">policy</span><span>Leak Inspector</span></div><span class="font-code-sm text-code-sm bg-error-container text-on-error-container px-1.5 py-0.5 rounded font-bold">14</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-md text-body-md" data-path="repositories" href="#"><span class="material-symbols-outlined text-lg">source</span><span>Repositories</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-md text-body-md" data-path="dpdp-schedules" href="#"><span class="material-symbols-outlined text-lg">gavel</span><span>DPDP Schedules</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-md text-body-md" data-path="ci-cd-pipelines" href="#"><span class="material-symbols-outlined text-lg">alt_route</span><span>CI/CD Pipelines</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-md text-body-md" data-path="audit-vault" href="#"><span class="material-symbols-outlined text-lg">lock_clock</span><span>Audit Vault</span></a></nav></div><div class="px-space-md border-t border-outline-variant/30 pt-space-md flex flex-col gap-space-sm"><div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant"><span>DPDP SHIELD STATUS</span><span class="text-secondary font-bold">ENFORCED</span></div><div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden"><div class="bg-primary-container h-full w-[88%]"></div></div><div class="flex justify-between font-code-sm text-code-sm text-on-surface-variant"><span>Coverage</span><span>88.4%</span></div></div></aside><div class="pl-64 flex flex-col min-h-screen"><main class="relative pt-16 flex-1 w-full px-margin-desktop py-space-lg bg-surface"><div class="flex flex-col w-full text-on-surface antialiased">
+<!-- Top Command Bar: Scope & Real-time AST Engine State -->
+<div class="w-full bg-surface-container-lowest px-space-md py-space-sm rounded-lg flex flex-wrap items-center justify-between gap-space-md shadow-sm mb-space-md">
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-xs font-label-md text-label-md">
+<span class="inline-flex items-center justify-center w-2 h-2 rounded-full bg-error animate-ping"></span>
+<span class="text-error font-semibold uppercase tracking-wider">Breach Block Activated</span>
+</div>
+<div class="h-4 w-px bg-surface-container-highest"></div>
+<div class="flex items-center gap-space-xs font-code-sm text-code-sm text-on-surface-variant">
+<span>Target:</span>
+<span class="text-primary font-code-md text-code-md font-semibold">acme/fintech-api</span>
+<span class="bg-surface-container px-1.5 py-0.5 rounded text-on-surface text-label-sm">commit #e4f9b2</span>
+</div>
+<div class="h-4 w-px bg-surface-container-highest hidden sm:block"></div>
+<div class="hidden sm:flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface-variant">
+<span>RULES:</span>
+<span class="text-on-surface bg-surface-container-high px-2 py-0.5 rounded font-mono">DPDP-2023-V2.8</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="font-code-sm text-code-sm text-on-surface-variant hidden md:inline">AST Analysis Latency: <strong class="text-secondary">42ms</strong></span>
+<button class="flex items-center gap-space-xs bg-surface-container hover:bg-surface-container-high px-space-sm py-1 rounded text-primary text-label-sm font-semibold transition-colors">
+<span class="material-symbols-outlined text-sm">tune</span>
+<span>Configure Sinks</span>
+</button>
+<button class="flex items-center gap-space-xs bg-surface-container hover:bg-surface-container-high px-space-sm py-1 rounded text-on-surface text-label-sm font-semibold transition-colors">
+<span class="material-symbols-outlined text-sm">history</span>
+<span>Run Diff</span>
+</button>
+</div>
+</div>
+<!-- Main 3-Column Cockpit Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md w-full items-start">
+<!-- ==================== LEFT COLUMN: Telemetry, Scores & DPDP Coverage (~280px / 3 cols) ==================== -->
+<div class="lg:col-span-3 flex flex-col gap-space-md w-full">
+<!-- Card 1: Repo Risk Score & Semicircular Gauge -->
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Repo Risk Telemetry</span>
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-error bg-error-container/40 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-xs">warning</span> LIVE
+          </span>
+</div>
+<!-- Custom SVG Semicircle Gauge -->
+<div class="relative flex flex-col items-center justify-center pt-2">
+<svg class="w-48 h-28 overflow-visible" viewbox="0 0 200 110">
+<!-- Background Arc (Radius 80, Center 100, 100) -->
+<path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#1d2025" stroke-linecap="round" stroke-width="16"></path>
+<!-- Safe Zone subtle marker -->
+<path d="M 20 100 A 80 80 0 0 1 65 38" fill="none" opacity="0.25" stroke="#00e5cc" stroke-linecap="round" stroke-width="16"></path>
+<!-- Active Risk Arc: 82% filled with red-orange gradient -->
+<defs>
+<lineargradient id="riskGrad" x1="0%" x2="100%" y1="100%" y2="0%">
+<stop offset="0%" stop-color="#ffb800"></stop>
+<stop offset="55%" stop-color="#ff8800"></stop>
+<stop offset="100%" stop-color="#ff3b5c"></stop>
+</lineargradient>
+<filter height="140%" id="gaugeGlow" width="140%" x="-20%" y="-20%">
+<fegaussianblur result="blur" stddeviation="3"></fegaussianblur>
+<fecomposite in="SourceGraphic" in2="blur" operator="over"></fecomposite>
+</filter>
+</defs>
+<path d="M 20 100 A 80 80 0 0 1 162 48" fill="none" filter="url(#gaugeGlow)" stroke="url(#riskGrad)" stroke-linecap="round" stroke-width="16"></path>
+<!-- Needle Center & Needle Indicator -->
+<circle cx="100" cy="98" fill="#e1e2e9" r="5"></circle>
+<!-- Needle pointer angle for 82/100 (approx 147.6 deg from 180 baseline) -->
+<line stroke="#ffdad6" stroke-linecap="round" stroke-width="3" x1="100" x2="152" y1="98" y2="52"></line>
+</svg>
+<!-- Gauge Score readout placed cleanly beneath pivot -->
+<div class="text-center -mt-6 flex flex-col items-center">
+<div class="flex items-baseline gap-1">
+<span class="font-headline-xl text-headline-xl font-bold tracking-tight text-error leading-none">82</span>
+<span class="font-code-md text-code-md text-on-surface-variant font-semibold">/100</span>
+</div>
+<span class="mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-label-sm font-label-sm font-bold bg-error-container text-on-error-container">
+<span class="material-symbols-outlined text-xs">gpp_bad</span> Critical Risk Â· DPDP Non-Compliant
+            </span>
+</div>
+</div>
+<!-- Delta pill -->
+<div class="mt-2 p-space-xs rounded bg-surface-container flex items-center justify-between text-code-sm font-code-sm">
+<span class="text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-error">trending_up</span>
+            Delta vs base
+          </span>
+<span class="text-error font-semibold font-mono">+18 pts (commit e4f9b2)</span>
+</div>
+</div>
+<!-- Card 2: Severity Breakdown Indicators -->
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Active Severity Queue</span>
+<span class="font-code-sm text-code-sm text-primary font-mono">14 Total</span>
+</div>
+<div class="flex flex-col gap-space-xs mt-1">
+<!-- Critical Item -->
+<div class="flex items-center justify-between p-space-sm rounded bg-surface-container hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-base text-error" style="font-variation-settings: 'FILL' 1;">dangerous</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">Critical</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-code-md text-code-md font-bold text-error">4</span>
+<span class="font-label-sm text-label-sm bg-error-container/60 text-on-error-container px-1.5 py-0.5 rounded uppercase">Action Required</span>
+</div>
+</div>
+<!-- High Item -->
+<div class="flex items-center justify-between p-space-sm rounded bg-surface-container hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-base text-tertiary-fixed-dim" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">High</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-code-md text-code-md font-bold text-tertiary-fixed-dim">6</span>
+<span class="font-label-sm text-label-sm bg-surface-container-high text-tertiary-fixed-dim px-1.5 py-0.5 rounded uppercase">Review Today</span>
+</div>
+</div>
+<!-- Medium Item -->
+<div class="flex items-center justify-between p-space-sm rounded bg-surface-container hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-base text-secondary" style="font-variation-settings: 'FILL' 1;">radio_button_checked</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">Medium</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-code-md text-code-md font-bold text-secondary">4</span>
+<span class="font-label-sm text-label-sm bg-surface-container-high text-on-surface-variant px-1.5 py-0.5 rounded uppercase">Scheduled</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 3: DPDP Act 2023 Coverage Checklist -->
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">DPDP Act 2023 Sched. Audit</span>
+<span class="material-symbols-outlined text-base text-on-surface-variant">gavel</span>
+</div>
+<div class="flex flex-col gap-space-xs mt-1">
+<!-- Sec 5 -->
+<div class="flex items-start justify-between p-space-xs rounded bg-surface-container">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary-container text-base">check_circle</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Sec 5 Â· Notice</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">Clear purpose specifications</span>
+</div>
+</div>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container-high px-1.5 py-0.5 rounded font-semibold">Pass</span>
+</div>
+<!-- Sec 6 -->
+<div class="flex items-start justify-between p-space-xs rounded bg-surface-container">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-base">error_med</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Sec 6 Â· Consent Gates</span>
+<span class="font-code-sm text-code-sm text-tertiary-fixed-dim">2 unvalidated opt-in gates</span>
+</div>
+</div>
+<span class="text-label-sm font-label-sm text-tertiary-fixed-dim bg-surface-container-high px-1.5 py-0.5 rounded font-semibold">2 Warn</span>
+</div>
+<!-- Sec 8(5) -->
+<div class="flex items-start justify-between p-space-xs rounded bg-surface-container">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-error text-base">report</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Sec 8(5) Â· Safeguards</span>
+<span class="font-code-sm text-code-sm text-error">4 leaks in logs & prompts</span>
+</div>
+</div>
+<span class="text-label-sm font-label-sm text-error bg-error-container px-1.5 py-0.5 rounded font-semibold">Fail</span>
+</div>
+<!-- Sec 8(7) -->
+<div class="flex items-start justify-between p-space-xs rounded bg-surface-container">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary-container text-base">check_circle</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Sec 8(7) Â· Data Erasure</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">RTBF automated queues ok</span>
+</div>
+</div>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container-high px-1.5 py-0.5 rounded font-semibold">Pass</span>
+</div>
+</div>
+<button class="mt-2 w-full flex items-center justify-center gap-space-xs bg-surface-container hover:bg-surface-container-high text-primary py-2 rounded text-label-sm font-label-sm font-semibold transition-colors">
+<span class="material-symbols-outlined text-sm">picture_as_pdf</span>
+<span>Export DPDP Board Audit PDF (Form 3)</span>
+</button>
+</div>
+</div>
+<!-- ==================== CENTER COLUMN: Findings Table & Verification Pane (~6 cols) ==================== -->
+<div class="lg:col-span-5 flex flex-col gap-space-md w-full">
+<!-- Findings Table Container -->
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-md flex flex-col gap-space-sm">
+<!-- Table Header & Controls -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pb-space-xs">
+<div>
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface leading-tight">Active Data Leaks & Sinks</h2>
+<p class="font-code-sm text-code-sm text-on-surface-variant mt-0.5">Automated AST scan flagged 14 PII compliance hazards</p>
+</div>
+<div class="flex items-center gap-space-xs">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2 top-2 text-sm text-on-surface-variant">search</span>
+<input class="bg-surface-container pl-7 pr-2 py-1 text-code-sm font-code-sm text-on-surface rounded focus:outline-none focus:ring-1 focus:ring-primary-container w-36 sm:w-44 placeholder:text-outline" placeholder="Filter PII or path..." type="text"/>
+</div>
+</div>
+</div>
+<!-- Filter Chips -->
+<div class="flex flex-wrap items-center gap-space-xs py-1">
+<button class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-primary-container text-on-primary-container font-bold shadow-sm">All (14)</button>
+<button class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors">Aadhaar (4)</button>
+<button class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors">PAN (5)</button>
+<button class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors">Phone (3)</button>
+<button class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors">UPI ID (2)</button>
+</div>
+<!-- Data Table -->
+<div class="overflow-x-auto w-full rounded">
+<table class="w-full text-left font-code-sm text-code-sm">
+<thead class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm uppercase">
+<tr>
+<th class="py-2 px-space-sm font-semibold">File & Line</th>
+<th class="py-2 px-space-sm font-semibold">PII Target</th>
+<th class="py-2 px-space-sm font-semibold">Sink Type</th>
+<th class="py-2 px-space-sm font-semibold">DPDP Sec</th>
+<th class="py-2 px-space-sm font-semibold">Severity</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<!-- Row 1: Selected & Highlighted -->
+<tr class="bg-surface-container-high/90 hover:bg-surface-container-highest cursor-pointer transition-colors shadow-[inset_3px_0_0_0_#00f0ff]">
+<td class="py-2 px-space-sm font-mono text-primary font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-xs text-primary-container">arrow_right</span>
+<span>app/kyc/service.py:42</span>
+</td>
+<td class="py-2 px-space-sm">
+<span class="px-2 py-0.5 rounded bg-primary-container/20 text-primary-container font-semibold uppercase text-label-sm">Aadhaar</span>
+</td>
+<td class="py-2 px-space-sm">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface text-label-sm">Log</span>
+</td>
+<td class="py-2 px-space-sm text-on-surface-variant font-mono">Sec 8(5)</td>
+<td class="py-2 px-space-sm">
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm text-error font-bold">
+<span class="material-symbols-outlined text-xs">dangerous</span>
+                    Critical
+                  </span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container/60 cursor-pointer transition-colors">
+<td class="py-2 px-space-sm font-mono text-on-surface">services/ai/agent_v2.py:108</td>
+<td class="py-2 px-space-sm">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-secondary font-semibold uppercase text-label-sm">PAN</span>
+</td>
+<td class="py-2 px-space-sm">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface text-label-sm">LLM Prompt</span>
+</td>
+<td class="py-2 px-space-sm text-on-surface-variant font-mono">Sec 8(5)</td>
+<td class="py-2 px-space-sm">
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm text-error font-bold">
+<span class="material-symbols-outlined text-xs">dangerous</span>
+                    Critical
+                  </span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container/60 cursor-pointer transition-colors">
+<td class="py-2 px-space-sm font-mono text-on-surface">db/migrations/202403_user.sql:15</td>
+<td class="py-2 px-space-sm">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-semibold uppercase text-label-sm">Phone</span>
+</td>
+<td class="py-2 px-space-sm">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface text-label-sm">DB Schema</span>
+</td>
+<td class="py-2 px-space-sm text-on-surface-variant font-mono">Sec 8(5)</td>
+<td class="py-2 px-space-sm">
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm text-tertiary-fixed-dim font-semibold">
+<span class="material-symbols-outlined text-xs">warning</span>
+                    High
+                  </span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container/60 cursor-pointer transition-colors">
+<td class="py-2 px-space-sm font-mono text-on-surface">api/v1/checkout/upi.go:87</td>
+<td class="py-2 px-space-sm">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-semibold uppercase text-label-sm">UPI ID</span>
+</td>
+<td class="py-2 px-space-sm">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface text-label-sm">Log</span>
+</td>
+<td class="py-2 px-space-sm text-on-surface-variant font-mono">Sec 8(5)</td>
+<td class="py-2 px-space-sm">
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm text-tertiary-fixed-dim font-semibold">
+<span class="material-symbols-outlined text-xs">warning</span>
+                    High
+                  </span>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container/60 cursor-pointer transition-colors">
+<td class="py-2 px-space-sm font-mono text-on-surface">web/components/ConsentModal.tsx:64</td>
+<td class="py-2 px-space-sm">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-semibold uppercase text-label-sm">Phone</span>
+</td>
+<td class="py-2 px-space-sm">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface text-label-sm">Consent UI</span>
+</td>
+<td class="py-2 px-space-sm text-on-surface-variant font-mono">Sec 6</td>
+<td class="py-2 px-space-sm">
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm text-secondary font-semibold">
+<span class="material-symbols-outlined text-xs">radio_button_checked</span>
+                    Medium
+                  </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Detail & Side-by-Side Diff Verification Panel (Selected: app/kyc/service.py:42) -->
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-md flex flex-col gap-space-sm">
+<!-- Breadcrumb & Rule ID -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs pb-1">
+<div class="flex items-center gap-1.5 font-code-sm text-code-sm text-on-surface">
+<span class="material-symbols-outlined text-base text-primary">data_object</span>
+<span class="text-on-surface-variant">fintech-api</span>
+<span>/</span>
+<span class="text-on-surface-variant">app</span>
+<span>/</span>
+<span class="text-on-surface-variant">kyc</span>
+<span>/</span>
+<span class="text-primary font-bold">service.py:42</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm font-mono bg-surface-container px-2 py-0.5 rounded text-on-surface-variant">
+              RULE: <strong class="text-primary-container">DPDP-085-AADHAAR-MASK</strong>
+</span>
+</div>
+</div>
+<!-- Side-by-side Diff Viewer -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-xs font-mono text-code-sm rounded overflow-hidden">
+<!-- Left: Vulnerable -->
+<div class="bg-surface-container-low flex flex-col">
+<div class="bg-surface-container px-space-sm py-1 flex items-center justify-between">
+<span class="text-error font-label-sm text-label-sm flex items-center gap-1 font-bold uppercase">
+<span class="material-symbols-outlined text-xs">dangerous</span>
+                Vulnerable Code
+              </span>
+<span class="text-outline text-label-sm">Source AST (Line 40-44)</span>
+</div>
+<div class="p-space-sm space-y-0.5 leading-relaxed text-on-surface-variant">
+<div class="flex"><span class="w-7 text-right select-none opacity-40 pr-2">40</span><span>def verify_identity(user_id, doc):</span></div>
+<div class="flex"><span class="w-7 text-right select-none opacity-40 pr-2">41</span><span class="pl-4">aadhaar_number = doc.get("uid")</span></div>
+<!-- Vulnerable line highlighted in deep red -->
+<div class="flex bg-error-container/40 text-error py-0.5 -mx-space-sm px-space-sm">
+<span class="w-7 text-right select-none text-error/80 pr-2">- 42</span>
+<span class="pl-4 font-semibold break-all">logger.info(f"KYC Verification initiated for user={user_id}, aadhaar={aadhaar_number}")</span>
+</div>
+<div class="flex"><span class="w-7 text-right select-none opacity-40 pr-2">43</span><span class="pl-4">return uidai_client.validate(aadhaar_number)</span></div>
+<div class="flex"><span class="w-7 text-right select-none opacity-40 pr-2">44</span><span class="pl-4"># End verification routine</span></div>
+</div>
+</div>
+<!-- Right: Fixed by Sentinel -->
+<div class="bg-surface-container-low flex flex-col">
+<div class="bg-surface-container px-space-sm py-1 flex items-center justify-between">
+<span class="text-secondary-container font-label-sm text-label-sm flex items-center gap-1 font-bold uppercase">
+<span class="material-symbols-outlined text-xs">verified</span>
+                Fixed by Sentinel Auto-Fix
+              </span>
+<span class="text-outline text-label-sm">Remediated AST</span>
+</div>
+<div class="p-space-sm space-y-0.5 leading-relaxed text-on-surface-variant">
+<div class="flex"><span class="w-7 text-right select-none opacity-40 pr-2">40</span><span>def verify_identity(user_id, doc):</span></div>
+<div class="flex"><span class="w-7 text-right select-none opacity-40 pr-2">41</span><span class="pl-4">aadhaar_number = doc.get("uid")</span></div>
+<!-- Fixed line highlighted in deep teal -->
+<div class="flex bg-secondary-container/20 text-secondary py-0.5 -mx-space-sm px-space-sm">
+<span class="w-7 text-right select-none text-secondary pr-2">+ 42</span>
+<span class="pl-4 font-semibold break-all">logger.info(f"KYC Verification initiated for user={user_id}, aadhaar={mask_aadhaar(aadhaar_number)}")</span>
+</div>
+<div class="flex"><span class="w-7 text-right select-none opacity-40 pr-2">43</span><span class="pl-4">return uidai_client.validate(aadhaar_number)</span></div>
+<div class="flex"><span class="w-7 text-right select-none opacity-40 pr-2">44</span><span class="pl-4"># End verification routine</span></div>
+</div>
+</div>
+</div>
+<!-- DPDP Statutory Citation Card -->
+<div class="mt-2 bg-surface-container-low p-space-sm rounded flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 font-label-md text-label-md text-primary font-bold">
+<span class="material-symbols-outlined text-sm">balance</span>
+<span>Section 8(5) - Digital Personal Data Protection Act, 2023</span>
+</div>
+<span class="font-code-sm text-code-sm text-error bg-error-container/30 px-2 py-0.5 rounded font-semibold">Max Fine: â‚¹250 Crores</span>
+</div>
+<p class="font-body-sm text-body-sm italic text-on-surface bg-surface-container p-2 rounded">
+            "A Data Fiduciary shall protect personal data in its possession or under its control, including in respect of any processing undertaken by it or on its behalf by a Data Processor, by taking reasonable security safeguards to prevent personal data breach."
+          </p>
+<div class="flex items-center justify-between pt-1">
+<span class="font-code-sm text-code-sm text-on-surface-variant">Citation: Act No. 22 of 2023, Ministry of Law and Justice, New Delhi</span>
+<a class="font-label-sm text-label-sm text-primary-container hover:underline flex items-center gap-1 font-semibold" href="#">
+              Read section text & DPA guidelines <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- ==================== RIGHT COLUMN: Auto-Fix PR & AI Auditor Workbench (~4 cols) ==================== -->
+<div class="lg:col-span-4 flex flex-col gap-space-md w-full">
+<!-- Auto-Fix PR Panel -->
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-base">merge_type</span>
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">Auto-Fix Pull Request</span>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-container text-secondary px-2 py-0.5 rounded font-mono">Target: main</span>
+</div>
+<!-- Verification Checklist -->
+<div class="bg-surface-container-low p-space-sm rounded flex flex-col gap-space-xs text-code-sm font-code-sm">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold">Remediation Proof Verification</span>
+<div class="flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-secondary-container text-base">task_alt</span>
+<span>Rescan clean (0 leak patterns detected in AST)</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-secondary-container text-base">task_alt</span>
+<span>No new findings introduced (Differential check)</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-secondary-container text-base">task_alt</span>
+<span>Pytest suite: 142 passed, 0 failed</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-secondary-container text-base">task_alt</span>
+<span>Verified Aadhaar regex mask: <strong class="text-primary font-mono">XXXX-XXXX-1234</strong></span>
+</div>
+</div>
+<!-- PR Draft Preview Box -->
+<div class="bg-surface-container p-space-sm rounded flex flex-col gap-1 font-mono text-code-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Branch: fix/dpdp-mask-kyc-aadhaar</span>
+<span class="material-symbols-outlined text-xs">content_copy</span>
+</div>
+<div class="text-primary font-semibold">fix(dpdp): mask Aadhaar in KYC logs</div>
+<p class="text-on-surface-variant font-code-sm text-code-sm leading-tight mt-1">
+            Enforce Sec 8(5) compliance by wrapping raw Aadhaar string with mask_aadhaar() helper in logger sink.
+          </p>
+</div>
+<!-- Primary Action Button -->
+<button class="w-full flex items-center justify-center gap-space-sm bg-primary-container text-on-primary-fixed hover:bg-secondary-container font-headline-sm text-headline-sm font-bold py-2.5 rounded transition-all shadow-md active:scale-[0.99]">
+<span class="material-symbols-outlined text-lg">call_merge</span>
+<span>Open Pull Request</span>
+<span class="ml-2 font-code-sm text-code-sm bg-surface-container-highest/60 text-on-surface px-1.5 py-0.5 rounded">âŒ˜ + â†µ</span>
+</button>
+<div class="flex items-center justify-between text-label-sm font-label-sm pt-1">
+<a class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-xs">file_download</span>
+            Export unified .patch file
+          </a>
+<span class="text-outline">Auto-sign: GPG Verified</span>
+</div>
+</div>
+<!-- "Ask the Auditor" AI Workbench -->
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-lg">neurology</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Ask the Auditor</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">DPDP Legal & DevSecOps AI</span>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary bg-surface-container px-2 py-0.5 rounded">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span> Gemini 1.5 Pro
+          </span>
+</div>
+<!-- Multimodal Voice Audit Hero Control -->
+<div class="bg-surface-container-low rounded p-space-md flex flex-col items-center justify-center text-center gap-space-xs relative overflow-hidden">
+<div class="relative flex items-center justify-center">
+<!-- Pulsing Rings -->
+<span class="absolute inline-flex h-14 w-14 rounded-full bg-primary-container/20 animate-ping"></span>
+<button class="relative w-12 h-12 rounded-full bg-primary-container text-on-primary-fixed flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-transform" title="Start Live Voice Audit">
+<span class="material-symbols-outlined text-2xl">mic</span>
+</button>
+</div>
+<span class="font-label-md text-label-md font-bold text-primary mt-1">Gemini Live (Voice Audit)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">
+            Speak naturally: â€œIs this remediation compliant with DPA guidelines?â€
+          </span>
+</div>
+<!-- Short Chat Transcript Box -->
+<div class="flex flex-col gap-space-xs max-h-56 overflow-y-auto pr-1">
+<!-- User message -->
+<div class="flex flex-col items-end">
+<div class="bg-surface-container text-on-surface px-space-sm py-1.5 rounded-lg rounded-tr-none font-body-sm text-body-sm max-w-[90%]">
+              Why is this flagged under Sec 8(5) instead of general logging hygiene?
+            </div>
+<span class="text-outline text-label-sm mt-0.5 pr-1 font-mono">14:02:11</span>
+</div>
+<!-- Auditor reply -->
+<div class="flex items-start gap-1.5">
+<div class="w-6 h-6 rounded-full bg-primary-container/20 flex items-center justify-center text-primary-container shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-xs">smart_toy</span>
+</div>
+<div class="flex flex-col">
+<div class="bg-surface-container-low text-on-surface px-space-sm py-1.5 rounded-lg rounded-tl-none font-body-sm text-body-sm leading-relaxed">
+                Under India DPDP Act 2023 Â§8(5), raw Aadhaar numbers in plaintext log aggregators constitute failure of â€œreasonable security safeguardsâ€. If logs are ingested by third-party APM tools (e.g. Datadog), this triggers non-consensual processor data sharing under Â§6.
+              </div>
+<span class="text-outline text-label-sm mt-0.5 pl-1 font-mono">14:02:14 Â· Cited: Â§8(5), Â§6</span>
+</div>
+</div>
+</div>
+<!-- Chat Input Bar -->
+<div class="relative flex items-center mt-1">
+<input class="w-full bg-surface-container pl-3 pr-20 py-2 rounded text-code-sm font-code-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary-container" placeholder="Ask about DPDP compliance, fines, or regex rules..." type="text"/>
+<div class="absolute right-1.5 flex items-center gap-1">
+<button class="p-1 text-on-surface-variant hover:text-on-surface transition-colors" title="Attach file or code AST snippet">
+<span class="material-symbols-outlined text-base">attach_file</span>
+</button>
+<button class="p-1 bg-primary-container hover:bg-secondary-container text-on-primary-fixed rounded transition-colors" title="Send Question">
+<span class="material-symbols-outlined text-base">send</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Telemetry Bar Under Grid -->
+<div class="mt-space-md w-full py-2 px-space-md bg-surface-container-lowest rounded-lg flex flex-wrap items-center justify-between gap-space-sm font-code-sm text-code-sm text-on-surface-variant">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-sm">security</span>
+<span>CERT-In & DPDP 2023 Rules Engine (IN-REG-V2)</span>
+</span>
+<span>Â·</span>
+<span>Gemma-2B Redaction Model</span>
+<span>Â·</span>
+<span>BigQuery Continuous Telemetry</span>
+</div>
+<div class="flex items-center gap-space-md font-mono">
+<span>Fiduciary ID: <strong class="text-on-surface">FID-ACME-8921-IND</strong></span>
+<span class="text-secondary flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> Guard Active
+      </span>
+</div>
+</div>
+</div></main><footer class="w-full bg-surface-container-lowest border-t border-outline-variant/40 py-space-sm px-margin-desktop text-on-surface-variant font-code-sm text-code-sm"><div class="flex flex-wrap items-center justify-between gap-space-md"><div><span class="inline-flex items-center gap-space-xs px-2 py-0.5 rounded bg-surface-container border border-outline-variant/40 text-on-surface font-code-sm text-code-sm"><span class="material-symbols-outlined text-sm text-primary">smart_toy</span>Powered by Gemini Â· Gemma redaction Â· BigQuery telemetry</span></div><div class="flex items-center gap-space-lg text-on-surface-variant"><span>Engine: <strong class="text-on-surface">v2.4.1 (DPDP-IND)</strong></span><span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-secondary-fixed"></span><span>All systems operational</span></span><span class="hidden lg:inline text-on-surface-variant">UTC 2024-03-31 09:42:15</span></div></div></footer></div></body></html>

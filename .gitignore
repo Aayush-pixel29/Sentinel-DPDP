@@ -1,0 +1,29 @@
+# Secrets & Environment
+.env
+.env.*
+*.pem
+*.key
+*.p12
+credentials*.json
+service-account*.json
+*secret*.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Node / Frontend
+node_modules/
+.next/
+dist/
+build/
+
+# Scan artifacts & OS
+scan.json
+*.sarif
+.DS_Store
+Thumbs.db
