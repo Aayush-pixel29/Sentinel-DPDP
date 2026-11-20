@@ -54,7 +54,7 @@ def log_scan_telemetry(report: dict[str, Any], target_label: str) -> dict[str, A
         "total_findings": summary.get("total", 0),
         "critical": summary.get("counts", {}).get("critical", 0),
         "high": summary.get("counts", {}).get("high", 0),
-        "dpdp_sections": ", ".join(summary.get("dpdp_sections", [])),
+        "dpdp_sections": ", ".join(sorted({p.strip() for s in summary.get("dpdp_sections", []) for p in str(s).split(",") if p.strip()})),
     }
     with LOCAL_LOG.open("a", encoding="utf-8") as fh:
         fh.write(json.dumps(row) + "\n")

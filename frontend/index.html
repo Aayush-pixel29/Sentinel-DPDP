@@ -177,9 +177,10 @@
     .section-head h2 { font-size: 28px; font-weight: 800; letter-spacing: -0.035em; margin: 6px 0 8px; }
     .section-head p { font-size: 14.5px; color: var(--ink-2); }
 
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .grid-2 > *, .grid-3 > *, .grid-4 > * { min-width: 0; }
     @media (max-width: 960px) { .grid-3, .grid-2, .grid-4 { grid-template-columns: 1fr; } }
 
     .card {
@@ -995,7 +996,7 @@ jobs:
               <button class="primary" onclick="runRedact()">Redact PII in VPC</button>
               <span class="tag" id="redactCountTag">0 entities masked</span>
             </div>
-            <pre class="diff-pre mono" id="redactOutput">Masked output renders here.</pre>
+            <pre class="diff-pre mono" id="redactOutput" style="white-space:pre-wrap;word-break:break-word;">Masked output renders here.</pre>
           </div>
 
           <div class="panel">
