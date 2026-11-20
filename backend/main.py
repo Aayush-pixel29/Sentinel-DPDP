@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import base64
 import difflib
+import hashlib
+import hmac
 import json
 import os
 import re
@@ -17,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 import httpx
-from fastapi import Cookie, FastAPI, HTTPException, Response
+from fastapi import Cookie, FastAPI, Header, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from pydantic import BaseModel
@@ -594,8 +596,22 @@ def api_ask(req: AskRequest):
 
 
 @app.post("/api/webhook/github")
-async def api_webhook_github(payload: dict[str, Any]):
-    """Receive GitHub PR webhook, run scan -> remediate -> verify, and return status check."""
+async def api_webhook_github(
+    request: Request,
+    x_hub_signature_256: str | None = Header(default=None),
+):
+    """Receive GitHub PR webhook, verify X-Hub-Signature-256 HMAC when secret is set, and run scan -> remediate -> verify."""
+    raw_body = await request.body()
+    secret = os.environ.get("GITHUB_WEBHOOK_SECRET", "")
+    sig_verified = False
+    if secret:
+        if not x_hub_signature_256 or not x_hub_signature_256.startswith("sha256="):
+            raise HTTPException(401, "Missing or malformed X-Hub-Signature-256 header.")
+        expected = "sha256=" + hmac.new(secret.encode("utf-8"), raw_body, hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(expected, x_hub_signature_256):
+            raise HTTPException(401, "Invalid GitHub webhook HMAC signature.")
+        sig_verified = True
+    payload: dict[str, Any] = json.loads(raw_body.decode("utf-8") or "{}")
     repo_url = (payload.get("repository") or {}).get("clone_url")
     pr_number = payload.get("number", 0)
     branch = ((payload.get("pull_request") or {}).get("head") or {}).get("ref", "main")
@@ -604,6 +620,7 @@ async def api_webhook_github(payload: dict[str, Any]):
     verified = rem_res.get("verification", {}).get("verified", False)
     return {
         "check_name": "sentinel-dpdp/verify",
+        "signature_verified": sig_verified,
         "conclusion": "success" if verified else "failure",
         "pr_number": pr_number,
         "risk_before": rem_res["verification"].get("risk_before", 0),

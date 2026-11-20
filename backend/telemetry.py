@@ -38,7 +38,7 @@ def redact_pii_in_vpc(text: str) -> dict[str, Any]:
         "redacted_text": out,
         "entities_redacted": counts,
         "latency_ms": elapsed_ms,
-        "mode": "in-vpc-sidecar",
+        "mode": "hybrid-vpc-sidecar (deterministic pre-filter + Gemma 2B VPC interface)",
     }
 
 

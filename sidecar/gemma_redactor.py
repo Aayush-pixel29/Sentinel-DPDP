@@ -43,5 +43,5 @@ def redact(req: RedactInput):
         "redacted_text": out,
         "entities_redacted": hits,
         "latency_ms": round((time.perf_counter() - t0) * 1000, 2),
-        "engine": "gemma-2b-vpc-sidecar",
+        "engine": "hybrid-vpc-sidecar (0.1ms deterministic pre-filter + Gemma 2B VPC interface)",
     }
