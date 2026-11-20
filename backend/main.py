@@ -135,6 +135,18 @@ def health():
     }
 
 
+def _code_context(file_path: Path, target_line: int, radius: int = 7) -> list[dict[str, Any]]:
+    if not file_path.exists():
+        return []
+    lines = file_path.read_text(encoding="utf-8", errors="ignore").splitlines()
+    start = max(1, target_line - radius)
+    end = min(len(lines), target_line + radius)
+    return [
+        {"line": ln, "text": lines[ln - 1], "highlight": ln == target_line}
+        for ln in range(start, end + 1)
+    ]
+
+
 @app.post("/api/scan")
 def api_scan(req: ScanRequest):
     scan_id = uuid.uuid4().hex[:10]
@@ -166,6 +178,8 @@ def api_scan(req: ScanRequest):
         f["obligation"] = r.get("obligation", "")
         f["penalty_ref"] = r.get("penalty_ref", "")
         f["cwe"] = r.get("cwe", "")
+        f["remediation_pattern"] = r.get("remediation_pattern", "")
+        f["code_context"] = _code_context(target_dir / f["file"], f["line"])
 
     telemetry = log_scan_telemetry(report, label)
     SCANS[scan_id] = {
@@ -179,6 +193,21 @@ def api_scan(req: ScanRequest):
         "unified_diff": "",
     }
     return {"scan_id": scan_id, "label": label, "report": report, "telemetry": telemetry}
+
+
+@app.post("/api/suggest")
+def api_suggest(req: PatchRequest):
+    """Preview a codebase-matched suggested fix and DPDP guideline BEFORE modifying any file."""
+    session = SCANS.get(req.scan_id)
+    if not session:
+        raise HTTPException(404, "Scan session not found.")
+    findings = session["report"]["findings"]
+    idx = req.finding_index if req.finding_index is not None else 0
+    if idx < 0 or idx >= len(findings):
+        raise HTTPException(400, "Invalid finding index.")
+    finding = findings[idx]
+    suggestion = generate_patch(finding, Path(session["target_dir"]))
+    return {"scan_id": req.scan_id, "finding_index": idx, "finding": finding, "suggestion": suggestion}
 
 
 @app.post("/api/remediate")
