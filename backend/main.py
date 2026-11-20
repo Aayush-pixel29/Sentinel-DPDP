@@ -16,9 +16,9 @@ from pathlib import Path
 from typing import Any
 
 import httpx
-from fastapi import FastAPI, HTTPException
+from fastapi import Cookie, FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from pydantic import BaseModel
 
 from backend.gemini_engine import ask_auditor, generate_patch, get_rules_by_id
@@ -42,8 +42,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# In-memory scan store for active session
+# In-memory scan store & GitHub OAuth sessions
 SCANS: dict[str, dict[str, Any]] = {}
+OAUTH_STATES: set[str] = set()
+SESSIONS: dict[str, dict[str, Any]] = {}
+
+
+def _get_session_token(sentinel_session: str | None) -> str | None:
+    if sentinel_session and sentinel_session in SESSIONS:
+        return SESSIONS[sentinel_session].get("access_token")
+    return None
 
 
 class ScanRequest(BaseModel):
@@ -130,9 +138,96 @@ def health():
     return {
         "status": "ok",
         "gemini_configured": bool(os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")),
+        "github_oauth_configured": bool(os.environ.get("GITHUB_CLIENT_ID") and os.environ.get("GITHUB_CLIENT_SECRET")),
         "gcp_project": os.environ.get("GOOGLE_CLOUD_PROJECT", ""),
         "rules_loaded": len(get_rules_by_id()),
     }
+
+
+@app.get("/auth/github/login")
+def github_login():
+    client_id = os.environ.get("GITHUB_CLIENT_ID")
+    if not client_id:
+        raise HTTPException(400, "GITHUB_CLIENT_ID is not configured on this server.")
+    state = uuid.uuid4().hex
+    OAUTH_STATES.add(state)
+    return RedirectResponse(
+        f"https://github.com/login/oauth/authorize?client_id={client_id}&scope=repo,read:user&state={state}"
+    )
+
+
+@app.get("/auth/github/callback")
+async def github_callback(code: str, state: str):
+    if state not in OAUTH_STATES:
+        raise HTTPException(400, "Invalid OAuth state.")
+    OAUTH_STATES.discard(state)
+    client_id = os.environ.get("GITHUB_CLIENT_ID", "")
+    client_secret = os.environ.get("GITHUB_CLIENT_SECRET", "")
+    async with httpx.AsyncClient(timeout=20) as client:
+        tok_r = await client.post(
+            "https://github.com/login/oauth/access_token",
+            headers={"Accept": "application/json"},
+            json={"client_id": client_id, "client_secret": client_secret, "code": code},
+        )
+        tok = tok_r.json().get("access_token")
+        if not tok:
+            raise HTTPException(400, f"GitHub OAuth token exchange failed: {tok_r.text}")
+        user_r = await client.get(
+            "https://api.github.com/user",
+            headers={"Authorization": f"Bearer {tok}", "Accept": "application/vnd.github+json"},
+        )
+        user = user_r.json()
+    sid = uuid.uuid4().hex
+    SESSIONS[sid] = {
+        "access_token": tok,
+        "login": user.get("login", "github-user"),
+        "avatar_url": user.get("avatar_url", ""),
+    }
+    resp = RedirectResponse(url="/")
+    resp.set_cookie("sentinel_session", sid, httponly=True, samesite="lax", max_age=86400)
+    return resp
+
+
+@app.get("/api/auth/me")
+def auth_me(sentinel_session: str | None = Cookie(default=None)):
+    sess = SESSIONS.get(sentinel_session) if sentinel_session else None
+    return {
+        "authenticated": bool(sess),
+        "login": sess["login"] if sess else None,
+        "avatar_url": sess["avatar_url"] if sess else None,
+        "oauth_configured": bool(os.environ.get("GITHUB_CLIENT_ID") and os.environ.get("GITHUB_CLIENT_SECRET")),
+    }
+
+
+@app.post("/api/auth/logout")
+def auth_logout(response: Response, sentinel_session: str | None = Cookie(default=None)):
+    if sentinel_session:
+        SESSIONS.pop(sentinel_session, None)
+    response.delete_cookie("sentinel_session")
+    return {"ok": True}
+
+
+@app.get("/api/github/repos")
+async def github_repos(sentinel_session: str | None = Cookie(default=None)):
+    tok = _get_session_token(sentinel_session)
+    if not tok:
+        raise HTTPException(401, "Sign in with GitHub first.")
+    async with httpx.AsyncClient(timeout=20) as client:
+        r = await client.get(
+            "https://api.github.com/user/repos?sort=updated&per_page=30",
+            headers={"Authorization": f"Bearer {tok}", "Accept": "application/vnd.github+json"},
+        )
+        if r.status_code >= 400:
+            raise HTTPException(400, f"Failed to fetch repos: {r.text}")
+        return [
+            {
+                "full_name": repo["full_name"],
+                "html_url": repo["html_url"],
+                "private": repo["private"],
+                "default_branch": repo.get("default_branch", "main"),
+            }
+            for repo in r.json()
+        ]
 
 
 def _code_context(file_path: Path, target_line: int, radius: int = 7) -> list[dict[str, Any]]:
@@ -148,13 +243,14 @@ def _code_context(file_path: Path, target_line: int, radius: int = 7) -> list[di
 
 
 @app.post("/api/scan")
-def api_scan(req: ScanRequest):
+def api_scan(req: ScanRequest, sentinel_session: str | None = Cookie(default=None)):
     scan_id = uuid.uuid4().hex[:10]
     work_dir: Path | None = None
     if req.repo_url:
         clone_url, url_branch = _normalize_github_url(req.repo_url)
         branch = req.branch or url_branch
-        auth_url = clone_url.replace("https://", f"https://x-access-token:{req.github_token}@") if req.github_token else clone_url
+        token = req.github_token or _get_session_token(sentinel_session)
+        auth_url = clone_url.replace("https://", f"https://x-access-token:{token}@") if token else clone_url
         work_dir = Path(tempfile.mkdtemp(prefix=f"sentinel_{scan_id}_"))
         target_dir = work_dir / "repo"
         cmd = ["git", "clone", "--depth", "1"]
@@ -164,7 +260,7 @@ def api_scan(req: ScanRequest):
         res = subprocess.run(cmd, capture_output=True, text=True, timeout=90)
         if res.returncode != 0:
             shutil.rmtree(work_dir, ignore_errors=True)
-            err = res.stderr.replace(req.github_token, "***") if req.github_token else res.stderr
+            err = res.stderr.replace(token, "***") if token else res.stderr
             raise HTTPException(400, f"Git clone failed: {err.strip()}")
         label = clone_url.removesuffix(".git")
     else:
@@ -272,7 +368,7 @@ def api_patch(req: PatchRequest):
 
 
 @app.post("/api/fix-pr")
-async def api_fix_pr(req: FixPRRequest):
+async def api_fix_pr(req: FixPRRequest, sentinel_session: str | None = Cookie(default=None)):
     session = SCANS.get(req.scan_id)
     if not session or not session.get("verification"):
         raise HTTPException(400, "Run /api/patch first so the verification gate is satisfied.")
@@ -289,9 +385,10 @@ async def api_fix_pr(req: FixPRRequest):
         + "\n".join(f"- `{r}`" for r in session["verification"].get("resolved", []))
     )
 
-    if req.github_token and req.repo:
+    token = req.github_token or _get_session_token(sentinel_session)
+    if token and req.repo:
         headers = {
-            "Authorization": f"Bearer {req.github_token}",
+            "Authorization": f"Bearer {token}",
             "Accept": "application/vnd.github+json",
         }
         async with httpx.AsyncClient(timeout=20) as client:

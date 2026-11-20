@@ -148,10 +148,18 @@
       <span class="brand-tag mono">Pre-Merge Security &amp; DPDP Gate</span>
     </div>
     <div class="controls">
+      <select id="repoPicker" style="display:none;max-width:210px;background:var(--bg);color:var(--ink);border:1px solid var(--border);border-radius:6px;padding:9px 10px;font-size:13px" onchange="pickRepo(this.value)">
+        <option value="">Select your GitHub repo...</option>
+      </select>
       <input id="repoUrl" style="flex:1" placeholder="Paste any GitHub repo URL (or leave blank for PaisaFlow demo)" />
       <button id="scanBtn" class="primary" onclick="runScan()">Run Scan</button>
     </div>
-    <span id="statusBadge" class="tag tag-med">READY</span>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span id="statusBadge" class="tag tag-med">READY</span>
+      <div id="authArea">
+        <a href="/auth/github/login" style="text-decoration:none"><button class="primary">Sign in with GitHub</button></a>
+      </div>
+    </div>
   </header>
 
   <nav class="tabs">
@@ -255,10 +263,10 @@
   <div id="view-onboard" class="view">
     <div class="grid-3">
       <div class="panel">
-        <div class="kicker">Step 1 · GitHub OAuth</div>
-        <p style="font-size:13px;color:var(--ink-2)">Connect your GitHub organization to automatically review every Pull Request before merge.</p>
-        <button class="primary" onclick="document.getElementById('ghAuthState').textContent='Connected as Aayush-pixel29 (GitHub App Active)'">Continue with GitHub</button>
-        <div id="ghAuthState" class="mono" style="font-size:12px;color:var(--green)">Ready to connect</div>
+        <div class="kicker">Step 1 · Real GitHub OAuth</div>
+        <p style="font-size:13px;color:var(--ink-2)">Connect your GitHub account via OAuth to load your public &amp; private repositories and open verified auto-fix Pull Requests with 1 click.</p>
+        <a href="/auth/github/login" style="text-decoration:none"><button class="primary" style="width:100%">Continue with GitHub OAuth</button></a>
+        <div id="ghAuthState" class="mono" style="font-size:12px;color:var(--green)">Ready to sign in</div>
       </div>
       <div class="panel" style="border-color:var(--ink)">
         <div class="kicker">Step 2 · Startup Pro</div>
@@ -330,11 +338,45 @@
     async function init() {
       const wb = document.getElementById("webhookUrlBox");
       if (wb) wb.value = window.location.origin + "/api/webhook/github";
-      const r = await fetch("/api/health").then(x => x.json());
+      const [r, me] = await Promise.all([
+        fetch("/api/health").then(x => x.json()),
+        fetch("/api/auth/me").then(x => x.json()),
+      ]);
       document.getElementById("engineInfo").textContent =
-        `Gemini=${r.gemini_configured ? "LIVE" : "FALLBACK"} · Project=${r.gcp_project || "local"} · Rules=${r.rules_loaded}`;
+        `Gemini=${r.gemini_configured ? "LIVE" : "FALLBACK"} · GitHub OAuth=${r.github_oauth_configured ? "LIVE" : "SETUP"} · Project=${r.gcp_project || "local"}`;
+      if (me.authenticated) {
+        document.getElementById("authArea").innerHTML =
+          `<div style="display:flex;align-items:center;gap:8px">` +
+          (me.avatar_url ? `<img src="${esc(me.avatar_url)}" width="26" height="26" style="border-radius:50%;border:1px solid var(--border)" />` : "") +
+          `<span class="mono" style="font-size:12px;font-weight:600">@${esc(me.login)}</span>` +
+          `<button style="padding:5px 10px;font-size:12px" onclick="logoutGitHub()">Logout</button></div>`;
+        document.getElementById("ghAuthState").textContent = `Signed in as @${me.login} (OAuth active)`;
+        loadUserRepos();
+      }
     }
     init();
+
+    async function loadUserRepos() {
+      const res = await fetch("/api/github/repos");
+      if (!res.ok) return;
+      const repos = await res.json();
+      const sel = document.getElementById("repoPicker");
+      sel.style.display = "block";
+      sel.innerHTML = `<option value="">My GitHub Repos (${repos.length})...</option>` +
+        repos.map(r => `<option value="${esc(r.html_url)}|${esc(r.full_name)}">${esc(r.full_name)}${r.private ? " (private)" : ""}</option>`).join("");
+    }
+
+    function pickRepo(val) {
+      if (!val) return;
+      const [url, fullName] = val.split("|");
+      document.getElementById("repoUrl").value = url;
+      document.getElementById("ghRepo").value = fullName;
+    }
+
+    async function logoutGitHub() {
+      await fetch("/api/auth/logout", { method: "POST" });
+      window.location.reload();
+    }
 
     async function runScan() {
       const btn = document.getElementById("scanBtn");
