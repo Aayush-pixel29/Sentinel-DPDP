@@ -50,7 +50,12 @@ def _gemini_client():
         return None
     try:
         from google import genai
-        return genai.Client(api_key=api_key)
+        from google.genai import types
+        return genai.Client(
+            api_key=api_key,
+            vertexai=False,
+            http_options=types.HttpOptions(timeout=18000),
+        )
     except Exception:
         return None
 
