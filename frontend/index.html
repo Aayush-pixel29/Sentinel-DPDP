@@ -859,11 +859,14 @@
           <div class="panel">
             <div class="panel-head">
               <div>
-                <div class="kicker">GitHub App Webhook</div>
-                <h3 style="font-size:16px;">CodeRabbit-Style Pre-Merge Gate</h3>
+                <div class="kicker">Automated Pre-Merge Review · Bugs + Security + DPDP Law</div>
+                <h3 style="font-size:16px;">Sentinel-DPDP Pull Request Gate</h3>
               </div>
               <span class="tag tag-ok">ACTIVE</span>
             </div>
+            <p style="font-size:12.5px;color:var(--ink-2);line-height:1.55;">
+              Connect this webhook in <strong>GitHub Repo → Settings → Webhooks</strong> (Content type: <code>application/json</code>, Events: <code>Pull requests</code>). On every PR, Sentinel-DPDP reviews code bugs, security flaws, syntax regressions, <strong>and</strong> India DPDP Act 2023 compliance automatically.
+            </p>
             <div>
               <div class="kicker" style="margin-bottom:6px;">Live Webhook URL</div>
               <div style="display:flex;gap:8px;">
@@ -1227,7 +1230,7 @@ const STATE = {
 
 const SCREEN_META = {
   inspector: ['Code Inspector', 'Scan any repo, inspect exact leaks, verify patches before merge'],
-  github: ['GitHub PR Gate', 'CodeRabbit-style PR webhook checks and drop-in GitHub Action'],
+  github: ['GitHub PR Gate', 'Automated pre-merge code bug, security & DPDP legal review on every Pull Request'],
   vault: ['Notices & BigQuery', '7-language DPDP Sec 5 notices synced to your scan + live audit trail'],
   vpc: ['Bank VPC & Gemma', '0.1ms local PII redaction sidecar + tamper-proof RS256 License JWT'],
   billing: ['Billing & Credits', 'Token balance, plan limits, Razorpay UPI QR / Card Autopay'],
@@ -1242,8 +1245,8 @@ const TOUR_STEPS = [
   },
   {
     screen: 'github',
-    title: '2. GitHub PR Gate (Like CodeRabbit)',
-    body: 'See how startups connect Sentinel-DPDP to every Pull Request. Use the built-in Webhook Simulator to run a real end-to-end PR #42 compliance check and inspect the generated GitHub review comment.',
+    title: '2. Automated GitHub PR Gate (Bugs + Security + DPDP)',
+    body: 'Connect your GitHub webhook once to review every Pull Request for runtime bugs, security flaws, syntax errors, and India DPDP legal rules automatically. Test it live right here with Simulate PR #42.',
     hint: 'Try it: Open GitHub PR Gate → click "Simulate Incoming PR #42".',
   },
   {
