@@ -841,8 +841,9 @@
               <button class="primary sm" onclick="askAuditor()">Ask</button>
             </div>
             <div class="chip-row">
+              <button class="chip" onclick="quickAsk('What does this repository do and where are the biggest privacy risks?')">Explain this repo</button>
               <button class="chip" onclick="quickAsk('Which finding has the highest DPDP penalty?')">Highest penalty?</button>
-              <button class="chip" onclick="quickAsk('How does verify_patch.py prevent hallucinations?')">Zero hallucinations?</button>
+              <button class="chip" onclick="quickAsk('Write a safe fix for the main leak in this repo')">Show exact fix</button>
             </div>
           </div>
         </div>
@@ -1221,6 +1222,7 @@ const STATE = {
   payMethod: 'upi_qr',
   activeLang: 'en',
   tourIdx: 0,
+  chatHistory: [],
 };
 
 const SCREEN_META = {
@@ -1543,6 +1545,8 @@ async function runScan() {
     if (!r.ok) throw new Error(data.detail || 'Scan failed');
     STATE.scanId = data.scan_id;
     STATE.report = data.report;
+    STATE.chatHistory = [];
+    document.getElementById('chatLog').innerHTML = `<div class="msg a">Live repo loaded: <strong>${esc(data.label)}</strong> (${data.report.files_scanned} files). Ask me anything about its files, architecture, leaks, or DPDP fixes!</div>`;
     renderScan(data);
     loadBilling();
     setStatus(`SCANNED · ${data.telemetry?.telemetry_status || 'logged'}`, true);
@@ -1712,12 +1716,19 @@ async function askAuditor() {
   inp.value = '';
   const log = document.getElementById('chatLog');
   log.innerHTML += `<div class="msg u">${esc(q)}</div>`;
-  const m = document.createElement('div'); m.className = 'msg a'; m.textContent = 'Analyzing scan…';
+  const m = document.createElement('div'); m.className = 'msg a'; m.textContent = 'Reading live repository files with Gemini…';
   log.appendChild(m); log.scrollTop = log.scrollHeight;
   try {
-    const r = await fetch('/api/ask', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question: q, scan_id: STATE.scanId }) });
+    const r = await fetch('/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: q, scan_id: STATE.scanId, history: STATE.chatHistory.slice(-8) }),
+    });
     const d = await r.json();
-    m.textContent = d.answer || 'No response.';
+    const ans = d.answer || 'No response.';
+    const filesNote = (d.files_read && d.files_read.length) ? ` · read ${d.files_read.length} repo files` : '';
+    m.innerHTML = `${esc(ans)}<div style="margin-top:6px;font-size:10.5px;color:var(--muted);font-family:'JetBrains Mono',monospace;">${esc(d.engine || 'gemini')}${esc(filesNote)}</div>`;
+    STATE.chatHistory.push({ role: 'user', text: q }, { role: 'assistant', text: ans });
   } catch (e) { m.textContent = 'Auditor temporarily unavailable.'; }
   log.scrollTop = log.scrollHeight;
 }

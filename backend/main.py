@@ -166,6 +166,7 @@ class RedactRequest(BaseModel):
 class AskRequest(BaseModel):
     question: str
     scan_id: str | None = None
+    history: list[dict[str, str]] = []
 
 
 class UpgradeRequest(BaseModel):
@@ -591,8 +592,11 @@ def api_redact(req: RedactRequest):
 
 @app.post("/api/ask")
 def api_ask(req: AskRequest):
-    report = SCANS.get(req.scan_id, {}).get("report") if req.scan_id else None
-    return ask_auditor(req.question, report)
+    session = SCANS.get(req.scan_id, {}) if req.scan_id else {}
+    report = session.get("report")
+    tdir = Path(session["target_dir"]) if session.get("target_dir") else DEMO_APP
+    label = session.get("label", "demo_vulnerable_app (PaisaFlow)")
+    return ask_auditor(req.question, report, target_dir=tdir, repo_label=label, history=req.history)
 
 
 @app.post("/api/webhook/github")
